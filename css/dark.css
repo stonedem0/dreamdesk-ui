@@ -1,0 +1,247 @@
+html {
+  background-color: var(--black);
+  color: var(--app-color);
+}
+
+body {
+  overflow-x: hidden;
+  /* background-color: var(--black); */
+  /* color: var(--dark-toxic-green); */
+}
+
+/* Windows styles */
+.bl-win {
+  background-color: var(--black);
+  color:  #3ff10b;
+  border: 1px solid rgba(58, 255, 0, 0.86);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+}
+
+.bl-win-message {
+  background-color: var(--black);
+  color: var(--dark-toxic-green); 
+  border: 1px solid rgba(58, 255, 0, 0.81);
+}
+
+.bl-win-header {
+  background-color: var(--black);
+  color: var(--dark-toxic-green);
+  border: 1px solid rgba(58, 255, 0, 0.81);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+
+}
+
+.bl-win-controls button {
+  width: 1.4rem;
+  height: 1.3rem;
+  background-color: var(--black);
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  background-size: cover;
+  border: 1px solid var(--dark-toxic-green);
+  
+}
+
+.bl-btn--minimize {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%233ff10b;stroke-width:7' /></svg>");
+}
+
+.bl-btn--fullscreen {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:%23242426;stroke-width:3;stroke:%233ff10b' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:%233ff10b;stroke-width:7' /></svg>");
+}
+
+.bl-btn--close {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%233ff10b' stroke-width='5' stroke-linecap='butt'/></svg>");
+}
+
+.bl-btn--primary {
+  color: var(--dark-toxic-green);
+  border: 1px solid var(--dark-toxic-green);
+  background-color: var(--black);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+}
+
+.bl-btn--ghost {
+  color: var(--dark-toxic-green);
+  border: 1px solid var(--dark-toxic-green);
+  background-color: var(--black);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+}
+
+.bl-btn--help {
+  color: var(--dark-toxic-green);
+  border: 1px solid var(--dark-toxic-green);
+  background-color: var(--black);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+}
+
+
+.bl-toggle input:checked + .slider {
+  background-color: var(--black);
+  transition: transform 6.3s ease;
+  border: 1px solid var(--dark-toxic-green);
+}
+
+
+  /* Toggle styles */
+.bl-toggle input:checked + .slider .knob {
+  background-color: var(--dark-toxic-green);
+  transition: transform 6.3s ease;
+  border: 1px solid var(--dark-toxic-green);
+  box-shadow: 
+    -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+    0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+    0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+    inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+    inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+    inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+}
+/* Toast styles */
+.bl-toast {
+  background-color: var(--black);
+  color: var(--dark-toxic-green);
+  border: 1px solid var(--dark-toxic-green);
+}
+
+
+/* Input styles */
+.dreamdesk-input {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+.bl-toast-btn--close {
+  border: 1px solid var(--dark-toxic-green);
+}
+
+/* Toast styles */
+.bl-toast-alert {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+  box-shadow: 
+  -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+  0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+  0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+  inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+  inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+  inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+
+}
+
+.bl-toast-notification {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+  box-shadow: 
+  -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+  0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+  0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+  inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+  inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+  inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+
+}
+
+.bl-toast-warning {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+  box-shadow: 
+  -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3),
+  0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2),
+  0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1),
+  inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4),
+  inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3),
+  inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+
+}
+
+.toast-btn--close {
+  color: var(--dark-toxic-green);
+}
+
+
+/* Progress bar styles */
+.bl-progress-bar {
+  background-color: #3ff10b;
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+.bl-progress-bar--gradient {
+  background: var(--pc-pink-mint-gradient);
+  transition: width 0.5s ease, filter 0.5s linear;
+}
+
+.bl-progress-track {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+.bl-progress-segment {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+.bl-progress-segment--gradient {
+  background-image: var(--pc-pink-mint-gradient);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.bl-tabs {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+.bl-tab-panels {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}
+
+
+
+/* Terminal window styles */
+.bl-terminal-win {
+  background-color: var(--black);
+  border: 1px solid var(--dark-toxic-green);
+  color: var(--dark-toxic-green);
+}

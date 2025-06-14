@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pastelcore">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dreamdesk Styleguide</title>
+    <link rel="stylesheet" href="./css/variables.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/pastelcore_global.css" />
+    <link rel="stylesheet" href="./css/dark_global.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./js/theme.js"></script>
+    <script type="module" src="./js/dreamdesk.js"></script>
+</head>
+
+<body>
+    <div class="toogle-container">
+        <dreamdesk-toggle></dreamdesk-toggle>
+    </div>
+    <div class="container">
+        <div class="col col1">
+            <dreamdesk-window title="Custom scroll" width="400px" height="400px">
+                <dreamdesk-tabs>
+                    <dreamdesk-tab index="0">General</dreamdesk-tab>
+                    <dreamdesk-tab index="1">Appearance</dreamdesk-tab>
+                    <dreamdesk-tab index="2">Advanced</dreamdesk-tab>
+                    <dreamdesk-tab index="3">Settings</dreamdesk-tab>
+                    <dreamdesk-tab-panel>
+                        <p class="scrollable">Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+                            roots in a piece of
+                            classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
+                            Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
+                            Latin
+                            words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
+                            classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+                            1.10.32
+                            and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,
+                            written in 45 BC. This book is a treatise on the theory of ethics, very popular during the
+                            Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a
+                            line in
+                            section 1.10.32</p>
+                    </dreamdesk-tab-panel>
+                    <dreamdesk-tab-panel>
+                        <p>This is the appearance panel. Customize your theme here.</p>
+                    </dreamdesk-tab-panel>
+                    <dreamdesk-tab-panel>
+                        <p>This is the advanced settings panel.</p>
+                    </dreamdesk-tab-panel>
+                    <dreamdesk-tab-panel>
+                        <p>This is the settings panel. Configure your preferences here.</p>
+                    </dreamdesk-tab-panel>
+                </dreamdesk-tabs>
+            </dreamdesk-window>
+            <div class="toast-container">
+                <dreamdesk-toast type="alert" message="This is an alert box."></dreamdesk-toast>
+                <dreamdesk-toast type="notification" message="This is a notification box."></dreamdesk-toast>
+                <dreamdesk-toast type="warning" message="This is a warning box."></dreamdesk-toast>
+            </div>
+        </div>
+        <div class="col col2">
+            <dreamdesk-window title="Error" width="400px" height="200px">
+                <p class="win-message">
+                    Something unexpected happened.<br />
+                    Please try again or contact support.
+                </p>
+                <div class="win-actions">
+                    <dreamdesk-button variant="primary">OK</dreamdesk-button>
+                    <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
+                </div>
+            </dreamdesk-window>
+            <dreamdesk-window title="Hello" width="400px" height="200px">
+                <div class="input-grid pc-input-grid">
+                    <dreamdesk-input type="text" label="Username:" id="dreamdesk-username" placeholder="">
+                    </dreamdesk-input>
+                    <dreamdesk-input type="password" label="Password:" id="dreamdesk-password" placeholder="">
+                    </dreamdesk-input>
+                </div>
+                <div class="win-actions">
+                    <dreamdesk-button variant="primary">Ok</dreamdesk-button>
+                    <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
+                </div>
+            </dreamdesk-window>
+            <div class="progress-bar-container">
+                <dreamdesk-progress-bar value="0"></dreamdesk-progress-bar>
+                <dreamdesk-progress-bar value="0" blocky></dreamdesk-progress-bar>
+                <dreamdesk-progress-bar value="0" gradient></dreamdesk-progress-bar>
+                <dreamdesk-progress-bar value="0" gradient blocky></dreamdesk-progress-bar>
+            </div>
+            <dreamdesk-terminal-window width="400px" height="250px">
+                <p>Hello, world!</p>
+            </dreamdesk-terminal-window>
+        </div>
+    </div>
+    <script src="/main.js"></script>
+</body>
+
+</html>

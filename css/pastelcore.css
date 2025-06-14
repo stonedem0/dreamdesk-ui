@@ -1,0 +1,221 @@
+/* PastelCore CSS */
+
+body {
+  background: var(--app-color);
+}
+
+/* Windows styles */
+.pc-win {
+  width: var(--window-width, auto);
+  border: var(--border);
+  background-color: var(--app-color);
+  background-color: var(--pastel-pink);
+  box-shadow: var(--shadow);
+}
+
+.pc-win-header {
+  background: var(--pastelcore-cyan);
+  color: var(--black);
+  border-bottom: var(--border);
+  box-shadow: inset -2px 2px 1px #f9f7ff,
+    inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+}
+
+.pc-win-controls button {
+  background-color: var(--app-color);
+  box-shadow: var(--shadow);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
+}
+
+.pc-win-body {
+  background-color: var(--pastel-pink);
+}
+
+/* Button styles */
+.pc-btn--minimize {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:rgb(61,45,51);stroke-width:7' /></svg>");
+}
+
+.pc-btn--fullscreen {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:rgb(254,227,227);stroke-width:3;stroke:rgb(61,45,51)' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:rgb(61,45,51);stroke-width:7' /></svg>");
+}
+
+.pc-btn--close {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='rgb(61,45,51)' stroke-width='5' stroke-linecap='butt'/></svg>");
+}
+
+.pc-btn--primary {
+  background-color: var(--pastelcore-blue);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a4bfc3;
+}
+
+.pc-btn--ghost {
+  background-color: var(--pastelcore-red);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f;
+}
+
+.pc-btn--help {
+  background-color: var(--pastel-yellow);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #f3d6a0;
+}
+
+.pc-btn--disable {
+  background-color: var(--pastel-orange);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #f4b8a3;
+}
+.pc-btn--basic {
+  background-color: rgb(255 181 183 / 40%);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d0bdc5;
+}
+
+.pc-terminal-win {
+  background-color: var(--black);
+  color: var(--pastel-orange);
+}
+
+.pc-terminal-win-body {
+  background-color: var(--black);
+
+}
+
+
+/* Input styles */
+.dreamdesk-input {
+  box-shadow: -2px -2px 0 var(--pastelcore-pink-shadow),
+    2px 2px 0 var(--pastelcore-pink-highlight);
+}
+
+/* Toast styles */
+.pc-toast-alert {
+  background-color: var(--pastelcore-red-bg);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f,
+    var(--shadow);
+}
+
+.pc-toast-notification {
+  background-color: var(--pastelcore-cyan);
+  box-shadow: inset -2px 2px 1px #f9f7ff,
+    inset 2px -2px 1px var(--pasteclore-cyan-shadow), var(--shadow);
+}
+
+.pc-toast-warning {
+  background-color: var(--pastel-yellow);
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #bebbb1,
+    var(--shadow);
+}
+
+.pc-progress-bar {
+  background-color: var(--pastelcore-cyan);
+  box-shadow: inset -2px 5px 1px #ffffff, inset 2px -4px 1px #d1b5c0;
+  filter: hue-rotate(0deg);
+}
+
+.pc-progress-bar--gradient {
+  background: var(--pc-pink-tiffany-blue);
+  transition: width 0.5s ease, filter 0.5s linear;
+  box-shadow: inset -2px 5px 1px #ffffff, inset 2px -4px 1px #d1b5c0;
+}
+
+.pc-progress-track--blocky {
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #b198a2;
+}
+
+.pc-progress-track  {
+  background-color: var(--pastel-grey);
+  border: var(--border);
+  box-shadow: inset -2px 2px 1px #f9f7ff,
+    inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+
+}
+
+.pc-progress-segment {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  box-shadow: inset -1px 1px 1px #fffcfc, inset 1px -1px 1px #b198a2;
+}
+
+.pc-toggle .slider {
+  animation: shimmer 5s infinite linear;
+  background-color: var(--pastelcore-cyan);
+  box-shadow: inset -2px 2px 0.7px rgba(104, 52, 52, 0.15),
+    inset -2px -2px 0.7px rgba(255, 255, 255, 0.6),
+    inset 2px -2px 0.7px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 0.7px rgba(0, 0, 0, 0.15);
+
+}
+
+.pc-toggle .knob {
+  background: linear-gradient(
+    to top right,
+    #e2e2ffff 0%,
+    #e4fbffff 25%,
+    #ffefffff 50%,
+    #fcfcffff 75%,
+    #e5e5ffff 100%
+  );
+  background-size: 300% 300%;
+  animation: shimmer 5s infinite linear;
+  box-shadow: inset -2px 2px 0.5px #ffffff, inset 2px -2px 0.5px #c5c6d1;
+  transition: transform 0.2s ease-in-out;
+
+}
+
+.pc-toggle input:checked + .slider .knob {
+  transform: translateX(2.25rem);
+}
+
+.pc-toggle input:checked + .slider {
+  /* background: linear-gradient(
+    to top right,
+    #e2e2ffff 0%,
+    #e4fbffff 25%,
+    #ffefffff 50%,
+    #fcfcffff 75%,
+    #e5e5ffff 100%,
+  ); */
+}
+
+.pc-toggle input:checked + .slider .knob {
+  /* background: linear-gradient(
+    to top right,
+    #e2e2ffff 0%,
+    #e4fbffff 25%,
+    #ffefffff 50%,
+    #fcfcffff 75%,
+    #e5e5ffff 100%,
+  ); */
+
+
+}
+
+
+
+.pc-iridescent {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    to top right,
+    #e2e2ffff 0%,
+    #e4fbffff 25%,
+    #ffefffff 50%,
+    #fcfcffff 75%,
+    #e5e5ffff 125%
+  );
+  background-size: 300% 300%;
+  animation: shimmer 5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+
+
