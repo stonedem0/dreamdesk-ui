@@ -3,6 +3,55 @@ html {
   color: var(--app-color);
 }
 
+/* Dark Theme Semantic Color Overrides */
+html[data-theme="dark"] {
+  /* Semantic Color System - Dark Theme Mapping */
+  --color-primary: var(--dark-toxic-green);
+  --color-secondary: var(--dark-toxic-green);
+  --color-accent: var(--dark-toxic-green);
+  --color-tertiary: var(--dark-toxic-green);
+  --color-background: var(--black);
+  --color-surface: var(--black);
+  --color-text: var(--dark-toxic-green);
+  --color-text-muted: var(--dark-toxic-green);
+  --color-border: rgba(58, 255, 0, 0.86);
+  
+  /* Interactive States */
+  --color-hover: var(--dark-toxic-green);
+  --color-active: var(--dark-toxic-green);
+  --color-disabled: var(--dark-toxic-green);
+  --color-error: var(--dark-toxic-green);
+  --color-success: var(--dark-toxic-green);
+  --color-warning: var(--dark-toxic-green);
+  
+  /* UI Component Colors */
+  --color-button-primary: var(--black);
+  --color-button-secondary: var(--black);
+  --color-button-ghost: var(--black);
+  --color-button-help: var(--black);
+  --color-button-disable: var(--black);
+  
+  --color-window-header: var(--black);
+  --color-window-body: var(--black);
+  --color-window-border: 1px solid rgba(58, 255, 0, 0.81);
+  
+  --color-input-background: var(--black);
+  --color-input-border: var(--dark-toxic-green);
+  --color-input-focus: var(--dark-toxic-green);
+  
+  --color-toast-alert: var(--black);
+  --color-toast-notification: var(--black);
+  --color-toast-warning: var(--black);
+  
+  --color-progress-track: var(--black);
+  --color-progress-bar: var(--dark-toxic-green);
+  --color-progress-segment: var(--dark-toxic-green);
+  
+  --color-toggle-background: var(--black);
+  --color-toggle-knob: var(--dark-toxic-green);
+  --color-toggle-active: var(--dark-toxic-green);
+}
+
 body {
   overflow-x: hidden;
   /* background-color: var(--black); */

@@ -1,5 +1,51 @@
 :root {
-  /* Core Colors */
+  /* Semantic Color System - Universal across themes */
+  --color-primary: var(--pink);
+  --color-secondary: var(--jade);
+  --color-accent: var(--yellow);
+  --color-tertiary: var(--purple);
+  --color-background: var(--app-color);
+  --color-surface: var(--pastel-pink);
+  --color-text: var(--black);
+  --color-text-muted: var(--grey);
+  --color-border: var(--line-color);
+  
+  /* Interactive States */
+  --color-hover: var(--pastelcore-blue);
+  --color-active: var(--pastelcore-cyan);
+  --color-disabled: var(--pastel-orange);
+  --color-error: var(--pastelcore-red);
+  --color-success: var(--pastel-jade);
+  --color-warning: var(--pastel-yellow);
+  
+  /* UI Component Colors */
+  --color-button-primary: var(--pastelcore-blue);
+  --color-button-secondary: var(--pastelcore-red);
+  --color-button-ghost: var(--pastelcore-red);
+  --color-button-help: var(--pastel-yellow);
+  --color-button-disable: var(--pastel-orange);
+  
+  --color-window-header: var(--pastelcore-cyan);
+  --color-window-body: var(--pastel-pink);
+  --color-window-border: var(--border);
+  
+  --color-input-background: var(--app-color);
+  --color-input-border: var(--pastelcore-pink-shadow);
+  --color-input-focus: var(--pastelcore-pink-highlight);
+  
+  --color-toast-alert: var(--pastelcore-red-bg);
+  --color-toast-notification: var(--pastelcore-cyan);
+  --color-toast-warning: var(--pastel-yellow);
+  
+  --color-progress-track: var(--pastel-pink);
+  --color-progress-bar: var(--pastelcore-blue);
+  --color-progress-segment: var(--pastelcore-cyan);
+  
+  --color-toggle-background: var(--pastel-pink);
+  --color-toggle-knob: var(--pastelcore-cyan);
+  --color-toggle-active: var(--pastelcore-blue);
+
+  /* Core Colors - Keep for backward compatibility */
   --pink: #ff6fb2;
   --jade: #20ffb6;
   --yellow: #f8e730;
