@@ -36,13 +36,24 @@ class DreamDeskComponent extends HTMLElement {
     this._initialized = true;
   }
 
+  _getAssetPath(file, directory = 'css', extension = 'css') {
+    // Get the current script's URL to determine the base path
+    const scriptUrl = new URL(import.meta.url);
+    const scriptPath = scriptUrl.pathname;
+    const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+    const assetPath = `${scriptDir}/../${directory}/${file}.${extension}`;
+    const baseUrl = new URL('.', window.location.href);
+    const fullUrl = new URL(assetPath, baseUrl);
+    
+    return fullUrl.pathname;
+  }
+
   _injectBaseStyles() {
     const base = ["variables", "base", "animations"];
     base.forEach((file) => {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      // TODO: make this relative to the root and dynamic
-      link.href = `css/${file}.css`;
+      link.href = this._getAssetPath(file, 'css', 'css');
       this.shadowRoot.appendChild(link);
     });
   }
@@ -53,7 +64,7 @@ class DreamDeskComponent extends HTMLElement {
     if (this._theme !== "default") {
       const themeLink = document.createElement("link");
       themeLink.rel = "stylesheet";
-      themeLink.href = `/css/${this._theme}.css`;
+      themeLink.href = this._getAssetPath(this._theme, 'css', 'css');
       themeLink.onload = () => {
         this._container.innerHTML = this.template();
         this.setup?.();
