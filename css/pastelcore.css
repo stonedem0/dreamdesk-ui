@@ -39,8 +39,8 @@ html[data-theme="pastelcore"] {
   --color-toast-notification: var(--pastelcore-cyan);
   --color-toast-warning: var(--pastel-yellow);
   
-  --color-progress-track: var(--pastel-pink);
-  --color-progress-bar: var(--pastelcore-blue);
+  --color-progress-track: var(--pastel-grey);
+  --color-progress-bar: var(--pastelcore-cyan);
   --color-progress-segment: var(--pastelcore-cyan);
   
   --color-toggle-background: var(--pastel-pink);
