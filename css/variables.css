@@ -1,9 +1,9 @@
 :root {
   /* Semantic Color System - Universal across themes */
-  --color-primary: var(--pink);
-  --color-secondary: var(--jade);
-  --color-accent: var(--yellow);
-  --color-tertiary: var(--purple);
+  --color-primary: var(--pc-rose-pompadour);
+  --color-secondary: var(--pastelcore-cyan);
+  --color-accent: var(--pastelcore-blue);
+  --color-tertiary: var(--pastelcore-purple);
   --color-background: var(--app-color);
   --color-surface: var(--pastel-pink);
   --color-text: var(--black);
