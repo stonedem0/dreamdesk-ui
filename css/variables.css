@@ -6,23 +6,11 @@
   --yellow: #f8e730;
   --purple: #9d7eff;
   --black: #151820;
-  --grey: #878385;
-
-  /* Default colors for when no theme is active */
-  --app-color: #fff5fa; /* Rose Mist */
-  --line-color: rgb(61, 45, 51);
-
-
-  /* dark mode */
-  --dark-toxic-green: #3ff10b;
 
   /* Typography */
   --font-ui: "Menlo", "Courier New", monospace;
   --font-size-base: 16px;
 
-  /* UI */
-  /* --radius: 6px; */
-  --shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
   /* Border */
   --border: 0.09rem solid var(--black);
 

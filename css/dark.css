@@ -5,6 +5,9 @@ html {
 
 /* Dark Theme Semantic Color Overrides */
 html[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --dark-toxic-green: #3ff10b;
+  
   /* Semantic Color System - Dark Theme Mapping */
   --color-primary: var(--dark-toxic-green);
   --color-secondary: var(--dark-toxic-green);
