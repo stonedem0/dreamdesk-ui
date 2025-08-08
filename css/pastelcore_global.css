@@ -1,5 +1,5 @@
 /* scroll styles */
-:root {
+html[data-theme="pastelcore"] {
   --scroll-track-bg: #fffefe;
   --scroll-thumb-bg: var(--pastelcore-cyan);
   --scroll-thumb-shadow-light: #ffffff;
