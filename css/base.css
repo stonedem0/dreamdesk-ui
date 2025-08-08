@@ -143,7 +143,6 @@ body {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='rgb(61,45,51)' stroke-width='5' stroke-linecap='butt'/></svg>");
 }
 
-/* ===== scrollbar base styles ===== */
 /* WebKit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 1.4rem;
