@@ -17,8 +17,6 @@ body {
   border: var(--border);
   background-color: white;
   width: var(--window-width, auto);
-  /* position: relative; */
-  /* position: fixed; */
 }
 
 .win:hover {
