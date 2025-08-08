@@ -1,0 +1,25 @@
+:root {
+  /* Core Colors - Keep for backward compatibility */
+  --pink: #ff6fb2;
+  --jade: #20ffb6;
+  --yellow: #f8e730;
+  --purple: #9d7eff;
+  --black: #151820;
+
+  /* Typography */
+  --font-ui: "Menlo", "Courier New", monospace;
+  --font-size-base: 16px;
+
+  /* Border */
+  --border: 0.09rem solid var(--black);
+
+  /* Window sizes utilities */
+  --window-width: 24rem;
+  --window-height: 12.5rem;
+  --window-radius: 0.25rem;
+
+  --win-width-sm: 24rem;
+  --win-width-md: 34rem;
+  --win-width-lg: 54rem;
+}
+

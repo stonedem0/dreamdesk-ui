@@ -1,5 +1,108 @@
 /* PastelCore CSS */
 
+html[data-theme="pastelcore"] {
+  /* Pastel Colors */
+  --pastel-pink: #fde2e4;
+  --pastel-purple: #c8b6ff;
+  --pastel-grey: #dbd7e4ed;
+  --pastel-yellow: #fff1e6;
+  --pastel-jade: #bee1e6;
+  --pastel-red: #ffa6c1;
+  --pastel-orange: #fec5bb;
+  --pastelcore-cyan: #a7fcfb;
+  --pastelcore-red: #ff9ea6;
+  --pastelcore-blue: #a1e4ff;
+  --pastelcore-purple: #c0b6fa;
+  --pc-rose-pompadour: #fb6f92ff;
+  
+  --app-color: #fff5fa; /* Rose Mist */
+  --line-color: rgb(61, 45, 51);
+
+  --pasteclore-cyan-shadow: #b3cecd;
+  --pastelcore-pink-shadow: rgba(103, 71, 73, 0.41);
+    
+  --pastelcore-red-bg: #ff9ea6b5;
+    
+  --pastelcore-pink-highlight: #fff9f9;
+    
+  --pc-pink-mint-gradient: linear-gradient(
+      90deg,
+      #fed9e0ff 0%,
+      #f7c8d4ff 25%,
+      #aef1f0ff 50%,
+      #b4f9efff 75%,
+      #3ff10b 100%
+    );
+    
+ --pc-pink-tiffany-blue: linear-gradient(
+      90deg,
+      #fed9e0ff,
+      #f7c8d4ff,
+      #aef1f0ff,
+      #b4f9efff
+    );
+
+  /* Semantic Color System - PastelCore Theme Mapping */
+  --color-primary: var(--pc-rose-pompadour);
+  --color-secondary: var(--pastelcore-cyan);
+  --color-accent: var(--pastelcore-blue);
+  --color-tertiary: var(--pastelcore-purple);
+  --color-background: var(--app-color);
+  --color-surface: var(--pastel-pink);
+  --color-text: var(--black);
+  --color-text-muted: var(--grey);
+  --color-border: var(--line-color);
+  
+  /* Interactive States */
+  --color-hover: var(--pastelcore-blue);
+  --color-active: var(--pastelcore-cyan);
+  --color-disabled: var(--pastel-orange);
+  --color-error: var(--pastelcore-red);
+  --color-success: var(--pastel-jade);
+  --color-warning: var(--pastel-yellow);
+  
+  /* UI Component Colors */
+  --color-button-primary: var(--pastelcore-blue);
+  --color-button-secondary: var(--pastelcore-red);
+  --color-button-ghost: var(--pastelcore-red);
+  --color-button-help: var(--pastel-yellow);
+  --color-button-disable: var(--pastel-orange);
+  
+  --color-window-header: var(--pastelcore-cyan);
+  --color-window-body: var(--pastel-pink);
+  --color-window-border: var(--border);
+  
+  --color-input-background: var(--app-color);
+  --color-input-border: var(--pastelcore-pink-shadow);
+  --color-input-focus: var(--pastelcore-pink-highlight);
+  
+  --color-toast-alert: var(--pastelcore-red-bg);
+  --color-toast-notification: var(--pastelcore-cyan);
+  --color-toast-warning: var(--pastel-yellow);
+  
+  --color-progress-track: var(--pastel-grey);
+  --color-progress-bar: var(--pastelcore-cyan);
+  --color-progress-segment: var(--pastelcore-cyan);
+  
+  --color-toggle-background: var(--pastel-pink);
+  --color-toggle-knob: var(--pastelcore-cyan);
+  --color-toggle-active: var(--pastelcore-blue);
+  
+  /* Scroll styles */
+  --scroll-track-bg: #fffefe;
+  --scroll-thumb-bg: var(--pastelcore-cyan);
+  --scroll-thumb-shadow-light: #ffffff;
+  --scroll-thumb-shadow-dark: var(--pasteclore-cyan-shadow);
+  --scroll-button-bg: #fffefe;
+  --scroll-button-shadow-light: #ffffff;
+  --scroll-button-shadow-dark: #a2a2a2;
+  --scroll-arrow-color: #1c1c1c;
+  
+
+}
+
+
+
 body {
   background: var(--app-color);
 }
@@ -77,7 +180,6 @@ body {
   background-color: var(--black);
 
 }
-
 
 /* Input styles */
 .dreamdesk-input {
@@ -189,7 +291,6 @@ body {
 }
 
 
-
 .pc-iridescent {
   font-size: 3rem;
   font-weight: bold;
@@ -218,4 +319,55 @@ body {
 }
 
 
+
+/* scrollbar styles */
+
+.pc-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+.pc-scroll::-webkit-scrollbar {
+  width: 1.4rem;
+}
+
+.pc-scroll::-webkit-scrollbar-thumb {
+  background: var(--pastelcore-cyan) !important;
+  background-size: 300% 300% !important;
+  box-shadow: inset -2px 2px 1px #ffffff,
+    inset 2px -2px 1px var(--pasteclore-cyan-shadow) !important;
+}
+
+.pc-scroll::-webkit-scrollbar-thumb:hover {
+  box-shadow: inset -2px 2px 1px #ffffff,
+    inset 2px -2px 1px var(--pastel-pink-shadow) !important;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>') !important;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>') !important;
+}
+
+.pc-scroll::-webkit-scrollbar-button {
+  background-color: #ccc !important;
+  border-right: var(--border) !important;
+  border-left: var(--border) !important;
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a2a2a2 !important;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical:increment:start,
+.pc-scroll::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
+}
+
+/* Firefox support */
+@-moz-document url-prefix() {
+  .pc-scroll {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--pastel-pink) #f1f1f1 !important;
+  }
+}
 

@@ -3,6 +3,71 @@ html {
   color: var(--app-color);
 }
 
+/* Dark Theme Semantic Color Overrides */
+html[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --dark-toxic-green: #3ff10b;
+  
+  /* Semantic Color System - Dark Theme Mapping */
+  --color-primary: var(--dark-toxic-green);
+  --color-secondary: var(--dark-toxic-green);
+  --color-accent: var(--dark-toxic-green);
+  --color-tertiary: var(--dark-toxic-green);
+  --color-background: var(--black);
+  --color-surface: var(--black);
+  --color-text: var(--dark-toxic-green);
+  --color-text-muted: var(--dark-toxic-green);
+  --color-border: rgba(58, 255, 0, 0.86);
+  
+  /* Interactive States */
+  --color-hover: var(--dark-toxic-green);
+  --color-active: var(--dark-toxic-green);
+  --color-disabled: var(--dark-toxic-green);
+  --color-error: var(--dark-toxic-green);
+  --color-success: var(--dark-toxic-green);
+  --color-warning: var(--dark-toxic-green);
+  
+  /* UI Component Colors */
+  --color-button-primary: var(--black);
+  --color-button-secondary: var(--black);
+  --color-button-ghost: var(--black);
+  --color-button-help: var(--black);
+  --color-button-disable: var(--black);
+  
+  --color-window-header: var(--black);
+  --color-window-body: var(--black);
+  --color-window-border: 1px solid rgba(58, 255, 0, 0.81);
+  
+  --color-input-background: var(--black);
+  --color-input-border: var(--dark-toxic-green);
+  --color-input-focus: var(--dark-toxic-green);
+  
+  --color-toast-alert: var(--black);
+  --color-toast-notification: var(--black);
+  --color-toast-warning: var(--black);
+  
+  --color-progress-track: var(--black);
+  --color-progress-bar: var(--dark-toxic-green);
+  --color-progress-segment: var(--dark-toxic-green);
+  
+  --color-toggle-background: var(--black);
+  --color-toggle-knob: var(--dark-toxic-green);
+  --color-toggle-active: var(--dark-toxic-green);
+  
+  /* Scroll styles */
+  --scroll-track-bg: #1a1a1a;
+  --scroll-thumb-bg: var(--dark-toxic-green);
+  --scroll-thumb-shadow-light: #2a2a2a;
+  --scroll-thumb-shadow-dark: #000000;
+  --scroll-thumb-hover-shadow: var(--dark-toxic-green);
+  --scroll-button-bg: #2a2a2a;
+  --scroll-button-shadow-light: #3a3a3a;
+  --scroll-button-shadow-dark: #1a1a1a;
+  --scroll-arrow-color: #ffffff;
+  
+
+}
+
 body {
   overflow-x: hidden;
   /* background-color: var(--black); */
@@ -245,3 +310,61 @@ body {
   border: 1px solid var(--dark-toxic-green);
   color: var(--dark-toxic-green);
 }
+
+ /* scrollbar styles */
+.bl-scroll::-webkit-scrollbar {
+  width: 1.4rem;
+}
+
+.bl-scroll::-webkit-scrollbar-track {
+  background: var(--scroll-track-bg) !important;
+  border: 1px solid var(--dark-toxic-green);
+}
+
+.bl-scroll::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb-bg) !important;
+  background-size: 300% 300% !important;
+  border: 1px solid var(--dark-toxic-green);
+  box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light),
+    inset 2px -2px 1px var(--scroll-thumb-shadow-dark) !important;
+}
+
+.bl-scroll::-webkit-scrollbar-thumb:hover {
+  box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light),
+    inset 2px -2px 1px var(--scroll-thumb-hover-shadow) !important;
+}
+
+ .bl-scroll::-webkit-scrollbar-button:vertical:decrement {
+border: 1px solid var(--dark-toxic-green);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 8l6 6H6z"/></svg>') !important;
+}
+
+.bl-scroll::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 16l-6-6h12z"/></svg>') !important;
+}
+
+.bl-scroll::-webkit-scrollbar-button {
+  background-color: var(--scroll-button-bg) !important;
+  border: 1px solid var(--dark-toxic-green);
+  box-shadow: inset -2px 2px 1px var(--scroll-button-shadow-light),
+    inset 2px -2px 1px var(--scroll-button-shadow-dark) !important;
+}
+
+.bl-scroll::-webkit-scrollbar-button:vertical:increment:start,
+.bl-scroll::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
+}
+
+/* Firefox support */
+@-moz-document url-prefix() {
+  [data-theme="dark"] .bl-scroll {
+      scrollbar-width: thin !important;
+      scrollbar-color: var(--scroll-thumb-bg) var(--scroll-track-bg) !important;
+  }
+}
+
+.bl-scroll {
+  color: var(--dark-toxic-green);
+}
+
