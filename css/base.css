@@ -143,6 +143,44 @@ body {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='rgb(61,45,51)' stroke-width='5' stroke-linecap='butt'/></svg>");
 }
 
+::-webkit-scrollbar-track {
+    background: #fffefe;
+    border: var(--border);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #fffefe;
+    border: var(--border);
+    background-size: 300% 300%;;
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  height: 1rem;
+  width: 1rem;
+  border-right: var(--border);
+  border-left: var(--border);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>');
+    background-position: center;
+    border-top: none;
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>');
+    background-position: center;
+    border-bottom: none;
+}
+
+::-webkit-scrollbar-button:vertical:increment:start,
+::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
+}
 
 /* Tab Styles */
 dreamdesk-tab {
