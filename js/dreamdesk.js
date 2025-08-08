@@ -89,6 +89,8 @@ class DreamDeskComponent extends HTMLElement {
         return "pc";
       case "dark":
         return "bl";
+      case "latte":
+        return "cc";
       default:
         return "";
     }

@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
 const toggle = document.querySelector('dreamdesk-toggle');
 toggle.addEventListener('toggle-changed', (e) => {
   const checked = e.detail.checked;
-  const theme = checked ? 'dark' : 'pastelcore';
+  const theme = checked ? 'latte' : 'pastelcore';
   document.documentElement.setAttribute('data-theme', theme);
   document.dispatchEvent(new CustomEvent('dreamdesk-theme-changed', { 
     detail: { theme }
