@@ -1,6 +1,47 @@
 /* PastelCore CSS */
 
 html[data-theme="pastelcore"] {
+  /* Pastel Colors */
+  --pastel-pink: #fde2e4;
+  --pastel-purple: #c8b6ff;
+  --pastel-grey: #dbd7e4ed;
+  --pastel-yellow: #fff1e6;
+  --pastel-jade: #bee1e6;
+  --pastel-red: #ffa6c1;
+  --pastel-orange: #fec5bb;
+  --pastelcore-cyan: #a7fcfb;
+  --pastelcore-red: #ff9ea6;
+  --pastelcore-blue: #a1e4ff;
+  --pastelcore-purple: #c0b6fa;
+  --pc-rose-pompadour: #fb6f92ff;
+  
+  --app-color: #fff5fa; /* Rose Mist */
+  --line-color: rgb(61, 45, 51);
+
+  --pasteclore-cyan-shadow: #b3cecd;
+  --pastelcore-pink-shadow: rgba(103, 71, 73, 0.41);
+    
+  --pastelcore-red-bg: #ff9ea6b5;
+    
+  --pastelcore-pink-highlight: #fff9f9;
+    
+  --pc-pink-mint-gradient: linear-gradient(
+      90deg,
+      #fed9e0ff 0%,
+      #f7c8d4ff 25%,
+      #aef1f0ff 50%,
+      #b4f9efff 75%,
+      #3ff10b 100%
+    );
+    
+ --pc-pink-tiffany-blue: linear-gradient(
+      90deg,
+      #fed9e0ff,
+      #f7c8d4ff,
+      #aef1f0ff,
+      #b4f9efff
+    );
+
   /* Semantic Color System - PastelCore Theme Mapping */
   --color-primary: var(--pc-rose-pompadour);
   --color-secondary: var(--pastelcore-cyan);
