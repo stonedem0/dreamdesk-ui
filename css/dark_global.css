@@ -23,10 +23,6 @@
   
 }
 
-[data-theme="dark"] .bl-scroll::-webkit-scrollbar-thumb:hover {
- 
-} 
-
 [data-theme="dark"] .bl-scroll::-webkit-scrollbar-button:vertical:decrement {
   border: 1px solid var(--dark-toxic-green);
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 8l6 6H6z"/></svg>') !important;
