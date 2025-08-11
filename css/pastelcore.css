@@ -169,6 +169,8 @@ html[data-theme="pastelcore"] {
   /* global soft shadow tokens */
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   --window-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  --color-terminal-bg: #111111;
+  --color-terminal-fg: #ffd6d6;
 }
 
 @keyframes shimmer {

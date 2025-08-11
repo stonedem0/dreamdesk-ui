@@ -55,6 +55,9 @@ html[data-theme="dark"] {
   --color-toggle-knob: var(--dark-toxic-green);
   --color-toggle-active: var(--dark-toxic-green);
   
+  --color-terminal-bg: #000000;
+  --color-terminal-fg: #3ff10b;
+  
   /* Scroll styles */
   --scroll-track-bg: #1a1a1a;
   --scroll-thumb-bg: var(--dark-toxic-green);

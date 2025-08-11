@@ -214,11 +214,9 @@ dreamdesk-tab-panel.active { display: block; }
 .win.fullscreen-animating { box-shadow: 0 0 24px 4px rgba(0,0,0,0.18); transition: all 0.4s ease; }
 .win.in-fullscreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; transition: all 0.4s ease; }
 
-.terminal-win { height: 10rem; } 
-.terminal-win-body {
-  background-color: rgb(18, 16, 16);
-  color:#ffd6d6
-}
+/* Terminal window layout */
+.terminal-win { display: flex; flex-direction: column; }
+.terminal-win .terminal-win-body { flex: 1; background-color: var(--color-terminal-bg, #000); color: var(--color-terminal-fg, #fafafa); }
 
 /* themed scroll class can add depth via variables */
 .pc-scroll::-webkit-scrollbar-track { box-shadow: none; }
