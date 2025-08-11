@@ -151,6 +151,20 @@ html[data-theme="pastelcore"] {
   --toast-notification-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
   --toast-warning-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #bebbb1;
   --progress-segment-shadow: inset -1px 1px 1px #fffcfc, inset 1px -1px 1px #b198a2;
+
+  /* tighter, cleaner switch shadows */
+  --toggle-slider-shadow: inset -1.5px 1.5px 0.4px rgba(104,52,52,0.15), inset 1.5px -1.5px 0.4px rgba(255,255,255,0.65);
+  --toggle-knob-shadow: inset -1.2px 1.2px 0.4px #ffffff, inset 1.2px -1.2px 0.4px #c5c6d1;
+  --toggle-slider-bg-size: 250% 250%;
+  --toggle-knob-bg-size: 250% 250%;
+
+  /* slightly longer, clean switch shadows */
+  --toggle-slider-shadow: inset -2px 2px 0.6px rgba(104,52,52,0.16), inset 2px -2px 0.6px rgba(255,255,255,0.66);
+  --toggle-knob-shadow: inset -2px 2px 0.55px #ffffff, inset 2px -2px 0.55px #c5c6d1;
+  --toggle-slider-bg-size: 260% 260%;
+  --toggle-knob-bg-size: 260% 260%;
+
+  --color-window-control-bg: #ffffff;
 }
 
 @keyframes shimmer {

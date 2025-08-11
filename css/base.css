@@ -107,6 +107,7 @@ body {
 .btn--disable { filter: grayscale(0.8); cursor: not-allowed; color: var(--grey); border: var(--color-window-border, var(--border)); }
 .btn--basic { color: var(--color-text, var(--black)); border: var(--color-window-border, var(--border)); }
 
+/* Window controls */
 .win-controls button {
   width: 1.4rem;
   height: 1.3rem;
@@ -114,9 +115,9 @@ body {
   background-position: center;
   box-shadow: var(--window-controls-button-shadow, none);
   cursor: pointer;
-  background-size: cover;
+  background-size: contain;
   border: var(--color-window-border, var(--border));
-  background-color: var(--color-surface, #ffffff);
+  background-color: var(--color-window-control-bg, var(--color-surface, #ffffff));
 }
 
 /* augment window controls buttons */
@@ -170,6 +171,20 @@ dreamdesk-tab-panel.active { display: block; }
 /* toggle animations via variables */
 .toggle .slider { animation: var(--toggle-slider-animation, none); }
 .toggle .knob { animation: var(--toggle-knob-animation, none); }
+
+/* Switch visuals tuning */
+.toggle .slider {
+  background: var(--color-toggle-background, #a7fcfb);
+  box-shadow: var(--toggle-slider-shadow, inset -1px 1px 0.5px rgba(0,0,0,0.12), inset 1px -1px 0.5px rgba(255,255,255,0.65));
+  animation: var(--toggle-slider-animation, shimmer 5s infinite linear);
+  background-size: var(--toggle-slider-bg-size, 300% 300%);
+}
+.toggle .knob {
+  background: var(--toggle-knob-gradient, #fff);
+  box-shadow: var(--toggle-knob-shadow, inset -1px 1px 0.4px #ffffff, inset 1px -1px 0.4px #c5c6d1);
+  animation: var(--toggle-knob-animation, shimmer 5s infinite linear);
+  background-size: var(--toggle-knob-bg-size, 300% 300%);
+}
 
 /* ===input base styles ==== */
 .input-grid { display: grid; grid-template-columns: 1fr; gap: 0.5rem; align-items: start; }
