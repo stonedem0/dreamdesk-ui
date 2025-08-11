@@ -347,9 +347,14 @@ class DreamDeskProgressBar extends DreamDeskComponent {
       this._segments.forEach((seg, i) => {
         const active = i < activeCount;
         seg.style.opacity = active ? "1" : "0.2";
-        if (!isGradient) {
-          seg.style.filter = active ? `hue-rotate(${percent * 3.6}deg)` : "none";
+        if (isGradient) {
+          // keep gradient image and no solid color
+          seg.style.backgroundColor = "transparent";
+          // background-image and sizing are set in _afterRender
+          seg.style.filter = "none";
         } else {
+          seg.style.backgroundImage = "none";
+          seg.style.backgroundColor = active ? "var(--color-progress-segment, #a8edea)" : "transparent";
           seg.style.filter = "none";
         }
       });
