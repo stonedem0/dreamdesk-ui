@@ -34,7 +34,7 @@ html[data-theme="pastelcore"] {
       #3ff10b 100%
     );
     
- --pc-pink-tiffany-blue: linear-gradient(
+  --pc-pink-tiffany-blue: linear-gradient(
       90deg,
       #fed9e0ff,
       #f7c8d4ff,
@@ -83,10 +83,22 @@ html[data-theme="pastelcore"] {
   --color-progress-track: var(--pastel-grey);
   --color-progress-bar: var(--pastelcore-cyan);
   --color-progress-segment: var(--pastelcore-cyan);
+  --color-progress-gradient: var(--pc-pink-tiffany-blue);
   
-  --color-toggle-background: var(--pastel-pink);
+  --color-toggle-background: var(--pastelcore-cyan);
   --color-toggle-knob: var(--pastelcore-cyan);
   --color-toggle-active: var(--pastelcore-blue);
+  
+  /* Visual Depth Tokens */
+  --window-shadow: var(--shadow, 0 0 0 rgba(0,0,0,0));
+  --window-header-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --window-controls-button-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
+  --toast-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f, var(--shadow);
+  --progress-track-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --progress-bar-shadow: inset -2px 5px 1px #ffffff, inset 2px -4px 1px #d1b5c0;
+  --toggle-slider-shadow: inset -3px 3px 1px rgba(104,52,52,0.18), inset -3px -3px 1px rgba(255,255,255,0.6), inset 3px -3px 1px rgba(0,0,0,0.15), inset 3px 3px 1px rgba(0,0,0,0.15);
+  --toggle-knob-shadow: inset -2px 2px 0.5px #ffffff, inset 2px -2px 0.5px #c5c6d1;
+  --input-shadow: -2px -2px 0 var(--pastelcore-pink-shadow), 2px 2px 0 var(--pastelcore-pink-highlight);
   
   /* Scroll styles */
   --scroll-track-bg: #fffefe;
@@ -98,9 +110,52 @@ html[data-theme="pastelcore"] {
   --scroll-button-shadow-dark: #a2a2a2;
   --scroll-arrow-color: #1c1c1c;
   
+  --toggle-knob-gradient: linear-gradient(
+    to top right,
+    #e2e2ffff 0%,
+    #e4fbffff 25%,
+    #ffefffff 50%,
+    #fcfcffff 75%,
+    #e5e5ffff 100%
+  );
 
+  /* Control button icons */
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:rgb(61,45,51);stroke-width:7' /></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:rgb(254,227,227);stroke-width:3;stroke:rgb(61,45,51)' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:rgb(61,45,51);stroke-width:7' /></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='rgb(61,45,51)' stroke-width='5' stroke-linecap='butt'/></svg>");
+
+  /* Switch visuals */
+  --color-toggle-background: var(--pastelcore-cyan);
+  --toggle-knob-gradient: linear-gradient(to top right,#e2e2ff 0%,#e4fbff 25%,#ffefff 50%,#fcfcff 75%,#e5e5ff 100%);
+  --toggle-slider-shadow: inset -3px 3px 1px rgba(104,52,52,0.18), inset -3px -3px 1px rgba(255,255,255,0.6), inset 3px -3px 1px rgba(0,0,0,0.15), inset 3px 3px 1px rgba(0,0,0,0.15);
+  --toggle-knob-shadow: inset -2px 2px 0.5px #ffffff, inset 2px -2px 0.5px #c5c6d1;
+  --toggle-slider-animation: shimmer 5s infinite linear;
+  --toggle-knob-animation: shimmer 5s infinite linear;
+
+  /* Buttons and toasts depth */
+  --window-controls-button-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
+  --toast-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f, var(--shadow);
+
+  /* tighter header/progress shadows */
+  --window-header-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --progress-track-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --progress-bar-shadow: inset -2px 5px 1px #ffffff, inset 2px -4px 1px #d1b5c0;
+
+  /* button shadows by type */
+  --button-shadow-primary: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a4bfc3;
+  --button-shadow-ghost: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f;
+  --button-shadow-help: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #f3d6a0;
+
+  /* toast shadows by type (tight) */
+  --toast-alert-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f;
+  --toast-notification-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --toast-warning-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #bebbb1;
 }
 
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 100%; }
+}
 
 
 body {

@@ -49,6 +49,7 @@ html[data-theme="dark"] {
   --color-progress-track: var(--black);
   --color-progress-bar: var(--dark-toxic-green);
   --color-progress-segment: var(--dark-toxic-green);
+  --color-progress-gradient: var(--pc-pink-mint-gradient);
   
   --color-toggle-background: var(--black);
   --color-toggle-knob: var(--dark-toxic-green);
@@ -64,8 +65,22 @@ html[data-theme="dark"] {
   --scroll-button-shadow-light: #3a3a3a;
   --scroll-button-shadow-dark: #1a1a1a;
   --scroll-arrow-color: #ffffff;
-  
 
+  /* Visual Depth Tokens */
+  --window-shadow: -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3), 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2), 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1), inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4), inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3), inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+  --window-header-shadow: -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.3), 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.2), 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.1), inset -0.5px -0.5px 5px 0.5px rgba(63, 241, 11, 0.4), inset 0.5px 0.2px 5px 0.5px rgba(63, 241, 11, 0.3), inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
+  --window-controls-button-shadow: var(--window-header-shadow);
+  --toast-shadow: var(--window-header-shadow);
+  --progress-track-shadow: var(--window-header-shadow);
+  --progress-bar-shadow: none;
+  --toggle-slider-shadow: none;
+  --toggle-knob-shadow: none;
+  --input-shadow: none;
+
+  /* Control button icons */
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%233ff10b;stroke-width:7' /></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:%23242426;stroke-width:3;stroke:%233ff10b' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:%233ff10b;stroke-width:7' /></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%233ff10b' stroke-width='5' stroke-linecap='butt'/></svg>");
 }
 
 body {

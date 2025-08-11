@@ -13,6 +13,7 @@ class DreamDeskComponent extends HTMLElement {
 
     this._styleLinks = [];
 
+    // Only inject shared base once per component (avoid missing files)
     this._injectBaseStyles();
     this.shadowRoot.appendChild(this._container);
 
@@ -49,7 +50,7 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _injectBaseStyles() {
-    const base = ["variables", "base", "animations"];
+    const base = ["base"]; // load only existing base.css
     base.forEach((file) => {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -59,24 +60,8 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _updateThemeStyles(callback) {
-    this._styleLinks.forEach((link) => link.remove());
-    this._styleLinks = [];
-    if (this._theme !== "default") {
-      const themeLink = document.createElement("link");
-      themeLink.rel = "stylesheet";
-      themeLink.href = this._getAssetPath(this._theme, 'css', 'css');
-      themeLink.onload = () => {
-        this._container.innerHTML = this.template();
-        this.setup?.();
-        if (callback) callback();
-      };
-      this._styleLinks.push(themeLink);
-      this.shadowRoot.insertBefore(themeLink, this._container);
-    } else {
-      this._container.innerHTML = this.template();
-      this.setup?.();
-      if (callback) callback();
-    }
+    // Variables propagate into shadow root; no theme stylesheet injection needed
+    if (callback) callback();
   }
 
   template() {
@@ -123,16 +108,16 @@ class DreamDeskWindow extends DreamDeskComponent {
   template() {
     const prefix = this.prefix ? `${this.prefix}-` : "";
     return `
-      <div class="win ${this.prefix}-win" style="width:${this.width}px;height:${this.height}px">
-        <div class="win-header ${this.prefix}-win-header">
+      <div class="win" style="width:${this.width}px;height:${this.height}px">
+        <div class="win-header">
           <span class="win-title">${this.title}</span>
-          <div class="win-controls ${this.prefix}-win-controls">
-            <button class="${prefix}btn--minimize" data-action="minimize"></button>
-            <button class="${prefix}btn--fullscreen" data-action="fullscreen"></button>
-            <button class="${prefix}btn--close" data-action="close"></button>
+          <div class="win-controls">
+            <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
+            <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
+            <button class="btn--close" data-action="close" aria-label="close"></button>
           </div>
         </div>
-        <div class="win-body ${this.prefix}-win-body">
+        <div class="win-body">
           <slot></slot>
         </div>
       </div>
@@ -220,12 +205,14 @@ class DreamDeskWindow extends DreamDeskComponent {
       assignedElements.forEach((node) => {
         const paragraphs = node.querySelectorAll?.("p.scrollable") ?? [];
         paragraphs.forEach((p) => {
+          // Clear previous themed scroll class
           p.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
               p.classList.remove(className);
             }
           });
-          if (this._theme !== "default") {
+          // Re-apply theme specific scroll class so global theme rules match
+          if (this._theme !== "default" && this.prefix) {
             p.classList.add(`${this.prefix}-scroll`);
           }
           observer.observe(p);
@@ -263,14 +250,9 @@ class DreamDeskProgressBar extends DreamDeskComponent {
   }
 
   template() {
-    const prefix = this.prefix ? `${this.prefix}-` : "";
     const trackClass = [
       "progress-track",
       this.hasAttribute("blocky") ? "progress-track--blocky" : "",
-      this.hasAttribute("blocky") && prefix
-        ? `${prefix}progress-track--blocky`
-        : "",
-      prefix ? `${prefix}progress-track` : "",
     ]
       .filter(Boolean)
       .join(" ");
@@ -278,10 +260,6 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     const barClass = [
       "progress-bar",
       this.hasAttribute("gradient") ? "progress-bar--gradient" : "",
-      this.hasAttribute("gradient") && prefix
-        ? `${prefix}progress-bar--gradient`
-        : "",
-      prefix ? `${prefix}progress-bar` : "",
     ]
       .filter(Boolean)
       .join(" ");
@@ -320,7 +298,6 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     const track = this.shadowRoot.querySelector(".progress-track");
     const isBlocky = this.hasAttribute("blocky");
     const isGradient = this.hasAttribute("gradient");
-    const isDefault = this.theme === "default";
 
     if (isBlocky) {
       requestAnimationFrame(() => {
@@ -338,27 +315,15 @@ class DreamDeskProgressBar extends DreamDeskComponent {
         for (let i = 0; i < segments; i++) {
           const seg = document.createElement("div");
           seg.className = "progress-segment";
-          if (this.prefix) {
-            seg.classList.add(`${this.prefix}-progress-segment`);
-          }
           seg.style.width = `${segmentWidth}px`;
           seg.style.height = `${segmentHeight}px`;
           seg.style.marginRight = i < segments - 1 ? `${gap}px` : "0";
 
-          if (isGradient && !isDefault) {
-            switch (this.theme) {
-              case "pastelcore":
-                seg.style.backgroundImage = "var(--pc-pink-tiffany-blue)";
-                break;
-              case "dark":
-                seg.style.backgroundColor = "#3ff10b";
-
-                break;
-            }
+          if (isGradient) {
+            seg.style.backgroundImage = "var(--color-progress-gradient, none)";
             seg.style.backgroundSize = `${fullVisualWidth}px 100%`;
             seg.style.backgroundPosition = `-${i * fullSegment}px 0`;
             seg.style.backgroundRepeat = "no-repeat";
-            seg.style.backgroundColor = "transparent";
           }
 
           track.appendChild(seg);
@@ -376,26 +341,21 @@ class DreamDeskProgressBar extends DreamDeskComponent {
   _updateProgress() {
     const percent = Math.min(Math.max(this._value, 0), 100);
     const isGradient = this.hasAttribute("gradient");
-    const isDefault = this.theme === "default";
 
     if (this.hasAttribute("blocky")) {
       const activeCount = Math.floor((percent / 100) * this._segments.length);
       this._segments.forEach((seg, i) => {
         const active = i < activeCount;
         seg.style.opacity = active ? "1" : "0.2";
-        if (!isGradient && !isDefault) {
-          seg.style.backgroundColor = active ? "#a8edea" : "transparent";
-          seg.style.filter = active
-            ? `hue-rotate(${percent * 3.6}deg)`
-            : "none";
+        if (!isGradient) {
+          seg.style.filter = active ? `hue-rotate(${percent * 3.6}deg)` : "none";
         } else {
-          seg.style.backgroundColor = "transparent";
           seg.style.filter = "none";
         }
       });
     } else if (this._bar) {
       this._bar.style.width = `${percent}%`;
-      if (!isGradient && !isDefault) {
+      if (!isGradient) {
         this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
       }
       if (this._value >= 100) {
@@ -493,12 +453,8 @@ class DreamDeskTabPanel extends DreamDeskComponent {
   template() {
     return `
       <style>
-        :host {
-          display: none;
-        }
-        :host(.active) {
-          display: block;
-        }
+        :host { display: none; }
+        :host(.active) { display: block; }
       </style>
       <slot></slot>
     `;
@@ -519,10 +475,8 @@ class DreamDeskButton extends DreamDeskComponent {
   template() {
     const actionAttr = this.action ? `data-action="${this.action}"` : "";
     const ariaLabel = this.action ? `aria-label="${this.action}"` : "";
-    const themeClass =
-      this._theme !== "default" ? `${this.prefix}-btn--${this.variant}` : "";
     return `
-      <button class="btn btn--${this.variant} ${themeClass}" ${actionAttr} ${ariaLabel}>
+      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel}>
         <slot></slot>
       </button>
     `;
@@ -541,9 +495,8 @@ class DreamDeskToast extends DreamDeskComponent {
   }
 
   template() {
-    const prefixClass = this.prefix ? `${this.prefix}-` : "";
     return `
-      <div class="toast ${prefixClass}toast-${this._type}">
+      <div class="toast toast-${this._type}">
         <span class="toast-btn--close" data-action="close">&times;</span>
         ${this._message}
       </div>
@@ -566,13 +519,8 @@ class DreamDeskToast extends DreamDeskComponent {
     });
   }
 
-  show() {
-    this.style.display = "block";
-  }
-
-  hide() {
-    this.style.display = "none";
-  }
+  show() { this.style.display = "block"; }
+  hide() { this.style.display = "none"; }
 }
 
 class DreamDeskInput extends DreamDeskComponent {
@@ -623,29 +571,22 @@ class DreamDeskInput extends DreamDeskComponent {
     });
   }
 
-  get value() {
-    return this._value;
-  }
-
+  get value() { return this._value; }
   set value(val) {
     this._value = val;
     const input = this.shadowRoot.querySelector("input");
-    if (input) {
-      input.value = val;
-    }
+    if (input) { input.value = val; }
   }
 }
 
 class DreamDeskToggle extends DreamDeskComponent {
   template() {
-    const prefixClass = this.prefix ? `${this.prefix}-` : "";
-    // TODO: figure out better way to handle checked state, do not use hardcoded pastelcore
     const checked = this.theme === "dark" ? "checked" : "";
     return `
-      <label class="${prefixClass}toggle toggle">
+      <label class="toggle">
         <input type="checkbox" ${checked}>
-        <span class="${prefixClass}slider slider">
-          <span class="${prefixClass}knob knob"></span>
+        <span class="slider">
+          <span class="knob"></span>
         </span>
       </label>
     `;
@@ -665,24 +606,21 @@ class DreamDeskToggle extends DreamDeskComponent {
 }
 
 class DreamDeskTerminalWindow extends DreamDeskWindow {
-  constructor() {
-    super();
-  }
+  constructor() { super(); }
   template() {
-    const prefix = this.prefix ? `${this.prefix}-` : "";
     const width = this.width !== "auto" ? `width:${this.width}px;` : "";
     const height = this.height !== "auto" ? `height:${this.height}px;` : "";
     return `
-      <div class="win terminal-win ${prefix}terminal-win" style="${width}${height}">
-        <div class="win-header ${prefix}win-header">
+      <div class="win terminal-win" style="${width}${height}">
+        <div class="win-header">
           <span class="win-title">${this.title}</span>
-          <div class="win-controls ${prefix}win-controls">
-            <button class="${prefix}btn--minimize" data-action="minimize"></button>
-            <button class="${prefix}btn--fullscreen" data-action="fullscreen"></button>
-            <button class="${prefix}btn--close" data-action="close"></button>
+          <div class="win-controls">
+            <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
+            <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
+            <button class="btn--close" data-action="close" aria-label="close"></button>
           </div>
         </div>
-        <div class="win-body terminal-win-body ${prefix}terminal-win-body">
+        <div class="win-body terminal-win-body">
           <slot></slot>
         </div>
       </div>
