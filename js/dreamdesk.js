@@ -13,11 +13,15 @@ class DreamDeskComponent extends HTMLElement {
 
     this._styleLinks = [];
 
+    // Controller to auto-cleanup any document-level listeners added by instances
+    this._eventController = new AbortController();
+
     // Only inject shared base once per component (avoid missing files)
     this._injectBaseStyles();
     this.shadowRoot.appendChild(this._container);
 
-    document.addEventListener("dreamdesk-theme-changed", () => {
+    // Bind theme change handler per instance and auto-remove on abort
+    this._onThemeChange = () => {
       this._theme =
         document.documentElement.getAttribute("data-theme") || "default";
 
@@ -25,7 +29,12 @@ class DreamDeskComponent extends HTMLElement {
       this._updateThemeStyles(() => {
         this.themeChanged?.();
       });
-    });
+    };
+    document.addEventListener(
+      "dreamdesk-theme-changed",
+      this._onThemeChange,
+      { signal: this._eventController.signal }
+    );
   }
 
   connectedCallback() {
@@ -35,6 +44,19 @@ class DreamDeskComponent extends HTMLElement {
       this.setup?.();
     });
     this._initialized = true;
+  }
+
+  disconnectedCallback() {
+    // Abort any document-level listeners registered with this controller
+    if (this._eventController) {
+      this._eventController.abort();
+      this._eventController = null;
+    }
+    // Disconnect any active ResizeObserver stored by subclasses
+    if (this._resizeObserver) {
+      try { this._resizeObserver.disconnect(); } catch (_) {}
+      this._resizeObserver = null;
+    }
   }
 
   _getAssetPath(file, directory = 'css', extension = 'css') {
@@ -60,6 +82,7 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _updateThemeStyles(callback) {
+    // Variables propagate into shadow root; no theme stylesheet injection needed
     if (callback) callback();
   }
 
@@ -202,7 +225,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     const setupScrollableElements = () => {
       assignedElements.forEach((node) => {
-        const paragraphs = node.querySelectorAll?.("p.scrollable") ?? [];
+        const paragraphs = node.querySelectorAll?.("p.scrollable, .scrollable") ?? [];
         paragraphs.forEach((p) => {
           // Clear previous themed scroll class
           p.classList.forEach((className) => {
@@ -222,11 +245,21 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     setupScrollableElements();
 
-    document.addEventListener("dreamdesk-theme-changed", () => {
-      this._theme =
-        document.documentElement.getAttribute("data-theme") || "default";
-      this._prefix = this._getThemePrefix(this._theme);
-      setupScrollableElements();
+    // Re-run on theme change; attach with the same controller to auto-cleanup
+    document.addEventListener(
+      "dreamdesk-theme-changed",
+      () => {
+        this._theme =
+          document.documentElement.getAttribute("data-theme") || "default";
+        this._prefix = this._getThemePrefix(this._theme);
+        setupScrollableElements();
+      },
+      { signal: this._eventController?.signal }
+    );
+
+    // Re-run when slot children change
+    slot?.addEventListener("slotchange", setupScrollableElements, {
+      signal: this._eventController?.signal,
     });
 
     this._resizeObserver = observer;
@@ -349,7 +382,6 @@ class DreamDeskProgressBar extends DreamDeskComponent {
         if (isGradient) {
           // keep gradient image and no solid color
           seg.style.backgroundColor = "transparent";
-          // background-image and sizing are set in _afterRender
           seg.style.filter = "none";
         } else {
           seg.style.backgroundImage = "none";
@@ -619,9 +651,9 @@ class DreamDeskTerminalWindow extends DreamDeskWindow {
         <div class="win-header">
           <span class="win-title">${this.title}</span>
           <div class="win-controls">
-            <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
-            <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
-            <button class="btn--close" data-action="close" aria-label="close"></button>
+            <button class="btn--minimize" data-action="minimize"></button>
+            <button class="btn--fullscreen" data-action="fullscreen"></button>
+            <button class="btn--close" data-action="close"></button>
           </div>
         </div>
         <div class="win-body terminal-win-body">
