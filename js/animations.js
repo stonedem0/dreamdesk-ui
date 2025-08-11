@@ -19,7 +19,7 @@ export function minimize(win) {
 export function fullscreen(win, previousState) {
     win.animate([
         {
-            position: 'absolute',
+            position: 'fixed',
             top: `${previousState.top}px`,
             left: `${previousState.left}px`,
             width: `${previousState.width}px`,
@@ -28,7 +28,7 @@ export function fullscreen(win, previousState) {
             zIndex: 1
         },
         {
-            position: 'absolute',
+            position: 'fixed',
             top: '0px',
             left: '0px',
             width: '100vw',
