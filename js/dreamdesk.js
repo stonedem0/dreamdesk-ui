@@ -38,6 +38,17 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   connectedCallback() {
+    // If this element was previously disconnected, recreate controller and rebind
+    if (!this._eventController) {
+      this._eventController = new AbortController();
+      if (this._onThemeChange) {
+        document.addEventListener(
+          "dreamdesk-theme-changed",
+          this._onThemeChange,
+          { signal: this._eventController.signal }
+        );
+      }
+    }
     if (this._initialized) return;
     this._updateThemeStyles(() => {
       this._container.innerHTML = this.template();
