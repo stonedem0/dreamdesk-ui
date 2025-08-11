@@ -332,9 +332,44 @@ class DreamDeskProgressBar extends DreamDeskComponent {
   }
 
   themeChanged() {
-    this._updateThemeStyles(() => {
+    // Do not rebuild markup on theme change; just restyle existing nodes
+    const track = this.shadowRoot?.querySelector?.('.progress-track');
+    const isBlocky = this.hasAttribute('blocky');
+    const isGradient = this.hasAttribute('gradient');
+
+    if (isBlocky && track && this._segments?.length) {
+      // Update gradient related styles for existing segments
+      const trackWidth = track.getBoundingClientRect().width;
+      this._segments.forEach((seg, i) => {
+        const segRect = seg.getBoundingClientRect();
+        const segStyles = getComputedStyle(seg);
+        const mr = parseFloat(segStyles.marginRight || '0') || 0;
+        const fullSegment = segRect.width + mr;
+        if (isGradient) {
+          seg.style.backgroundImage = 'var(--color-progress-gradient, none)';
+          seg.style.backgroundSize = `${trackWidth}px 100%`;
+          seg.style.backgroundPosition = `-${i * fullSegment}px 0`;
+          seg.style.backgroundRepeat = 'no-repeat';
+          seg.style.backgroundColor = 'transparent';
+        } else {
+          seg.style.backgroundImage = 'none';
+          seg.style.backgroundColor = 'var(--color-progress-segment, #a8edea)';
+        }
+      });
+      // Keep current value styling
+      this._updateProgress();
+    } else if (!isBlocky && this._bar) {
+      // Non-blocky bar only needs filter/gradient updated
+      if (isGradient) {
+        this._bar.classList.add('progress-bar--gradient');
+      } else {
+        this._bar.classList.remove('progress-bar--gradient');
+      }
+      this._updateProgress();
+    } else {
+      // If segments/bar are not ready yet (first paint), fall back to current render flow
       this._afterRender();
-    });
+    }
   }
 
   _afterRender() {
