@@ -181,7 +181,7 @@ dreamdesk-tab-panel.active { display: block; }
 .progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); }
 .progress-track { width: 25.7rem; height: 1.5rem; background-color: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); }
 .progress-track--blocky { padding-left: 1.5px; padding-right: 1.5px; }
-.progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; }
+.progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; box-shadow: var(--progress-segment-shadow, none); }
 
 /* ====== utility classes ====== */
 .hidden { display: none; }

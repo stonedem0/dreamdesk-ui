@@ -150,6 +150,7 @@ html[data-theme="pastelcore"] {
   --toast-alert-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f;
   --toast-notification-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
   --toast-warning-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #bebbb1;
+  --progress-segment-shadow: inset -1px 1px 1px #fffcfc, inset 1px -1px 1px #b198a2;
 }
 
 @keyframes shimmer {
