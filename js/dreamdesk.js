@@ -60,7 +60,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _updateThemeStyles(callback) {
-    // Variables propagate into shadow root; no theme stylesheet injection needed
     if (callback) callback();
   }
 

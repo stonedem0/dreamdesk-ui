@@ -90,7 +90,7 @@ html[data-theme="pastelcore"] {
   --color-toggle-active: var(--pastelcore-blue);
   
   /* Visual Depth Tokens */
-  --window-shadow: var(--shadow, 0 0 0 rgba(0,0,0,0));
+  --window-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   --window-header-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
   --window-controls-button-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
   --toast-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f, var(--shadow);
@@ -165,6 +165,10 @@ html[data-theme="pastelcore"] {
   --toggle-knob-bg-size: 260% 260%;
 
   --color-window-control-bg: #ffffff;
+
+  /* global soft shadow tokens */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --window-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes shimmer {

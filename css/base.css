@@ -215,6 +215,10 @@ dreamdesk-tab-panel.active { display: block; }
 .win.in-fullscreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; transition: all 0.4s ease; }
 
 .terminal-win { height: 10rem; } 
+.terminal-win-body {
+  background-color: rgb(18, 16, 16);
+  color:#ffd6d6
+}
 
 /* themed scroll class can add depth via variables */
 .pc-scroll::-webkit-scrollbar-track { box-shadow: none; }
@@ -235,4 +239,3 @@ dreamdesk-tab-panel.active { display: block; }
 
 /* ensure control icons render */
 .win-controls button { background-repeat: no-repeat; background-position: center; background-size: contain; } 
-
