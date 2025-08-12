@@ -17,7 +17,7 @@ export function minimize(win) {
 }
 
 export function fullscreen(win, previousState) {
-    win.animate([
+    const animation = win.animate([
         {
             position: 'fixed',
             top: `${previousState.top}px`,
@@ -25,7 +25,7 @@ export function fullscreen(win, previousState) {
             width: `${previousState.width}px`,
             height: `${previousState.height}px`,
             offset: 0,
-            zIndex: 1
+            zIndex: 9999
         },
         {
             position: 'fixed',
@@ -34,13 +34,21 @@ export function fullscreen(win, previousState) {
             width: '100vw',
             height: '100vh',
             offset: 1,
-            zIndex: 1
+            zIndex: 9999
         }
     ], {
         duration: 400,
         easing: 'ease-in-out',
         fill: 'forwards'
     });
+    animation.onfinish = () => {
+        win.style.position = 'fixed';
+        win.style.top = '0px';
+        win.style.left = '0px';
+        win.style.width = '100vw';
+        win.style.height = '100vh';
+        win.style.zIndex = 9999;
+    };
 }
 
 export function unfullscreen(win, previousState) {
