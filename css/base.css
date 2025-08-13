@@ -21,6 +21,10 @@ body {
   color: var(--color-text, var(--black));
   box-shadow: var(--window-shadow, none);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .win:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
@@ -44,7 +48,7 @@ body {
   box-shadow: var(--window-header-shadow, none);
 }
 
-.win-body { padding: 0.5rem; }
+.win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
 
 /* bottom-right resize handle */
 .win-resize-handle {
