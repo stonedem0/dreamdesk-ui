@@ -160,6 +160,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   setup() {
     this._setupResizeObserver();
     this._bindButtons();
+    this._setupResizeHandle();
   }
 
   _bindButtons() {
@@ -278,6 +279,60 @@ class DreamDeskWindow extends DreamDeskComponent {
   _checkOverflow(message) {
     const isOverflowing = message.scrollHeight > message.clientHeight;
     message.classList.toggle("overflowing", isOverflowing);
+  }
+
+  _setupResizeHandle() {
+    const win = this.shadowRoot.querySelector('.win');
+    if (!win) return;
+
+    // Create handle once
+    let handle = win.querySelector('.win-resize-handle');
+    if (!handle) {
+      handle = document.createElement('div');
+      handle.className = 'win-resize-handle';
+      win.appendChild(handle);
+    }
+
+    let isResizing = false;
+    let startX = 0;
+    let startY = 0;
+    let startWidth = 0;
+    let startHeight = 0;
+
+    const minWidth = 180;
+    const minHeight = 120;
+
+    const onPointerMove = (e) => {
+      if (!isResizing) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      const newWidth = Math.max(minWidth, startWidth + deltaX);
+      const newHeight = Math.max(minHeight, startHeight + deltaY);
+      win.style.width = `${newWidth}px`;
+      win.style.height = `${newHeight}px`;
+      // Keep component state in sync for features like fullscreen restore
+      this.width = newWidth;
+      this.height = newHeight;
+    };
+
+    const stop = () => {
+      if (!isResizing) return;
+      isResizing = false;
+      document.removeEventListener('pointermove', onPointerMove, { capture: true });
+      document.removeEventListener('pointerup', stop, { capture: true });
+    };
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (this.state?.isFullscreen) return; // do not resize while fullscreen
+      isResizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = win.getBoundingClientRect();
+      startWidth = rect.width;
+      startHeight = rect.height;
+      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
+      document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal });
+    }, { signal: this._eventController?.signal });
   }
 }
 
