@@ -115,7 +115,7 @@ class DreamDeskComponent extends HTMLElement {
 
 class DreamDeskWindow extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["title", "width", "height", "resizable"];
+    return ["title", "width", "height", "resizable", "movable"];
   }
 
   constructor() {
@@ -129,6 +129,12 @@ class DreamDeskWindow extends DreamDeskComponent {
       resizableAttr === "" ||
       resizableAttr === "true" ||
       resizableAttr === "1";
+    const movableAttr = this.getAttribute("movable");
+    this._movable =
+      movableAttr === null ||
+      movableAttr === "" ||
+      movableAttr === "true" ||
+      movableAttr === "1";
     this.state = {
       isMinimized: false,
       isFullscreen: false,
@@ -159,6 +165,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._setupResizeObserver();
     this._bindButtons();
     this._setupResizeHandle();
+    this._setupDragging();
   }
 
   _bindButtons() {
@@ -318,7 +325,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     };
 
     handle.addEventListener('pointerdown', (e) => {
-      if (this.state?.isFullscreen) return; // do not resize while fullscreen
+      if (this.state?.isFullscreen) return;
       isResizing = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -330,6 +337,68 @@ class DreamDeskWindow extends DreamDeskComponent {
     }, { signal: this._eventController?.signal });
   }
 
+  _setupDragging() {
+    const header = this.shadowRoot.querySelector('.win-header');
+    if (!header) return;
+
+    if (!this._movable) {
+      header.style.cursor = 'default';
+      return;
+    }
+    header.style.cursor = 'move';
+
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+    let rafId = null;
+
+    const onPointerMove = (e) => {
+      if (!isDragging) return;
+      const desiredLeft = e.clientX - offsetX;
+      const desiredTop = e.clientY - offsetY;
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = this.getBoundingClientRect();
+        const maxLeft = Math.max(0, window.innerWidth - rect.width);
+        const maxTop = Math.max(0, window.innerHeight - rect.height);
+
+        const computed = getComputedStyle(this);
+        if (computed.position === 'static') {
+          this.style.position = 'absolute';
+        }
+
+        const clampedLeft = Math.max(0, Math.min(desiredLeft, maxLeft));
+        const clampedTop = Math.max(0, Math.min(desiredTop, maxTop));
+        this.style.left = `${clampedLeft}px`;
+        this.style.top = `${clampedTop}px`;
+      });
+    };
+
+    const onPointerUp = () => {
+      isDragging = false;
+      document.removeEventListener('pointermove', onPointerMove, { capture: true });
+      document.removeEventListener('pointerup', onPointerUp, { capture: true });
+    };
+
+    header.addEventListener('pointerdown', (e) => {
+      if (!this._movable) return;
+      if (this.state?.isFullscreen) return;
+      if (e.target.closest('.win-controls')) return;
+
+      const hostRect = this.getBoundingClientRect();
+      offsetX = e.clientX - hostRect.left;
+      offsetY = e.clientY - hostRect.top;
+      isDragging = true;
+
+      DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
+      this.style.zIndex = String(DreamDeskWindow._z);
+
+      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
+      document.addEventListener('pointerup', onPointerUp, { capture: true, signal: this._eventController?.signal });
+    }, { signal: this._eventController?.signal });
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'resizable') {
@@ -338,6 +407,14 @@ class DreamDeskWindow extends DreamDeskComponent {
       this._resizable = isTrue;
       if (this._initialized) {
         this._setupResizeHandle();
+      }
+    }
+    if (name === 'movable') {
+      const isTrue =
+        newVal === null || newVal === '' || newVal === 'true' || newVal === '1';
+      this._movable = isTrue;
+      if (this._initialized) {
+        this._setupDragging();
       }
     }
   }
