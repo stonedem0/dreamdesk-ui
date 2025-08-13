@@ -13,14 +13,11 @@ class DreamDeskComponent extends HTMLElement {
 
     this._styleLinks = [];
 
-    // Controller to auto-cleanup any document-level listeners added by instances
     this._eventController = new AbortController();
 
-    // Only inject shared base once per component (avoid missing files)
     this._injectBaseStyles();
     this.shadowRoot.appendChild(this._container);
 
-    // Bind theme change handler per instance and auto-remove on abort
     this._onThemeChange = () => {
       this._theme =
         document.documentElement.getAttribute("data-theme") || "default";
@@ -38,7 +35,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    // If this element was previously disconnected, recreate controller and rebind
     if (!this._eventController) {
       this._eventController = new AbortController();
       if (this._onThemeChange) {
@@ -58,12 +54,10 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
-    // Abort any document-level listeners registered with this controller
     if (this._eventController) {
       this._eventController.abort();
       this._eventController = null;
     }
-    // Disconnect any active ResizeObserver stored by subclasses
     if (this._resizeObserver) {
       try { this._resizeObserver.disconnect(); } catch (_) {}
       this._resizeObserver = null;
@@ -71,7 +65,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _getAssetPath(file, directory = 'css', extension = 'css') {
-    // Get the current script's URL to determine the base path
     const scriptUrl = new URL(import.meta.url);
     const scriptPath = scriptUrl.pathname;
     const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
@@ -83,7 +76,7 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _injectBaseStyles() {
-    const base = ["base"]; // load only existing base.css
+    const base = ["base"]; 
     base.forEach((file) => {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -93,7 +86,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _updateThemeStyles(callback) {
-    // Variables propagate into shadow root; no theme stylesheet injection needed
     if (callback) callback();
   }
 
@@ -239,13 +231,11 @@ class DreamDeskWindow extends DreamDeskComponent {
       assignedElements.forEach((node) => {
         const paragraphs = node.querySelectorAll?.("p.scrollable, .scrollable") ?? [];
         paragraphs.forEach((p) => {
-          // Clear previous themed scroll class
           p.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
               p.classList.remove(className);
             }
           });
-          // Re-apply theme specific scroll class so global theme rules match
           if (this._theme !== "default" && this.prefix) {
             p.classList.add(`${this.prefix}-scroll`);
           }
@@ -256,8 +246,6 @@ class DreamDeskWindow extends DreamDeskComponent {
     };
 
     setupScrollableElements();
-
-    // Re-run on theme change; attach with the same controller to auto-cleanup
     document.addEventListener(
       "dreamdesk-theme-changed",
       () => {
@@ -269,7 +257,6 @@ class DreamDeskWindow extends DreamDeskComponent {
       { signal: this._eventController?.signal }
     );
 
-    // Re-run when slot children change
     slot?.addEventListener("slotchange", setupScrollableElements, {
       signal: this._eventController?.signal,
     });
@@ -285,7 +272,6 @@ class DreamDeskWindow extends DreamDeskComponent {
     const win = this.shadowRoot.querySelector('.win');
     if (!win) return;
 
-    // Create handle once
     let handle = win.querySelector('.win-resize-handle');
     if (!handle) {
       handle = document.createElement('div');
@@ -310,7 +296,6 @@ class DreamDeskWindow extends DreamDeskComponent {
       const newHeight = Math.max(minHeight, startHeight + deltaY);
       win.style.width = `${newWidth}px`;
       win.style.height = `${newHeight}px`;
-      // Keep component state in sync for features like fullscreen restore
       this.width = newWidth;
       this.height = newHeight;
     };
