@@ -51,14 +51,26 @@ body {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   cursor: nwse-resize;
-  background-image: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.25) 50%),
-                    linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.9) 60%);
-  background-size: 8px 8px, 8px 8px;
-  background-position: right bottom, calc(100% - 2px) calc(100% - 2px);
-  background-repeat: no-repeat;
+  background:
+    linear-gradient(135deg,
+      transparent calc(100% - 3px),
+      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 3px) calc(100% - 2px),
+      transparent calc(100% - 2px)
+    ),
+    linear-gradient(135deg,
+      transparent calc(100% - 7px),
+      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 7px) calc(100% - 6px),
+      transparent calc(100% - 6px)
+    ),
+    linear-gradient(135deg,
+      transparent calc(100% - 11px),
+      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 11px) calc(100% - 10px),
+      transparent calc(100% - 10px)
+    );
+    image-rendering: pixelated
 }
 
 .win.in-fullscreen .win-resize-handle { display: none; }
