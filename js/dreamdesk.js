@@ -115,7 +115,7 @@ class DreamDeskComponent extends HTMLElement {
 
 class DreamDeskWindow extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["title", "width", "height"];
+    return ["title", "width", "height", "resizable"];
   }
 
   constructor() {
@@ -123,6 +123,12 @@ class DreamDeskWindow extends DreamDeskComponent {
     this.title = this.getAttribute("title") || "Window";
     this.width = parseInt(this.getAttribute("width")) || "auto";
     this.height = parseInt(this.getAttribute("height")) || "auto";
+    const resizableAttr = this.getAttribute("resizable");
+    this._resizable =
+      resizableAttr === null ||
+      resizableAttr === "" ||
+      resizableAttr === "true" ||
+      resizableAttr === "1";
     this.state = {
       isMinimized: false,
       isFullscreen: false,
@@ -273,6 +279,10 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (!win) return;
 
     let handle = win.querySelector('.win-resize-handle');
+    if (!this._resizable) {
+      if (handle) handle.remove();
+      return;
+    }
     if (!handle) {
       handle = document.createElement('div');
       handle.className = 'win-resize-handle';
@@ -318,6 +328,18 @@ class DreamDeskWindow extends DreamDeskComponent {
       document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
       document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal });
     }, { signal: this._eventController?.signal });
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal) return;
+    if (name === 'resizable') {
+      const isTrue =
+        newVal === null || newVal === '' || newVal === 'true' || newVal === '1';
+      this._resizable = isTrue;
+      if (this._initialized) {
+        this._setupResizeHandle();
+      }
+    }
   }
 }
 
