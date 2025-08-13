@@ -71,6 +71,8 @@ html[data-theme="pastelcore"] {
   --color-window-header: var(--pastelcore-cyan);
   --color-window-body: var(--pastel-pink);
   --color-window-border: var(--border);
+  /* Resize grip color matches pastelcore border tone */
+  --resize-stripe-color: var(--line-color);
   
   --color-input-background: var(--app-color);
   --color-input-border: var(--pastelcore-pink-shadow);

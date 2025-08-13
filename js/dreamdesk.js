@@ -13,14 +13,11 @@ class DreamDeskComponent extends HTMLElement {
 
     this._styleLinks = [];
 
-    // Controller to auto-cleanup any document-level listeners added by instances
     this._eventController = new AbortController();
 
-    // Only inject shared base once per component (avoid missing files)
     this._injectBaseStyles();
     this.shadowRoot.appendChild(this._container);
 
-    // Bind theme change handler per instance and auto-remove on abort
     this._onThemeChange = () => {
       this._theme =
         document.documentElement.getAttribute("data-theme") || "default";
@@ -38,7 +35,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    // If this element was previously disconnected, recreate controller and rebind
     if (!this._eventController) {
       this._eventController = new AbortController();
       if (this._onThemeChange) {
@@ -58,12 +54,10 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
-    // Abort any document-level listeners registered with this controller
     if (this._eventController) {
       this._eventController.abort();
       this._eventController = null;
     }
-    // Disconnect any active ResizeObserver stored by subclasses
     if (this._resizeObserver) {
       try { this._resizeObserver.disconnect(); } catch (_) {}
       this._resizeObserver = null;
@@ -71,7 +65,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _getAssetPath(file, directory = 'css', extension = 'css') {
-    // Get the current script's URL to determine the base path
     const scriptUrl = new URL(import.meta.url);
     const scriptPath = scriptUrl.pathname;
     const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
@@ -83,7 +76,7 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _injectBaseStyles() {
-    const base = ["base"]; // load only existing base.css
+    const base = ["base"]; 
     base.forEach((file) => {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -93,7 +86,6 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _updateThemeStyles(callback) {
-    // Variables propagate into shadow root; no theme stylesheet injection needed
     if (callback) callback();
   }
 
@@ -123,7 +115,7 @@ class DreamDeskComponent extends HTMLElement {
 
 class DreamDeskWindow extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["title", "width", "height"];
+    return ["title", "width", "height", "resizable"];
   }
 
   constructor() {
@@ -131,6 +123,12 @@ class DreamDeskWindow extends DreamDeskComponent {
     this.title = this.getAttribute("title") || "Window";
     this.width = parseInt(this.getAttribute("width")) || "auto";
     this.height = parseInt(this.getAttribute("height")) || "auto";
+    const resizableAttr = this.getAttribute("resizable");
+    this._resizable =
+      resizableAttr === null ||
+      resizableAttr === "" ||
+      resizableAttr === "true" ||
+      resizableAttr === "1";
     this.state = {
       isMinimized: false,
       isFullscreen: false,
@@ -160,6 +158,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   setup() {
     this._setupResizeObserver();
     this._bindButtons();
+    this._setupResizeHandle();
   }
 
   _bindButtons() {
@@ -238,13 +237,11 @@ class DreamDeskWindow extends DreamDeskComponent {
       assignedElements.forEach((node) => {
         const paragraphs = node.querySelectorAll?.("p.scrollable, .scrollable") ?? [];
         paragraphs.forEach((p) => {
-          // Clear previous themed scroll class
           p.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
               p.classList.remove(className);
             }
           });
-          // Re-apply theme specific scroll class so global theme rules match
           if (this._theme !== "default" && this.prefix) {
             p.classList.add(`${this.prefix}-scroll`);
           }
@@ -255,8 +252,6 @@ class DreamDeskWindow extends DreamDeskComponent {
     };
 
     setupScrollableElements();
-
-    // Re-run on theme change; attach with the same controller to auto-cleanup
     document.addEventListener(
       "dreamdesk-theme-changed",
       () => {
@@ -268,7 +263,6 @@ class DreamDeskWindow extends DreamDeskComponent {
       { signal: this._eventController?.signal }
     );
 
-    // Re-run when slot children change
     slot?.addEventListener("slotchange", setupScrollableElements, {
       signal: this._eventController?.signal,
     });
@@ -278,6 +272,74 @@ class DreamDeskWindow extends DreamDeskComponent {
   _checkOverflow(message) {
     const isOverflowing = message.scrollHeight > message.clientHeight;
     message.classList.toggle("overflowing", isOverflowing);
+  }
+
+  _setupResizeHandle() {
+    const win = this.shadowRoot.querySelector('.win');
+    if (!win) return;
+
+    let handle = win.querySelector('.win-resize-handle');
+    if (!this._resizable) {
+      if (handle) handle.remove();
+      return;
+    }
+    if (!handle) {
+      handle = document.createElement('div');
+      handle.className = 'win-resize-handle';
+      win.appendChild(handle);
+    }
+
+    let isResizing = false;
+    let startX = 0;
+    let startY = 0;
+    let startWidth = 0;
+    let startHeight = 0;
+
+    const minWidth = 180;
+    const minHeight = 120;
+
+    const onPointerMove = (e) => {
+      if (!isResizing) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      const newWidth = Math.max(minWidth, startWidth + deltaX);
+      const newHeight = Math.max(minHeight, startHeight + deltaY);
+      win.style.width = `${newWidth}px`;
+      win.style.height = `${newHeight}px`;
+      this.width = newWidth;
+      this.height = newHeight;
+    };
+
+    const stop = () => {
+      if (!isResizing) return;
+      isResizing = false;
+      document.removeEventListener('pointermove', onPointerMove, { capture: true });
+      document.removeEventListener('pointerup', stop, { capture: true });
+    };
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (this.state?.isFullscreen) return; // do not resize while fullscreen
+      isResizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = win.getBoundingClientRect();
+      startWidth = rect.width;
+      startHeight = rect.height;
+      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
+      document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal });
+    }, { signal: this._eventController?.signal });
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal) return;
+    if (name === 'resizable') {
+      const isTrue =
+        newVal === null || newVal === '' || newVal === 'true' || newVal === '1';
+      this._resizable = isTrue;
+      if (this._initialized) {
+        this._setupResizeHandle();
+      }
+    }
   }
 }
 
