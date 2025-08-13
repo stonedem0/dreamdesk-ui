@@ -37,6 +37,8 @@ html[data-theme="dark"] {
   --color-window-header: var(--black);
   --color-window-body: var(--black);
   --color-window-border: 1px solid rgba(58, 255, 0, 0.81);
+  /* Resize grip color = dark theme border accent */
+  --resize-stripe-color: var(--dark-toxic-green);
   
   --color-input-background: var(--black);
   --color-input-border: var(--dark-toxic-green);
