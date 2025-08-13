@@ -57,20 +57,19 @@ body {
   background:
     linear-gradient(135deg,
       transparent calc(100% - 3px),
-      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 3px) calc(100% - 2px),
+      var(--resize-stripe-color, var(--black)) calc(100% - 3px) calc(100% - 2px),
       transparent calc(100% - 2px)
     ),
     linear-gradient(135deg,
       transparent calc(100% - 7px),
-      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 7px) calc(100% - 6px),
+      var(--resize-stripe-color, var(--black)) calc(100% - 7px) calc(100% - 6px),
       transparent calc(100% - 6px)
     ),
     linear-gradient(135deg,
       transparent calc(100% - 11px),
-      var(--resize-stripe-color, rgba(0,0,0,0.35)) calc(100% - 11px) calc(100% - 10px),
+      var(--resize-stripe-color, var(--black)) calc(100% - 11px) calc(100% - 10px),
       transparent calc(100% - 10px)
     );
-    image-rendering: pixelated
 }
 
 .win.in-fullscreen .win-resize-handle { display: none; }
