@@ -1,0 +1,51 @@
+name: Release to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      distTag:
+        description: "Optional npm dist-tag (default: auto: next for 0.x, latest otherwise)"
+        required: false
+        default: ""
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install (if needed)
+        run: |
+          npm ci --ignore-scripts || echo "No dependencies to install"
+
+      - name: Preview tarball
+        run: npm pack --dry-run
+
+      - name: Resolve dist-tag
+        id: tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          INPUT_TAG="${{ github.event.inputs.distTag }}"
+          if [ -n "$INPUT_TAG" ]; then TAG="$INPUT_TAG";
+          elif [[ "$VERSION" == 0.* ]]; then TAG="next";
+          else TAG="latest"; fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Publish to npm
+        run: npm publish --access public --tag ${{ steps.tag.outputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+

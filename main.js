@@ -5,10 +5,9 @@ window.addEventListener('load', () => {
   }));
   document.body.style.background = 'var(--app-color, #fff5fa)';
 
-  // Setup toggle safely after DOM and custom elements are ready
   const setupToggle = () => {
     const toggle = document.querySelector('dreamdesk-toggle');
-    if (!toggle) return; // not present on this page
+    if (!toggle) return; 
     toggle.addEventListener('toggle-changed', (e) => {
       const checked = e.detail?.checked;
       const theme = checked ? 'dark' : 'pastelcore';
@@ -29,8 +28,6 @@ window.addEventListener('load', () => {
   } else {
     setupToggle();
   }
-
-  // Progress bars demo: rAF loop with page visibility pause
   const bars = document.querySelectorAll('dreamdesk-progress-bar');
   if (bars.length) {
     let progress = 0;
@@ -54,3 +51,29 @@ window.addEventListener('load', () => {
     rafId = requestAnimationFrame(tick);
   }
 });
+
+window.DreamDeskAnimations = {
+  customFullscreen(el, { isFullscreen, previousState }) {
+    const rect = el.getBoundingClientRect();
+    const fromW = rect.width;
+    const fromH = rect.height;
+    const toW = isFullscreen && previousState ? previousState.width : 400;
+    const toH = isFullscreen && previousState ? previousState.height : 400;
+
+    const anim = el.animate(
+      [
+        { width: `${fromW}px`, height: `${fromH}px` },
+        { width: `${toW}px`, height: `${toH}px` }
+      ],
+      { duration: 300, easing: 'ease-in-out', fill: 'forwards' }
+    );
+    return anim.finished.then(() => {
+      el.style.width = `${toW}px`;
+      el.style.height = `${toH}px`;
+    });
+  },
+};
+
+// Use the same behavior when leaving fullscreen
+window.DreamDeskAnimations.customUnfullscreen = window.DreamDeskAnimations.customFullscreen;
+
