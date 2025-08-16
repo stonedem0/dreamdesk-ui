@@ -1,8 +1,9 @@
 name: Release to npm
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Cut Release (create tag and GitHub Release)"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       distTag:
@@ -13,12 +14,16 @@ on:
 jobs:
   publish:
     name: Publish package
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
 
       - name: Use Node.js
         uses: actions/setup-node@v4
