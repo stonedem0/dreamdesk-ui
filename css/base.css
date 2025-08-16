@@ -39,6 +39,7 @@ body {
   align-items: center;
   cursor: move;
   user-select: none;
+  touch-action: none;
   border: var(--color-window-border, var(--border));
   border-top: none;
   border-left: none;
@@ -58,6 +59,7 @@ body {
   width: 16px;
   height: 16px;
   cursor: nwse-resize;
+  touch-action: none;
   background:
     linear-gradient(135deg,
       transparent calc(100% - 3px),
