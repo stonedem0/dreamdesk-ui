@@ -1,104 +1,52 @@
-# DreamDesk
+# DreamDesk UI
 
-Welcome to the DreamDesk project!
+Vanilla JS Web Components for retro-style windows, controls, and theming.
 
-## Overview
+## CDN Usage (no build tools)
 
-DreamDesk is a project designed to [briefly describe the purpose of your project]. It aims to [state the main goal or functionality].
+Add the script as a module and pick a theme by setting `data-theme` on `html`.
 
-## Installation
+```html
+<!doctype html>
+<html data-theme="pastelcore">
+  <head>
+    <meta charset="utf-8" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/dreamdesk-ui@1/js/dreamdesk.js"></script>
+  </head>
+  <body>
+    <dreamdesk-window title="Hello" width="420" height="260"></dreamdesk-window>
+  </body>
+  </html>
+```
 
-To get started, clone the repository and install the dependencies:
+Notes:
+- Base styles are auto-injected by the component.
+- Themes are controlled via `data-theme` on `html`: `default`, `pastelcore`, `dark`.
+
+## Installing via npm
 
 ```bash
-git clone https://github.com/asya/dreamdesk.git
-cd dreamdesk
+npm install dreamdesk-ui
+```
+
+Then import in your app:
+
+```html
+<script type="module" src="/node_modules/dreamdesk-ui/js/dreamdesk.js"></script>
+```
+
+## Components
+- `<dreamdesk-window>`: basic window with minimize, fullscreen, close
+  - Attributes: `title`, `width`, `height`, `resizable` (default true; set `resizable="false"` to disable)
+- See `css/*` for available themes.
+
+## Development
+
+```bash
 npm install
-```
-
-### Git Submodules
-
-This project uses Git submodules. Here's how to manage them:
-
-#### Initial Setup
-
-If you've just cloned the repository, you need to initialize and update the submodules:
-
-```bash
-# Initialize submodules
-git submodule init
-
-# Update submodules to their latest commits
-git submodule update
-```
-
-Or do both in one command:
-
-```bash
-git submodule update --init
-```
-
-#### Updating Submodules
-
-To update all submodules to their latest commits:
-
-```bash
-# Update all submodules
-git submodule update --remote
-
-# Or update a specific submodule
-git submodule update --remote submodules/dreamdesk
-```
-
-#### Working with Submodules
-
-When you want to make changes to a submodule:
-
-1. Navigate to the submodule directory:
-
-```bash
-cd submodules/dreamdesk
-```
-
-2. Create a new branch for your changes:
-
-```bash
-git checkout -b your-feature-branch
-```
-
-3. Make your changes and commit them:
-
-```bash
-git add .
-git commit -m "Your commit message"
-```
-
-4. Push your changes to the submodule's repository:
-
-```bash
-git push origin your-feature-branch
-```
-
-5. Go back to the main project and update the submodule reference:
-
-```bash
-cd ../..
-git add submodules/dreamdesk
-git commit -m "Update dreamdesk submodule"
-```
-
-## Usage
-
-Run the application with:
-
-```bash
 npm start
 ```
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
-
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT

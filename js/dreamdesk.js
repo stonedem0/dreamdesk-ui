@@ -65,14 +65,9 @@ class DreamDeskComponent extends HTMLElement {
   }
 
   _getAssetPath(file, directory = 'css', extension = 'css') {
-    const scriptUrl = new URL(import.meta.url);
-    const scriptPath = scriptUrl.pathname;
-    const scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
-    const assetPath = `${scriptDir}/../${directory}/${file}.${extension}`;
-    const baseUrl = new URL('.', window.location.href);
-    const fullUrl = new URL(assetPath, baseUrl);
-    
-    return fullUrl.pathname;
+    // Resolve asset relative to this module file so it works locally and on CDNs
+    const fullUrl = new URL(`../${directory}/${file}.${extension}`, import.meta.url);
+    return fullUrl.href;
   }
 
   _injectBaseStyles() {
