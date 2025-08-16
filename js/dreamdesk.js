@@ -178,38 +178,66 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   minimize() {
     const win = this.shadowRoot.querySelector(".win");
-    this.state.isMinimized = !this.state.isMinimized;
-    this.setAttribute("minimized", "");
-    minimize(win);
-    this.dispatchEvent(
-      new CustomEvent("minimize", {
-        detail: { isMinimized: this.state.isMinimized },
-      })
-    );
+    const customId = this.getAttribute('minimize-animation');
+    const customFn = window.DreamDeskAnimations?.[customId];
+    const done = () => {
+      this.state.isMinimized = !this.state.isMinimized;
+      this.setAttribute("minimized", "");
+      this.dispatchEvent(
+        new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } })
+      );
+    };
+    if (typeof customFn === 'function') {
+      const res = customFn(win, { defaultFns: { minimize }, previousState: this.state.previousState });
+      Promise.resolve(res).then(done);
+    } else {
+      minimize(win);
+      done();
+    }
   }
 
   fullscreen() {
     const win = this.shadowRoot.querySelector(".win");
-    if (!this.state.isFullscreen) {
-      this._freezeWindowState();
-      fullscreen(win, this.state.previousState);
-    } else {
-      unfullscreen(win, this.state.previousState);
+    const goingFull = !this.state.isFullscreen;
+    if (goingFull) this._freezeWindowState();
+    const customId = this.getAttribute(goingFull ? 'fullscreen-animation' : 'unfullscreen-animation');
+    let customFn = window.DreamDeskAnimations?.[customId];
+    // If no explicit unfullscreen handler, fall back to fullscreen-animation
+    if (!goingFull && typeof customFn !== 'function') {
+      const fallbackId = this.getAttribute('fullscreen-animation');
+      customFn = window.DreamDeskAnimations?.[fallbackId];
     }
-    this.state.isFullscreen = !this.state.isFullscreen;
-    this.dispatchEvent(
-      new CustomEvent("fullscreen", {
-        detail: { isFullscreen: this.state.isFullscreen },
-      })
-    );
+    const after = () => {
+      this.state.isFullscreen = !this.state.isFullscreen;
+      this.dispatchEvent(new CustomEvent("fullscreen", { detail: { isFullscreen: this.state.isFullscreen } }));
+    };
+    if (typeof customFn === 'function') {
+      const res = customFn(win, { previousState: this.state.previousState, isFullscreen: this.state.isFullscreen, defaultFns: { fullscreen, unfullscreen } });
+      Promise.resolve(res).then(after);
+    } else {
+      if (goingFull) {
+        fullscreen(win, this.state.previousState);
+      } else {
+        unfullscreen(win, this.state.previousState);
+      }
+      after();
+    }
   }
 
   close() {
     const win = this.shadowRoot.querySelector(".win");
-    close(win, () => {
+    const customId = this.getAttribute('close-animation');
+    const customFn = window.DreamDeskAnimations?.[customId];
+    const finalize = () => {
       this.style.display = "none";
       this.dispatchEvent(new CustomEvent("close"));
-    });
+    };
+    if (typeof customFn === 'function') {
+      const res = customFn(win, { defaultFns: { close } });
+      Promise.resolve(res).then(finalize);
+    } else {
+      close(win, finalize);
+    }
   }
 
   _freezeWindowState() {
