@@ -1,0 +1,50 @@
+name: Cut Release (create tag and GitHub Release)
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: "semver bump: patch | minor | major"
+        required: true
+        default: patch
+
+jobs:
+  cut:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          npm version ${{ github.event.inputs.releaseType }} -m "chore(release): v%s"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push commit and tag
+        run: |
+          git push --follow-tags
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.bump.outputs.tag }}
+          name: ${{ steps.bump.outputs.tag }}
+          generateReleaseNotes: true
+
