@@ -406,7 +406,8 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     header.addEventListener('pointerdown', (e) => {
       if (!this._movable) return;
-      if (this.state?.isFullscreen) return;
+      const allowFSDrag = this.getAttribute('fullscreen-mode') === 'expand';
+      if (this.state?.isFullscreen && !allowFSDrag) return;
       if (e.target.closest('.win-controls')) return;
 
       const hostRect = this.getBoundingClientRect();
