@@ -15,7 +15,7 @@ body {
 
 /* Windows styles */
 .win {
-  border: var(--color-window-border, var(--border));
+  border: var(--dd-border, var(--color-window-border, var(--border)));
   background-color: var(--color-window-body, #ffffff);
   width: var(--window-width, auto);
   color: var(--color-text, var(--black));
@@ -40,6 +40,7 @@ body {
   cursor: move;
   user-select: none;
   touch-action: none;
+  border: var(--dd-header-border, none);
   border-bottom: var(--dd-header-border-bottom, var(--color-window-border, var(--border)));
   background: var(--dd-header-bg, var(--color-window-header, #ffffff));
   color: var(--dd-header-color, var(--color-text, var(--black)));
@@ -150,6 +151,9 @@ body {
   border: var(--color-window-border, var(--border));
   background-color: var(--color-window-control-bg, var(--color-surface, #ffffff));
 }
+
+/* If custom SVGs are injected into buttons, size them nicely */
+.win-controls button svg { width: 1rem; height: 1rem; display: block; }
 
 /* augment window controls buttons */
 .win-controls button {
