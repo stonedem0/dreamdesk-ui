@@ -31,22 +31,19 @@ body {
 
 .win-header {
   display: flex;
-  height: 1.5rem;
-  padding: 0.2rem 0.5rem;
-  font-weight: bold;
-  font-size: 0.95rem;
+  height: var(--dd-header-height, 1.5rem);
+  padding: var(--dd-header-padding, 0.2rem 0.5rem);
+  font-weight: var(--dd-header-font-weight, bold);
+  font-size: var(--dd-header-font-size, 0.95rem);
   justify-content: space-between;
   align-items: center;
   cursor: move;
   user-select: none;
   touch-action: none;
-  border: var(--color-window-border, var(--border));
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  background: var(--color-window-header, #ffffff);
-  color: var(--color-text, var(--black));
-  box-shadow: var(--window-header-shadow, none);
+  border-bottom: var(--dd-header-border-bottom, var(--color-window-border, var(--border)));
+  background: var(--dd-header-bg, var(--color-window-header, #ffffff));
+  color: var(--dd-header-color, var(--color-text, var(--black)));
+  box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
 }
 
 .win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
