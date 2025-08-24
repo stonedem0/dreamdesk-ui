@@ -15,7 +15,7 @@ body {
 
 /* Windows styles */
 .win {
-  border: var(--color-window-border, var(--border));
+  border: var(--dd-border, var(--color-window-border, var(--border)));
   background-color: var(--color-window-body, #ffffff);
   width: var(--window-width, auto);
   color: var(--color-text, var(--black));
@@ -31,22 +31,20 @@ body {
 
 .win-header {
   display: flex;
-  height: 1.5rem;
-  padding: 0.2rem 0.5rem;
-  font-weight: bold;
-  font-size: 0.95rem;
+  height: var(--dd-header-height, 1.5rem);
+  padding: var(--dd-header-padding, 0.2rem 0.5rem);
+  font-weight: var(--dd-header-font-weight, bold);
+  font-size: var(--dd-header-font-size, 0.95rem);
   justify-content: space-between;
   align-items: center;
   cursor: move;
   user-select: none;
   touch-action: none;
-  border: var(--color-window-border, var(--border));
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  background: var(--color-window-header, #ffffff);
-  color: var(--color-text, var(--black));
-  box-shadow: var(--window-header-shadow, none);
+  border: var(--dd-header-border, none);
+  border-bottom: var(--dd-header-border-bottom, var(--color-window-border, var(--border)));
+  background: var(--dd-header-bg, var(--color-window-header, #ffffff));
+  color: var(--dd-header-color, var(--color-text, var(--black)));
+  box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
 }
 
 .win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
@@ -153,6 +151,9 @@ body {
   border: var(--color-window-border, var(--border));
   background-color: var(--color-window-control-bg, var(--color-surface, #ffffff));
 }
+
+/* If custom SVGs are injected into buttons, size them nicely */
+.win-controls button svg { width: 1rem; height: 1rem; display: block; }
 
 /* augment window controls buttons */
 .win-controls button {

@@ -110,7 +110,17 @@ class DreamDeskComponent extends HTMLElement {
 
 class DreamDeskWindow extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["title", "width", "height", "resizable", "movable"];
+    return [
+      "title",
+      "width",
+      "height",
+      "resizable",
+      "movable",
+      // optional custom SVG icon hooks
+      "minimize-icon",
+      "fullscreen-icon",
+      "close-icon",
+    ];
   }
 
   constructor() {
@@ -161,6 +171,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._bindButtons();
     this._setupResizeHandle();
     this._setupDragging();
+    this._applyControlIcons();
   }
 
   _bindButtons() {
@@ -423,6 +434,44 @@ class DreamDeskWindow extends DreamDeskComponent {
     }, { signal: this._eventController?.signal });
   }
 
+  _applyControlIcons() {
+    const root = this.shadowRoot;
+    const apply = (selector, attrName) => {
+      const btn = root.querySelector(selector);
+      if (!btn) return;
+
+      const iconIdOrSvg = this.getAttribute(attrName);
+      // If nothing specified, do nothing (CSS background-image may apply)
+      if (!iconIdOrSvg) return;
+
+      let svgMarkup = "";
+      const trimmed = iconIdOrSvg.trim();
+      if (trimmed.startsWith("<svg")) {
+        svgMarkup = trimmed;
+      } else if (window.DreamDeskIcons && typeof window.DreamDeskIcons[trimmed] === "string") {
+        svgMarkup = window.DreamDeskIcons[trimmed];
+      } else {
+        // Not a known key or inline SVG; ignore gracefully
+        return;
+      }
+
+      // Clear existing content and inject SVG
+      btn.innerHTML = svgMarkup;
+      // Ensure background-image (CSS var) doesn't clash visually
+      btn.style.backgroundImage = "none";
+      // Make SVG non-interactive inside the button
+      const svgEl = btn.querySelector("svg");
+      if (svgEl) {
+        svgEl.setAttribute("aria-hidden", "true");
+        svgEl.setAttribute("focusable", "false");
+      }
+    };
+
+    apply('.btn--minimize', 'minimize-icon');
+    apply('.btn--fullscreen', 'fullscreen-icon');
+    apply('.btn--close', 'close-icon');
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'resizable') {
@@ -440,6 +489,10 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (this._initialized) {
         this._setupDragging();
       }
+    }
+    if (name === 'minimize-icon' || name === 'fullscreen-icon' || name === 'close-icon') {
+      // Re-apply icons when attributes change
+      this._applyControlIcons();
     }
   }
 }
