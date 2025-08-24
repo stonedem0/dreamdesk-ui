@@ -337,37 +337,37 @@ body {
 }
 
 .bl-scroll::-webkit-scrollbar-track {
-  background: var(--scroll-track-bg) !important;
+  background: var(--scroll-track-bg)
   border: 1px solid var(--dark-toxic-green);
 }
 
-.bl-scroll::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb-bg) !important;
-  background-size: 300% 300% !important;
+  .bl-scroll::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb-bg);
+  background-size: 300% 300%;
   border: 1px solid var(--dark-toxic-green);
   box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light),
-    inset 2px -2px 1px var(--scroll-thumb-shadow-dark) !important;
+    inset 2px -2px 1px var(--scroll-thumb-shadow-dark);
 }
 
 .bl-scroll::-webkit-scrollbar-thumb:hover {
   box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light),
-    inset 2px -2px 1px var(--scroll-thumb-hover-shadow) !important;
+    inset 2px -2px 1px var(--scroll-thumb-hover-shadow);
 }
 
  .bl-scroll::-webkit-scrollbar-button:vertical:decrement {
 border: 1px solid var(--dark-toxic-green);
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 8l6 6H6z"/></svg>') !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 8l6 6H6z"/></svg>');
 }
 
 .bl-scroll::-webkit-scrollbar-button:vertical:increment {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 16l-6-6h12z"/></svg>') !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%233ff10b" d="M12 16l-6-6h12z"/></svg>');
 }
 
 .bl-scroll::-webkit-scrollbar-button {
-  background-color: var(--scroll-button-bg) !important;
+  background-color: var(--scroll-button-bg);
   border: 1px solid var(--dark-toxic-green);
   box-shadow: inset -2px 2px 1px var(--scroll-button-shadow-light),
-    inset 2px -2px 1px var(--scroll-button-shadow-dark) !important;
+    inset 2px -2px 1px var(--scroll-button-shadow-dark);
 }
 
 .bl-scroll::-webkit-scrollbar-button:vertical:increment:start,
@@ -379,8 +379,8 @@ border: 1px solid var(--dark-toxic-green);
 /* Firefox support */
 @-moz-document url-prefix() {
   [data-theme="dark"] .bl-scroll {
-      scrollbar-width: thin !important;
-      scrollbar-color: var(--scroll-thumb-bg) var(--scroll-track-bg) !important;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scroll-thumb-bg) var(--scroll-track-bg);
   }
 }
 

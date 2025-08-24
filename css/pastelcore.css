@@ -401,7 +401,7 @@ body {
 /* scrollbar styles */
 
 .pc-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1 !important;
+  background: #f1f1f1 ;
 }
 
 .pc-scroll::-webkit-scrollbar {
@@ -409,15 +409,15 @@ body {
 }
 
 .pc-scroll::-webkit-scrollbar-thumb {
-  background: var(--pastelcore-cyan) !important;
-  background-size: 300% 300% !important;
+  background: var(--pastelcore-cyan);
+  background-size: 300% 300% ;
   box-shadow: inset -2px 2px 1px #ffffff,
-    inset 2px -2px 1px var(--pasteclore-cyan-shadow) !important;
+    inset 2px -2px 1px var(--pasteclore-cyan-shadow);
 }
 
 .pc-scroll::-webkit-scrollbar-thumb:hover {
   box-shadow: inset -2px 2px 1px #ffffff,
-    inset 2px -2px 1px var(--pastel-pink-shadow) !important;
+    inset 2px -2px 1px var(--pastel-pink-shadow)
 }
 
 .pc-scroll::-webkit-scrollbar-button:vertical:decrement {
@@ -429,9 +429,9 @@ body {
 }
 
 .pc-scroll::-webkit-scrollbar-button {
-  background-color: #ccc !important;
-  border-right: var(--border) !important;
-  border-left: var(--border) !important;
+  background-color: #ccc; 
+  border-right: var(--border);
+  border-left: var(--border);
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a2a2a2 !important;
 }
 
@@ -444,7 +444,7 @@ body {
 /* Firefox support */
 @-moz-document url-prefix() {
   .pc-scroll {
-    scrollbar-width: thin !important;
+    scrollbar-width: thin;
     scrollbar-color: var(--pastel-pink) #f1f1f1 !important;
   }
 }
