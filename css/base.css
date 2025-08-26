@@ -326,6 +326,7 @@ dreamdesk-tab-panel.active { display: block; }
   --dd-btn-px: 0.75rem;
   --dd-btn-py: 0.125rem;
   --dd-btn-fs: inherit;
+  --dd-btn-border: var(--color-window-border, var(--border));
 }
 
 :host([data-dd-role="button"][size="sm"]) {
