@@ -35,25 +35,33 @@ jobs:
         run: |
           npm ci --ignore-scripts || echo "No dependencies to install"
 
-      - name: Preview tarball
-        run: npm pack --dry-run
-
-      - name: Checkout latest semver tag (v*)
+      - name: Resolve release tag and sync version
         run: |
           set -e
           git fetch --tags --force
-          # Prefer a tag pointing at the triggering workflow_run commit
-          TAG=$(git tag --points-at "${{ github.event.workflow_run.head_sha }}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)
-          # Fallback to the most recent semver tag
+          TAG=""
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            TAG=$(git tag --points-at "${{ github.event.workflow_run.head_sha }}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)
+          fi
+          if [ -z "$TAG" ]; then
+            TAG=$(git describe --tags --exact-match 2>/dev/null || true)
+          fi
           if [ -z "$TAG" ]; then
             TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1 || true)
           fi
           if [ -n "$TAG" ]; then
-            echo "Publishing from tag $TAG"
-            git checkout --quiet "$TAG"
+            echo "Using tag $TAG"
+            git checkout --quiet "$TAG" || true
+            VER="${TAG#v}"
+            npm version "$VER" --no-git-tag-version
           else
-            echo "No v* tag found; continuing on current ref"
+            echo "No v* tag found; leaving version as is"
           fi
+
+      - name: Preview tarball (post-sync)
+        run: |
+          node -p "require('./package.json').version"
+          npm pack --dry-run
 
       - name: Resolve dist-tag
         id: tag
