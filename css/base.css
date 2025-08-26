@@ -29,6 +29,8 @@ body {
 
 .win:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
 
+.component-root { inline-size: 100%; block-size: 100%; display: block; }
+
 .win-header {
   display: flex;
   height: var(--dd-header-height, 1.5rem);
@@ -48,6 +50,10 @@ body {
 }
 
 .win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
+
+/* When an explicit size is set (attrs or size tokens), let body fill */
+:host([data-ddw-explicit]) .win-body,
+:host([size]) .win-body { flex: 1 1 auto; }
 
 /* bottom-right resize handle */
 .win-resize-handle {
@@ -229,8 +235,8 @@ dreamdesk-tab-panel.active { display: block; }
 /* Progress bar */
 .progress-bar { background-color: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); }
 .progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); }
-.progress-track { width: 25.7rem; height: 1.5rem; background-color: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); }
-.progress-track--blocky { padding-left: 1.5px; padding-right: 1.5px; }
+.progress-track { inline-size: 100%; height: 1.5rem; background-color: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); }
+.progress-track--blocky { padding-left: 3.4px; padding-right: 3.4px; }
 .progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; box-shadow: var(--progress-segment-shadow, none); }
 
 /* ====== utility classes ====== */
@@ -272,3 +278,34 @@ dreamdesk-tab-panel.active { display: block; }
 
 /* ensure control icons render */
 .win-controls button { background-repeat: no-repeat; background-position: center; background-size: contain; } 
+
+:host([data-dd-role="window"]) {
+  display: block;
+  --ddw-w: auto;      
+  --ddw-h: auto;     
+  --ddw-min-w: 180px;
+  --ddw-min-h: 120px;
+  --ddw-max-w: none;
+  --ddw-max-h: none;
+
+  /* responsive defaults (can be overridden by attributes or user CSS) */
+  inline-size: clamp(var(--ddw-min-w), 90vw, var(--ddw-max-w, 48rem));
+  block-size:  clamp(var(--ddw-min-h), 80svh, var(--ddw-max-h, 32rem));
+}
+
+/* if explicit size vars are set, use them */
+:host([data-dd-role="window"][data-ddw-explicit]) {
+  inline-size: var(--ddw-w, auto);
+  block-size:  var(--ddw-h, auto);
+}
+
+/* the visual window follows the host size */
+.win {
+  inline-size: 100%;
+  block-size:  100%;
+}
+
+/* optional size tokens */
+:host([data-dd-role="window"][size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 12rem; }
+:host([data-dd-role="window"][size="md"]) { --ddw-max-w: 32rem; --ddw-max-h: 26rem; }
+:host([data-dd-role="window"][size="lg"]) { --ddw-max-w: 48rem; --ddw-max-h: 34rem; }

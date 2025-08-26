@@ -21,7 +21,7 @@
     </div>
     <div class="container">
         <div class="col col1">
-            <dreamdesk-window title="Custom scroll" width="400px" height="400px">
+            <dreamdesk-window title="Custom scroll">
                 <dreamdesk-tabs>
                     <dreamdesk-tab index="0">General</dreamdesk-tab>
                     <dreamdesk-tab index="1">Appearance</dreamdesk-tab>
@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="col col2">
-            <dreamdesk-window title="Error" width="400px" height="200px" resizable="false">
+            <dreamdesk-window title="Error" size="sm" resizable="false">
                 <p class="win-message">
                     Something unexpected happened.<br />
                     Please try again or contact support.
@@ -70,8 +70,7 @@
                     <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
                 </div>
             </dreamdesk-window>
-            <dreamdesk-window title="Hello" width="400px" height="200px" fullscreen-animation="customFullscreen"
-                fullscreen-mode="expand">
+            <dreamdesk-window title="Hello" size="sm" fullscreen-animation="customFullscreen" fullscreen-mode="expand">
                 <div class="input-grid pc-input-grid">
                     <dreamdesk-input type="text" label="Username:" id="dreamdesk-username" placeholder="">
                     </dreamdesk-input>
@@ -89,10 +88,10 @@
                 <dreamdesk-progress-bar value="0" gradient></dreamdesk-progress-bar>
                 <dreamdesk-progress-bar value="0" gradient blocky></dreamdesk-progress-bar>
             </div>
-            <dreamdesk-terminal-window width="400px" height="250px">
+            <dreamdesk-terminal-window style="--ddw-w: 28rem; --ddw-h: 12rem" data-ddw-explicit>
                 <p>Hello, world!</p>
             </dreamdesk-terminal-window>
-            <dreamdesk-window title="Custom Header + Icons" width="400px" height="200px" style="
+            <dreamdesk-window title="Custom Header + Icons" style="
     --dd-header-bg: linear-gradient(90deg,#ffe 0%,#ffc 100%);
     --dd-header-color: #333;
     --dd-header-shadow: 0 2px 8px rgba(0,0,0,.15) inset;
@@ -103,7 +102,8 @@
     --dd-header-padding: 0.25rem 0.75rem;
   " minimize-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="11" width="14" height="2"/></svg>'
                 fullscreen-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h5v2H9v3H7V7zm10 10h-5v-2h3v-3h2v5z"/></svg>'
-                close-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'>
+                close-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'
+                size="sm">
                 <p class="win-message">This window uses custom header styles and inline SVG control icons.</p>
             </dreamdesk-window>
         </div>

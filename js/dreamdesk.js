@@ -3,6 +3,7 @@ import { minimize, fullscreen, unfullscreen, close } from "./animations.js";
 class DreamDeskComponent extends HTMLElement {
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'window');
     this._theme =
       document.documentElement.getAttribute("data-theme") || "default";
     this._prefix = this._getThemePrefix(this._theme);
@@ -126,8 +127,8 @@ class DreamDeskWindow extends DreamDeskComponent {
   constructor() {
     super();
     this.title = this.getAttribute("title") || "Window";
-    this.width = parseInt(this.getAttribute("width")) || "auto";
-    this.height = parseInt(this.getAttribute("height")) || "auto";
+    this.widthAttr = this.getAttribute("width");
+    this.heightAttr = this.getAttribute("height");
     const resizableAttr = this.getAttribute("resizable");
     this._resizable =
       resizableAttr === null ||
@@ -150,7 +151,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   template() {
     const prefix = this.prefix ? `${this.prefix}-` : "";
     return `
-      <div class="win" style="width:${this.width}px;height:${this.height}px">
+      <div class="win">
         <div class="win-header">
           <span class="win-title">${this.title}</span>
           <div class="win-controls">
@@ -167,11 +168,20 @@ class DreamDeskWindow extends DreamDeskComponent {
   }
 
   setup() {
+    this._syncSizeFromAttributes();
     this._setupResizeObserver();
     this._bindButtons();
     this._setupResizeHandle();
     this._setupDragging();
     this._applyControlIcons();
+  }
+
+  _syncSizeFromAttributes() {
+    const w = this.widthAttr;
+    const h = this.heightAttr;
+    if (w || h) this.setAttribute('data-ddw-explicit', '');
+    if (w) this.style.setProperty('--ddw-w', w);
+    if (h) this.style.setProperty('--ddw-h', h);
   }
 
   _bindButtons() {
@@ -258,8 +268,8 @@ class DreamDeskWindow extends DreamDeskComponent {
     this.state.previousState = {
       top: rect.top + scrollTop,
       left: rect.left + scrollLeft,
-      width: this.width,
-      height: this.height,
+      width: rect.width,
+      height: rect.height,
       position: getComputedStyle(this).position || "static",
     };
   }
@@ -345,10 +355,9 @@ class DreamDeskWindow extends DreamDeskComponent {
       const deltaY = e.clientY - startY;
       const newWidth = Math.max(minWidth, startWidth + deltaX);
       const newHeight = Math.max(minHeight, startHeight + deltaY);
-      win.style.width = `${newWidth}px`;
-      win.style.height = `${newHeight}px`;
-      this.width = newWidth;
-      this.height = newHeight;
+      this.style.setProperty('--ddw-w', `${newWidth}px`);
+      this.style.setProperty('--ddw-h', `${newHeight}px`);
+      this.setAttribute('data-ddw-explicit', '');
     };
 
     const stop = () => {
@@ -490,6 +499,14 @@ class DreamDeskWindow extends DreamDeskComponent {
         this._setupDragging();
       }
     }
+    if (name === 'width') {
+      this.widthAttr = newVal;
+      if (this._initialized) this._syncSizeFromAttributes();
+    }
+    if (name === 'height') {
+      this.heightAttr = newVal;
+      if (this._initialized) this._syncSizeFromAttributes();
+    }
     if (name === 'minimize-icon' || name === 'fullscreen-icon' || name === 'close-icon') {
       // Re-apply icons when attributes change
       this._applyControlIcons();
@@ -594,7 +611,7 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     const isGradient = this.hasAttribute("gradient");
 
     if (isBlocky) {
-      requestAnimationFrame(() => {
+      const rebuild = () => {
         const gap = 1;
         const segmentWidth = 10;
         const segmentHeight = 20;
@@ -625,7 +642,15 @@ class DreamDeskProgressBar extends DreamDeskComponent {
         }
 
         this._updateProgress();
-      });
+      };
+
+      // Build now and observe for container resizes to keep it responsive
+      requestAnimationFrame(rebuild);
+      if (this._progressResizeObserver) {
+        try { this._progressResizeObserver.disconnect(); } catch(_) {}
+      }
+      this._progressResizeObserver = new ResizeObserver(() => rebuild());
+      this._progressResizeObserver.observe(track);
     } else {
       this._bar = this.shadowRoot.querySelector(".progress-bar");
       this._updateProgress();
@@ -906,10 +931,8 @@ class DreamDeskToggle extends DreamDeskComponent {
 class DreamDeskTerminalWindow extends DreamDeskWindow {
   constructor() { super(); }
   template() {
-    const width = this.width !== "auto" ? `width:${this.width}px;` : "";
-    const height = this.height !== "auto" ? `height:${this.height}px;` : "";
     return `
-      <div class="win terminal-win" style="${width}${height}">
+      <div class="win terminal-win">
         <div class="win-header">
           <span class="win-title">${this.title}</span>
           <div class="win-controls">
