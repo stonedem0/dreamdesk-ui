@@ -29,6 +29,8 @@ body {
 
 .win:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
 
+.component-root { inline-size: 100%; block-size: 100%; display: block; }
+
 .win-header {
   display: flex;
   height: var(--dd-header-height, 1.5rem);
