@@ -38,6 +38,23 @@ jobs:
       - name: Preview tarball
         run: npm pack --dry-run
 
+      - name: Checkout latest semver tag (v*)
+        run: |
+          set -e
+          git fetch --tags --force
+          # Prefer a tag pointing at the triggering workflow_run commit
+          TAG=$(git tag --points-at "${{ github.event.workflow_run.head_sha }}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)
+          # Fallback to the most recent semver tag
+          if [ -z "$TAG" ]; then
+            TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1 || true)
+          fi
+          if [ -n "$TAG" ]; then
+            echo "Publishing from tag $TAG"
+            git checkout --quiet "$TAG"
+          else
+            echo "No v* tag found; continuing on current ref"
+          fi
+
       - name: Resolve dist-tag
         id: tag
         run: |
