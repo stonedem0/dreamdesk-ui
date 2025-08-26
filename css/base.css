@@ -49,6 +49,10 @@ body {
 
 .win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
 
+/* When an explicit size is set (attrs or size tokens), let body fill */
+:host([data-ddw-explicit]) .win-body,
+:host([size]) .win-body { flex: 1 1 auto; }
+
 /* bottom-right resize handle */
 .win-resize-handle {
   position: absolute;
@@ -273,13 +277,11 @@ dreamdesk-tab-panel.active { display: block; }
 /* ensure control icons render */
 .win-controls button { background-repeat: no-repeat; background-position: center; background-size: contain; } 
 
-/* Host controls size via variables; the inner .win just fills */
 :host {
   display: block;
-  /* public API */
-  --ddw-w: auto;      /* final inline-size  */
-  --ddw-h: auto;      /* final block-size   */
-  --ddw-min-w: 180px; /* interactable floor */
+  --ddw-w: auto;      
+  --ddw-h: auto;     
+  --ddw-min-w: 180px;
   --ddw-min-h: 120px;
   --ddw-max-w: none;
   --ddw-max-h: none;
@@ -302,6 +304,6 @@ dreamdesk-tab-panel.active { display: block; }
 }
 
 /* optional size tokens */
-:host([size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 20rem; }
+:host([size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 12rem; }
 :host([size="md"]) { --ddw-max-w: 32rem; --ddw-max-h: 26rem; }
 :host([size="lg"]) { --ddw-max-w: 48rem; --ddw-max-h: 34rem; }
