@@ -37,8 +37,27 @@ Then import in your app:
 
 ## Components
 - `<dreamdesk-window>`: basic window with minimize, fullscreen, close
-  - Attributes: `title`, `width`, `height`, `resizable` (default true; set `resizable="false"` to disable)
-- See `css/*` for available themes.
+  - Attributes: `title`, `resizable` (default true), `movable` (default true)
+  - Sizing:
+    - Tokens: `size="sm|md|lg"`
+    - Overrides: `width`, `height` (raw CSS lengths). When either is present the host switches to explicit mode.
+    - CSS Vars: `--ddw-w`, `--ddw-h`, `--ddw-min-w`, `--ddw-min-h`, `--ddw-max-w`, `--ddw-max-h`
+
+- `<dreamdesk-button>`: themed button
+  - Attributes: `variant` (`primary|ghost|help`), `action`
+  - Sizing:
+    - Tokens: `size="sm|md|lg"`
+    - Overrides: `min-width`, `width`, `height`, `font-size`, `px` (x padding), `py` (y padding)
+    - CSS Vars: `--dd-btn-min-w`, `--dd-btn-w`, `--dd-btn-h`, `--dd-btn-fs`, `--dd-btn-px`, `--dd-btn-py`, `--dd-btn-border`
+
+- `<dreamdesk-progress-bar>`: linear progress, solid or blocky
+  - Attributes: `value` (0-100), `gradient`, `blocky`
+  - Responsive by default (fills container width)
+  - Sizing:
+    - Token: `size="sm|md|lg"` (via container or custom CSS)
+    - Overrides: set `--dd-pb-h` on the element to control height
+
+See `css/*` for available themes.
 
 ## Development
 

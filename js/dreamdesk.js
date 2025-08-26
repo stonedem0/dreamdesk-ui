@@ -521,6 +521,7 @@ class DreamDeskProgressBar extends DreamDeskComponent {
 
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'progressbar');
     this._value = parseFloat(this.getAttribute("value")) || 0;
     this._segments = [];
   }
