@@ -1,3 +1,6 @@
+:host([data-dd-role="button"]) {
+  font-size: var(--dd-btn-fs, inherit);
+}
 /* Base Styles  */
 html {
   scroll-behavior: smooth;
@@ -113,7 +116,7 @@ body {
   width: var(--dd-btn-w, auto);
   height: var(--dd-btn-h, auto);
   padding: var(--dd-btn-py, 0.125rem) var(--dd-btn-px, 0.75rem);
-  font-size: var(--dd-btn-fs, inherit);
+  font-size: inherit;
   font: inherit;
   cursor: pointer;
   display: inline-block;
