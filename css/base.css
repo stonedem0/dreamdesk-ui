@@ -177,6 +177,14 @@ body {
   color: var(--line-color, #3d2d33);
 }
 
+.win-controls button:hover {
+  box-shadow: none;
+}
+
+.win-controls button:active {
+  box-shadow: none;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar-track { background: var(--scroll-track-bg, #fffefe); border: var(--color-window-border, var(--border)); }
 ::-webkit-scrollbar-thumb { background: var(--scroll-thumb-bg, #fffefe); border: var(--color-window-border, var(--border)); background-size: 300% 300%; }
