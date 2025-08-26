@@ -20,7 +20,6 @@ body {
 .win {
   border: var(--dd-border, var(--color-window-border, var(--border)));
   background-color: var(--color-window-body, #ffffff);
-  width: var(--window-width, auto);
   color: var(--color-text, var(--black));
   box-shadow: var(--window-shadow, none);
   position: relative;
