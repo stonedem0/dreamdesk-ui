@@ -3,6 +3,7 @@ import { minimize, fullscreen, unfullscreen, close } from "./animations.js";
 class DreamDeskComponent extends HTMLElement {
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'window');
     this._theme =
       document.documentElement.getAttribute("data-theme") || "default";
     this._prefix = this._getThemePrefix(this._theme);
@@ -610,7 +611,7 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     const isGradient = this.hasAttribute("gradient");
 
     if (isBlocky) {
-      requestAnimationFrame(() => {
+      const rebuild = () => {
         const gap = 1;
         const segmentWidth = 10;
         const segmentHeight = 20;
@@ -641,7 +642,15 @@ class DreamDeskProgressBar extends DreamDeskComponent {
         }
 
         this._updateProgress();
-      });
+      };
+
+      // Build now and observe for container resizes to keep it responsive
+      requestAnimationFrame(rebuild);
+      if (this._progressResizeObserver) {
+        try { this._progressResizeObserver.disconnect(); } catch(_) {}
+      }
+      this._progressResizeObserver = new ResizeObserver(() => rebuild());
+      this._progressResizeObserver.observe(track);
     } else {
       this._bar = this.shadowRoot.querySelector(".progress-bar");
       this._updateProgress();
