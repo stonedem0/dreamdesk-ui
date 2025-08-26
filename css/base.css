@@ -164,6 +164,7 @@ body {
   background-size: contain;
   border: var(--color-window-border, var(--border));
   background-color: var(--color-window-control-bg, var(--color-surface, #ffffff));
+  transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
 }
 
 /* If custom SVGs are injected into buttons, size them nicely */
@@ -176,6 +177,17 @@ body {
   justify-content: center;
   color: var(--line-color, #3d2d33);
 }
+
+.win-controls button:hover {
+  box-shadow: none;
+}
+
+.win-controls button:active {
+  box-shadow: none;
+  transform: translateY(1px);
+}
+
+.win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 
 /* Scrollbars */
 ::-webkit-scrollbar-track { background: var(--scroll-track-bg, #fffefe); border: var(--color-window-border, var(--border)); }
