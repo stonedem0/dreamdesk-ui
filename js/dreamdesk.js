@@ -521,6 +521,7 @@ class DreamDeskProgressBar extends DreamDeskComponent {
 
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'progressbar');
     this._value = parseFloat(this.getAttribute("value")) || 0;
     this._segments = [];
   }
@@ -687,6 +688,14 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     }
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._progressResizeObserver) {
+      try { this._progressResizeObserver.disconnect(); } catch (_) {}
+      this._progressResizeObserver = null;
+    }
+  }
+
   get value() {
     return this._value;
   }
@@ -786,13 +795,23 @@ class DreamDeskTabPanel extends DreamDeskComponent {
 
 class DreamDeskButton extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["variant", "action"];
+    return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py"];
   }
+
+  static sizeVarMap = {
+    'min-width': '--dd-btn-min-w',
+    'width': '--dd-btn-w',
+    'height': '--dd-btn-h',
+    'font-size': '--dd-btn-fs',
+    'px': '--dd-btn-px',
+    'py': '--dd-btn-py',
+  };
 
   constructor() {
     super();
     this.variant = this.getAttribute("variant") || "primary";
     this.action = this.getAttribute("action");
+    this.setAttribute('data-dd-role', 'button');
   }
 
   template() {
@@ -803,6 +822,34 @@ class DreamDeskButton extends DreamDeskComponent {
         <slot></slot>
       </button>
     `;
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal === newVal) return;
+    if (name === 'size') {
+      // size tokens handled via CSS :host selectors
+      return;
+    }
+    const varName = DreamDeskButton.sizeVarMap[name];
+    if (varName) {
+      if (newVal == null) {
+        this.style.removeProperty(varName);
+      } else {
+        this.style.setProperty(varName, newVal);
+      }
+    }
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._applyButtonSizeOverrides();
+  }
+
+  _applyButtonSizeOverrides() {
+    Object.entries(DreamDeskButton.sizeVarMap).forEach(([attr, cssVar]) => {
+      const val = this.getAttribute(attr);
+      if (val != null) this.style.setProperty(cssVar, val);
+    });
   }
 }
 
