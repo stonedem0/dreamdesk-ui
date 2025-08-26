@@ -272,3 +272,36 @@ dreamdesk-tab-panel.active { display: block; }
 
 /* ensure control icons render */
 .win-controls button { background-repeat: no-repeat; background-position: center; background-size: contain; } 
+
+/* Host controls size via variables; the inner .win just fills */
+:host {
+  display: block;
+  /* public API */
+  --ddw-w: auto;      /* final inline-size  */
+  --ddw-h: auto;      /* final block-size   */
+  --ddw-min-w: 180px; /* interactable floor */
+  --ddw-min-h: 120px;
+  --ddw-max-w: none;
+  --ddw-max-h: none;
+
+  /* responsive defaults (can be overridden by attributes or user CSS) */
+  inline-size: clamp(var(--ddw-min-w), 90vw, var(--ddw-max-w, 48rem));
+  block-size:  clamp(var(--ddw-min-h), 80svh, var(--ddw-max-h, 32rem));
+}
+
+/* if explicit size vars are set, use them */
+:host([data-ddw-explicit]) {
+  inline-size: var(--ddw-w, auto);
+  block-size:  var(--ddw-h, auto);
+}
+
+/* the visual window follows the host size */
+.win {
+  inline-size: 100%;
+  block-size:  100%;
+}
+
+/* optional size tokens */
+:host([size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 20rem; }
+:host([size="md"]) { --ddw-max-w: 32rem; --ddw-max-h: 26rem; }
+:host([size="lg"]) { --ddw-max-w: 48rem; --ddw-max-h: 34rem; }
