@@ -53,7 +53,13 @@ jobs:
             echo "Using tag $TAG"
             git checkout --quiet "$TAG" || true
             VER="${TAG#v}"
-            npm version "$VER" --no-git-tag-version
+            CUR=$(node -p "require('./package.json').version")
+            if [ "$CUR" != "$VER" ]; then
+              npm version "$VER" --no-git-tag-version
+              echo "package.json version set to $VER"
+            else
+              echo "package.json already $CUR; no change"
+            fi
           else
             echo "No v* tag found; leaving version as is"
           fi
