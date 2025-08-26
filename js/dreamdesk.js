@@ -687,6 +687,14 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     }
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._progressResizeObserver) {
+      try { this._progressResizeObserver.disconnect(); } catch (_) {}
+      this._progressResizeObserver = null;
+    }
+  }
+
   get value() {
     return this._value;
   }
