@@ -108,13 +108,19 @@ body {
 
 /* Button styles */
 .btn {
-  width: 5rem;
-  padding: 0.125rem;
+  /* responsive, overridable sizing */
+  min-width: var(--dd-btn-min-w, 5rem);
+  width: var(--dd-btn-w, auto);
+  height: var(--dd-btn-h, auto);
+  padding: var(--dd-btn-py, 0.125rem) var(--dd-btn-px, 0.75rem);
+  font-size: var(--dd-btn-fs, inherit);
   font: inherit;
   cursor: pointer;
   display: inline-block;
   text-align: center;
   transition: transform 0.1s ease, background-color 0.2s ease;
+  box-sizing: border-box;
+  line-height: 1;
 }
 
 /* remove legacy background-image icons; inline SVGs are used now */
@@ -127,19 +133,19 @@ body {
 .btn--primary {
   color: var(--color-text, var(--black));
   background: var(--color-button-primary, #e6e6e6);
-  border: var(--color-window-border, var(--border));
+  border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
 .btn--ghost {
   color: var(--color-text, var(--black));
   background: var(--color-button-ghost, #f0f0f0);
-  border: var(--color-window-border, var(--border));
+  border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
 .btn--help {
   color: var(--color-text, var(--black));
   background: var(--color-button-help, #fff9c4);
-  border: var(--color-window-border, var(--border));
+  border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
 .btn--disable { filter: grayscale(0.8); cursor: not-allowed; color: var(--grey); border: var(--color-window-border, var(--border)); }
@@ -309,3 +315,37 @@ dreamdesk-tab-panel.active { display: block; }
 :host([data-dd-role="window"][size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 12rem; }
 :host([data-dd-role="window"][size="md"]) { --ddw-max-w: 32rem; --ddw-max-h: 26rem; }
 :host([data-dd-role="window"][size="lg"]) { --ddw-max-w: 48rem; --ddw-max-h: 34rem; }
+
+/* Button component sizing API (tokenized + overridable) */
+:host([data-dd-role="button"]) {
+  --dd-btn-min-w: 5rem;
+  --dd-btn-w: auto;
+  --dd-btn-h: auto;
+  --dd-btn-px: 0.75rem;
+  --dd-btn-py: 0.125rem;
+  --dd-btn-fs: inherit;
+}
+
+:host([data-dd-role="button"][size="sm"]) {
+  --dd-btn-min-w: 4rem;
+  --dd-btn-h: 1.3rem;
+  --dd-btn-px: 0.5rem;
+  --dd-btn-py: 0.1rem;
+  --dd-btn-fs: 0.9rem;
+}
+
+:host([data-dd-role="button"][size="md"]) {
+  --dd-btn-min-w: 5rem;
+  --dd-btn-h: 1.4rem;
+  --dd-btn-px: 0.75rem;
+  --dd-btn-py: 0.125rem;
+  --dd-btn-fs: 1rem;
+}
+
+:host([data-dd-role="button"][size="lg"]) {
+  --dd-btn-min-w: 6rem;
+  --dd-btn-h: 1.6rem;
+  --dd-btn-px: 1rem;
+  --dd-btn-py: 0.2rem;
+  --dd-btn-fs: 1.05rem;
+}
