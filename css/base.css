@@ -51,7 +51,7 @@ body {
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
 }
 
-.win-body { padding: 0.5rem; flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
+.win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
 
 /* When an explicit size is set (attrs or size tokens), let body fill */
 :host([data-ddw-explicit]) .win-body,
