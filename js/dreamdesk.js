@@ -286,18 +286,22 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     const setupScrollableElements = () => {
       assignedElements.forEach((node) => {
-        const paragraphs = node.querySelectorAll?.("p.scrollable, .scrollable") ?? [];
-        paragraphs.forEach((p) => {
-          p.classList.forEach((className) => {
+        const candidates = node.querySelectorAll?.(
+          // Prefer attribute API, keep legacy class for backward compatibility
+          ".win-content[scrollable], [scrollable], p.scrollable, .scrollable"
+        ) ?? [];
+
+        candidates.forEach((el) => {
+          el.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
-              p.classList.remove(className);
+              el.classList.remove(className);
             }
           });
           if (this._theme !== "default" && this.prefix) {
-            p.classList.add(`${this.prefix}-scroll`);
+            el.classList.add(`${this.prefix}-scroll`);
           }
-          observer.observe(p);
-          this._checkOverflow(p);
+          observer.observe(el);
+          this._checkOverflow(el);
         });
       });
     };
@@ -779,7 +783,7 @@ class DreamDeskTabPanel extends DreamDeskComponent {
     super.connectedCallback();
     this.setAttribute("slot", "panel");
     this.setAttribute("data-panel", "");
-    this.querySelector("p")?.classList.add("win-message");
+    this.querySelector("p")?.classList.add("win-content");
   }
 
   template() {

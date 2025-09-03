@@ -108,7 +108,7 @@ body {
     inset 0.5px 0.5px 9px 0.5px rgba(58, 255, 0, 0.2);
 }
 
-.bl-win-message {
+.bl-win-content {
   background-color: var(--black);
   color: var(--dark-toxic-green); 
   border: 1px solid rgba(58, 255, 0, 0.81);
@@ -337,7 +337,7 @@ body {
 }
 
 .bl-scroll::-webkit-scrollbar-track {
-  background: var(--scroll-track-bg)
+  background: var(--scroll-track-bg);
   border: 1px solid var(--dark-toxic-green);
 }
 
