@@ -285,21 +285,20 @@ class DreamDeskWindow extends DreamDeskComponent {
     const assignedElements = slot?.assignedElements({ flatten: true }) ?? [];
 
     const setupScrollableElements = () => {
+      const selector = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
+      let hasScrollable = false;
       assignedElements.forEach((node) => {
-        const candidates = node.querySelectorAll?.(
-          // Prefer attribute API, keep legacy class for backward compatibility
-          ".win-content[scrollable], [scrollable], p.scrollable, .scrollable"
-        ) ?? [];
+        const selfMatches = node.matches?.(selector) ? [node] : [];
+        const descendants = node.querySelectorAll?.(selector) ?? [];
+        const candidates = [...selfMatches, ...descendants];
 
         candidates.forEach((el) => {
+          hasScrollable = true;
           el.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
               el.classList.remove(className);
             }
           });
-          if (this._theme !== "default" && this.prefix) {
-            el.classList.add(`${this.prefix}-scroll`);
-          }
           observer.observe(el);
           this._checkOverflow(el);
         });
@@ -325,7 +324,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._resizeObserver = observer;
   }
   _checkOverflow(message) {
-    const isOverflowing = message.scrollHeight > message.clientHeight;
+    // Force a reflow to ensure measurements are up-to-date, then compute overflow
+    // Use clientHeight/Width vs scrollHeight/Width for both axes
+    const isOverflowing = (message.scrollHeight > message.clientHeight) || (message.scrollWidth > message.clientWidth);
     message.classList.toggle("overflowing", isOverflowing);
   }
 
