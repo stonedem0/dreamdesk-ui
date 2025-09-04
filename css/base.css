@@ -21,7 +21,7 @@ body {
   border: var(--dd-border, var(--dd-window-border, var(--color-window-border, var(--border))));
   background-color: var(--dd-window-body, var(--color-window-body, #ffffff));
   color: var(--dd-window-text, var(--color-text, var(--black)));
-  box-shadow: var(--window-shadow, none);
+  box-shadow: var(--dd-window-shadow, var(--window-shadow, none));
   position: relative;
   display: flex;
   flex-direction: column;
@@ -49,6 +49,7 @@ body {
   background: var(--dd-header-bg, var(--color-window-header, #ffffff));
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
+  text-shadow: var(--dd-header-text-shadow, none);
 }
 
 .win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
@@ -92,13 +93,15 @@ body {
   justify-content: flex-start;
 }
 
-.win-title { user-select: none; }
+.win-title { user-select: none; text-shadow: var(--dd-title-text-shadow, none); }
 
 .win-content {
   margin: auto;
   padding: var(--dd-content-py, 0.6rem) var(--dd-content-px, 0.6rem);
   line-height: 1.4;
   color: var(--dd-window-text, var(--color-text, var(--black)));
+  text-shadow: var(--dd-content-text-shadow, none);
+  box-shadow: var(--dd-content-shadow, none);
 }
 
 .win-actions {
