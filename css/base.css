@@ -18,9 +18,9 @@ body {
 
 /* Windows styles */
 .win {
-  border: var(--dd-border, var(--color-window-border, var(--border)));
-  background-color: var(--color-window-body, #ffffff);
-  color: var(--color-text, var(--black));
+  border: var(--dd-border, var(--dd-window-border, var(--color-window-border, var(--border))));
+  background-color: var(--dd-window-body, var(--color-window-body, #ffffff));
+  color: var(--dd-window-text, var(--color-text, var(--black)));
   box-shadow: var(--window-shadow, none);
   position: relative;
   display: flex;
@@ -98,7 +98,7 @@ body {
   margin: auto;
   padding: var(--dd-content-py, 0.6rem) var(--dd-content-px, 0.6rem);
   line-height: 1.4;
-  color: var(--color-text, var(--black));
+  color: var(--dd-window-text, var(--color-text, var(--black)));
 }
 
 .win-actions {
@@ -263,9 +263,9 @@ dreamdesk-tab-panel.active { display: block; }
 .hidden { display: none; }
 .show { display: block; }
 .no-gap { display: flex; gap: 0px; }
-.scrollable { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--color-input-background, #fff); }
+.scrollable { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
 /* Attribute-based global scroll helper (works for light DOM content) */
-.win-content[scrollable] { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--color-input-background, #fff); }
+.win-content[scrollable] { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
 .non-scrollable { overflow-y: hidden; }
 .win--sm { width: var(--win-width-sm, auto); }
 .win--md { width: var(--win-width-md, auto); }
@@ -276,9 +276,9 @@ dreamdesk-tab-panel.active { display: block; }
 
 /* Attribute-based API for window content scrollability */
 /* Shadow DOM styling for slotted content */
-:host([data-dd-role="window"]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); height: var(--dd-scrollable-h, 100%); max-height: var(--scrollable-max-height, none); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--color-input-background, #fff); display: block; }
+:host([data-dd-role="window"]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); height: var(--dd-scrollable-h, 100%); max-height: var(--scrollable-max-height, none); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); display: block; }
 /* Also apply inside tab panels */
-:host([data-panel]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--color-input-background, #fff); }
+:host([data-panel]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
 
 /* ===== Window Controls ===== */
 .win.minimized { height: 0; overflow: hidden; transition: height 0.3s ease; }
