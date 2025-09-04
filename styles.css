@@ -35,3 +35,32 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* Demo: custom minimal scrollbar skin for elements with scroll-style="minimal" */
+[scroll-style="minimal"]::-webkit-scrollbar {
+  width: 0.9rem;
+}
+[scroll-style="minimal"]::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+[scroll-style="minimal"]::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border: 1px solid #bfbfbf;
+  box-shadow: inset -1px 1px 0.5px #ffffff, inset 1px -1px 0.5px #cfcfcf;
+}
+[scroll-style="minimal"]::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>');
+}
+[scroll-style="minimal"]::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>');
+}
+[scroll-style="minimal"]::-webkit-scrollbar-button {
+  background-color: #ededed;
+  border-left: 1px solid #bfbfbf;
+  border-right: 1px solid #bfbfbf;
+}
+[scroll-style="minimal"]::-webkit-scrollbar-button:vertical:increment:start,
+[scroll-style="minimal"]::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
+}

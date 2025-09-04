@@ -28,7 +28,8 @@
                     <dreamdesk-tab index="2">Advanced</dreamdesk-tab>
                     <dreamdesk-tab index="3">Settings</dreamdesk-tab>
                     <dreamdesk-tab-panel>
-                        <p class="scrollable">Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+                        <p class="win-content" scrollable>Contrary to popular belief, Lorem Ipsum is not simply random
+                            text. It has
                             roots in a piece of
                             classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
                             Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
@@ -61,7 +62,7 @@
         </div>
         <div class="col col2">
             <dreamdesk-window title="Error" size="sm" resizable="false">
-                <p class="win-message">
+                <p class="win-content">
                     Something unexpected happened.<br />
                     Please try again or contact support.
                 </p>
@@ -70,7 +71,7 @@
                     <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
                 </div>
             </dreamdesk-window>
-            <dreamdesk-window title="Hello" size="sm" fullscreen-animation="customFullscreen" fullscreen-mode="expand">
+            <dreamdesk-window title="Hello" size="sm">
                 <div class="input-grid pc-input-grid">
                     <dreamdesk-input type="text" label="Username:" id="dreamdesk-username" placeholder="">
                     </dreamdesk-input>
@@ -105,19 +106,33 @@
                 <p>Hello, world!</p>
             </dreamdesk-terminal-window>
             <dreamdesk-window title="Custom Header + Icons" style="
-    --dd-header-bg: linear-gradient(90deg,#ffe 0%,#ffc 100%);
-    --dd-header-color: #333;
-    --dd-header-shadow: 0 2px 8px rgba(0,0,0,.15) inset;
-    --dd-header-border-bottom: 1px solid #e2d99a;
-    --dd-header-border: 1px solid #e2d99a;
-    --dd-border: 2px solid #f3c86a;
+    --dd-window-body: #000;
+    --dd-window-text: #ffe3f5;
+    --dd-window-border: 1px solid #ff2bd1;
+    --dd-border: 2px solid #ff2bd1;
+    --dd-header-bg: #000;
+    --dd-header-color: #ff2bd1;
+    --dd-header-border: 2px solid #ff2bd1;
+    --dd-header-border-bottom: 2px solid #ff2bd1;
+    --dd-header-shadow: none;
+    --dd-body-padding: 0;
     --dd-header-height: 2rem;
     --dd-header-padding: 0.25rem 0.75rem;
   " minimize-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="11" width="14" height="2"/></svg>'
                 fullscreen-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h5v2H9v3H7V7zm10 10h-5v-2h3v-3h2v5z"/></svg>'
                 close-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'
-                size="sm">
-                <p class="win-message">This window uses custom header styles and inline SVG control icons.</p>
+                size="sm" fullscreen-animation="customFullscreen" fullscreen-mode="expand">
+                <div class="win-content" scrollable scroll-style="minimal"
+                    style="--dd-content-bg: #000; display:grid; grid-template-columns: repeat(auto-fill, minmax(1.2rem, 1fr)); gap: 0.4rem; font-size: 1.2rem; line-height: 1;">
+                    <span>🔧</span><span>🎧</span><span>💡</span><span>📎</span><span>🖱️</span><span>⌨️</span><span>🗂️</span><span>🧷</span><span>🧲</span><span>📌</span>
+                    <span>🧰</span><span>🧪</span><span>🧯</span><span>🧷</span><span>📁</span><span>📄</span><span>📝</span><span>📐</span><span>📏</span><span>📦</span>
+                    <span>🧭</span><span>🧱</span><span>🧲</span><span>🔩</span><span>⚙️</span><span>🔒</span><span>🔑</span><span>🧯</span><span>🧪</span><span>🧰</span>
+                    <span>🖨️</span><span>🖥️</span><span>🖲️</span><span>💾</span><span>💽</span><span>💿</span><span>📀</span><span>🕹️</span><span>🧮</span><span>🧷</span>
+                    <span>🧲</span><span>🔌</span><span>🔋</span><span>🔧</span><span>🧰</span><span>🧪</span><span>🧯</span><span>📎</span><span>📌</span><span>📍</span>
+                    <span>📎</span><span>📌</span><span>📍</span><span>🧷</span><span>🧲</span><span>🔩</span><span>⚙️</span><span>🔧</span><span>🧰</span><span>🧪</span>
+                    <span>🧯</span><span>📁</span><span>📄</span><span>📝</span><span>📐</span><span>📏</span><span>📦</span><span>🧭</span><span>🧱</span><span>🖨️</span>
+                    <span>🖥️</span><span>🖲️</span><span>💾</span><span>💽</span><span>💿</span><span>📀</span><span>🕹️</span><span>🧮</span><span>🔌</span><span>🔋</span>
+                </div>
             </dreamdesk-window>
         </div>
     </div>

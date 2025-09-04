@@ -285,19 +285,22 @@ class DreamDeskWindow extends DreamDeskComponent {
     const assignedElements = slot?.assignedElements({ flatten: true }) ?? [];
 
     const setupScrollableElements = () => {
+      const selector = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
+      let hasScrollable = false;
       assignedElements.forEach((node) => {
-        const paragraphs = node.querySelectorAll?.("p.scrollable, .scrollable") ?? [];
-        paragraphs.forEach((p) => {
-          p.classList.forEach((className) => {
+        const selfMatches = node.matches?.(selector) ? [node] : [];
+        const descendants = node.querySelectorAll?.(selector) ?? [];
+        const candidates = [...selfMatches, ...descendants];
+
+        candidates.forEach((el) => {
+          hasScrollable = true;
+          el.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
-              p.classList.remove(className);
+              el.classList.remove(className);
             }
           });
-          if (this._theme !== "default" && this.prefix) {
-            p.classList.add(`${this.prefix}-scroll`);
-          }
-          observer.observe(p);
-          this._checkOverflow(p);
+          observer.observe(el);
+          this._checkOverflow(el);
         });
       });
     };
@@ -321,7 +324,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._resizeObserver = observer;
   }
   _checkOverflow(message) {
-    const isOverflowing = message.scrollHeight > message.clientHeight;
+    // Force a reflow to ensure measurements are up-to-date, then compute overflow
+    // Use clientHeight/Width vs scrollHeight/Width for both axes
+    const isOverflowing = (message.scrollHeight > message.clientHeight) || (message.scrollWidth > message.clientWidth);
     message.classList.toggle("overflowing", isOverflowing);
   }
 
@@ -779,7 +784,7 @@ class DreamDeskTabPanel extends DreamDeskComponent {
     super.connectedCallback();
     this.setAttribute("slot", "panel");
     this.setAttribute("data-panel", "");
-    this.querySelector("p")?.classList.add("win-message");
+    this.querySelector("p")?.classList.add("win-content");
   }
 
   template() {

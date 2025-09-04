@@ -58,7 +58,7 @@ window.DreamDeskAnimations = {
     const fromW = rect.width;
     const fromH = rect.height;
     const toW = isFullscreen && previousState ? previousState.width : 400;
-    const toH = isFullscreen && previousState ? previousState.height : 400;
+    const toH = isFullscreen && previousState ? previousState.height : 200;
 
     const anim = el.animate(
       [
@@ -74,6 +74,5 @@ window.DreamDeskAnimations = {
   },
 };
 
-// Use the same behavior when leaving fullscreen
 window.DreamDeskAnimations.customUnfullscreen = window.DreamDeskAnimations.customFullscreen;
 
