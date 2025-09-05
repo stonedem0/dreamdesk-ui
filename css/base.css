@@ -184,6 +184,7 @@ body {
 }
 
 .win-controls button:hover { box-shadow: none; background-color: var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit)); }
+.win-controls button:disabled { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
 
 .win-controls button:active { box-shadow: none; transform: translateY(1px); background-color: var(--dd-controls-bg-active, var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit))); }
 

@@ -121,6 +121,10 @@ class DreamDeskWindow extends DreamDeskComponent {
       "minimize-icon",
       "fullscreen-icon",
       "close-icon",
+      // disable specific controls
+      "disable-minimize",
+      "disable-fullscreen",
+      "disable-close",
     ];
   }
 
@@ -174,6 +178,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._setupResizeHandle();
     this._setupDragging();
     this._applyControlIcons();
+    this._applyControlsDisabled();
   }
 
   _syncSizeFromAttributes() {
@@ -486,6 +491,26 @@ class DreamDeskWindow extends DreamDeskComponent {
     apply('.btn--close', 'close-icon');
   }
 
+  _applyControlsDisabled() {
+    const root = this.shadowRoot;
+    const setDisabled = (selector, attrName) => {
+      const btn = root.querySelector(selector);
+      if (!btn) return;
+      const v = this.getAttribute(attrName);
+      const isDisabled = v !== null && v !== 'false' && v !== '0';
+      btn.disabled = isDisabled;
+      btn.setAttribute('aria-disabled', String(isDisabled));
+      if (isDisabled) {
+        btn.setAttribute('tabindex', '-1');
+      } else {
+        btn.removeAttribute('tabindex');
+      }
+    };
+    setDisabled('.btn--minimize', 'disable-minimize');
+    setDisabled('.btn--fullscreen', 'disable-fullscreen');
+    setDisabled('.btn--close', 'disable-close');
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'resizable') {
@@ -515,6 +540,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (name === 'minimize-icon' || name === 'fullscreen-icon' || name === 'close-icon') {
       // Re-apply icons when attributes change
       this._applyControlIcons();
+    }
+    if (name === 'disable-minimize' || name === 'disable-fullscreen' || name === 'disable-close') {
+      this._applyControlsDisabled();
     }
   }
 }
