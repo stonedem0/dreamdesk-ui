@@ -155,6 +155,8 @@ body {
 
 .btn--disable { filter: grayscale(0.8); cursor: not-allowed; color: var(--grey); border: var(--color-window-border, var(--border)); }
 .btn--basic { color: var(--color-text, var(--black)); border: var(--color-window-border, var(--border)); }
+/* disabled state specifics */
+.btn:disabled { cursor: not-allowed; opacity: var(--dd-btn-disabled-opacity, 0.6); filter: var(--dd-btn-disabled-filter, grayscale(0.5)); }
 
 /* Window controls */
 .win-controls button {

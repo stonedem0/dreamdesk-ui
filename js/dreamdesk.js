@@ -800,7 +800,7 @@ class DreamDeskTabPanel extends DreamDeskComponent {
 
 class DreamDeskButton extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py"];
+    return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py", "disabled"];
   }
 
   static sizeVarMap = {
@@ -822,8 +822,9 @@ class DreamDeskButton extends DreamDeskComponent {
   template() {
     const actionAttr = this.action ? `data-action="${this.action}"` : "";
     const ariaLabel = this.action ? `aria-label="${this.action}"` : "";
+    const disabledAttr = this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false" && this.getAttribute("disabled") !== "0" ? "disabled aria-disabled=\"true\"" : "";
     return `
-      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel}>
+      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel} ${disabledAttr}>
         <slot></slot>
       </button>
     `;
@@ -833,6 +834,10 @@ class DreamDeskButton extends DreamDeskComponent {
     if (oldVal === newVal) return;
     if (name === 'size') {
       // size tokens handled via CSS :host selectors
+      return;
+    }
+    if (name === 'disabled') {
+      this._syncDisabled();
       return;
     }
     const varName = DreamDeskButton.sizeVarMap[name];
@@ -848,6 +853,7 @@ class DreamDeskButton extends DreamDeskComponent {
   connectedCallback() {
     super.connectedCallback();
     this._applyButtonSizeOverrides();
+    this._syncDisabled();
   }
 
   _applyButtonSizeOverrides() {
@@ -855,6 +861,20 @@ class DreamDeskButton extends DreamDeskComponent {
       const val = this.getAttribute(attr);
       if (val != null) this.style.setProperty(cssVar, val);
     });
+  }
+
+  _syncDisabled() {
+    const btn = this.shadowRoot?.querySelector('button');
+    if (!btn) return;
+    const isDisabled = this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false' && this.getAttribute('disabled') !== '0';
+    btn.disabled = isDisabled;
+    btn.setAttribute('aria-disabled', String(isDisabled));
+    btn.classList.toggle('btn--disable', isDisabled);
+    if (isDisabled) {
+      btn.setAttribute('tabindex', '-1');
+    } else {
+      btn.removeAttribute('tabindex');
+    }
   }
 }
 
