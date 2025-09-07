@@ -184,7 +184,33 @@ body {
 }
 
 .win-controls button:hover { box-shadow: none; background-color: var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit)); }
-.win-controls button:disabled { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
+.win-controls button[aria-disabled="true"] { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
+
+/* Shadow-friendly tooltip for disabled controls */
+.win-controls button[aria-disabled="true"][data-tooltip] {
+  position: relative;
+}
+.win-controls button[aria-disabled="true"][data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--dd-tooltip-bg, #111);
+  color: var(--dd-tooltip-fg, #fff);
+  padding: 2px 6px;
+  border: 1px solid var(--dd-tooltip-border, #333);
+  font-size: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+  z-index: 10;
+}
+.win-controls button[aria-disabled="true"][data-tooltip]:hover::after,
+.win-controls button[aria-disabled="true"][data-tooltip]:focus::after {
+  opacity: 1;
+}
 
 .win-controls button:active { box-shadow: none; transform: translateY(1px); background-color: var(--dd-controls-bg-active, var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit))); }
 
