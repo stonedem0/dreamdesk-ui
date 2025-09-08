@@ -21,7 +21,7 @@ body {
   border: var(--dd-border, var(--dd-window-border, var(--color-window-border, var(--border))));
   background-color: var(--dd-window-body, var(--color-window-body, #ffffff));
   color: var(--dd-window-text, var(--color-text, var(--black)));
-  box-shadow: var(--window-shadow, none);
+  box-shadow: var(--dd-window-shadow, var(--window-shadow, none));
   position: relative;
   display: flex;
   flex-direction: column;
@@ -29,7 +29,7 @@ body {
   box-sizing: border-box;
 }
 
-.win:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+.win:hover { box-shadow: var(--dd-window-shadow-hover, var(--dd-window-shadow, 0 2px 8px rgba(0, 0, 0, 0.08))); }
 
 .component-root { inline-size: 100%; block-size: 100%; display: block; }
 
@@ -49,6 +49,7 @@ body {
   background: var(--dd-header-bg, var(--color-window-header, #ffffff));
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
+  text-shadow: var(--dd-header-text-shadow, none);
 }
 
 .win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
@@ -92,13 +93,15 @@ body {
   justify-content: flex-start;
 }
 
-.win-title { user-select: none; }
+.win-title { user-select: none; text-shadow: var(--dd-title-text-shadow, none); }
 
 .win-content {
   margin: auto;
   padding: var(--dd-content-py, 0.6rem) var(--dd-content-px, 0.6rem);
   line-height: 1.4;
   color: var(--dd-window-text, var(--color-text, var(--black)));
+  text-shadow: var(--dd-content-text-shadow, none);
+  box-shadow: var(--dd-content-shadow, none);
 }
 
 .win-actions {
@@ -152,6 +155,8 @@ body {
 
 .btn--disable { filter: grayscale(0.8); cursor: not-allowed; color: var(--grey); border: var(--color-window-border, var(--border)); }
 .btn--basic { color: var(--color-text, var(--black)); border: var(--color-window-border, var(--border)); }
+/* disabled state specifics */
+.btn:disabled { cursor: not-allowed; opacity: var(--dd-btn-disabled-opacity, 0.6); filter: var(--dd-btn-disabled-filter, grayscale(0.5)); }
 
 /* Window controls */
 .win-controls button {
@@ -159,33 +164,55 @@ body {
   height: 1.3rem;
   background-repeat: no-repeat;
   background-position: center;
-  box-shadow: var(--window-controls-button-shadow, none);
+  box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
   cursor: pointer;
   background-size: contain;
-  border: var(--color-window-border, var(--border));
-  background-color: var(--color-window-control-bg, var(--color-surface, #ffffff));
+  border: var(--dd-controls-border, var(--color-window-border, var(--border)));
+  background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
   transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
 }
 
 /* If custom SVGs are injected into buttons, size them nicely */
-.win-controls button svg { width: 1rem; height: 1rem; display: block; }
+.win-controls button svg { width: var(--dd-controls-icon-size, 1rem); height: var(--dd-controls-icon-size, 1rem); display: block; }
 
 /* augment window controls buttons */
 .win-controls button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--line-color, #3d2d33);
+  color: var(--dd-controls-fg, var(--line-color, #3d2d33));
 }
 
-.win-controls button:hover {
-  box-shadow: none;
+.win-controls button:hover { box-shadow: none; background-color: var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit)); }
+.win-controls button[aria-disabled="true"] { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
+
+/* Shadow-friendly tooltip for disabled controls */
+.win-controls button[aria-disabled="true"][data-tooltip] {
+  position: relative;
+}
+.win-controls button[aria-disabled="true"][data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--dd-tooltip-bg, #111);
+  color: var(--dd-tooltip-fg, #fff);
+  padding: 2px 6px;
+  border: 1px solid var(--dd-tooltip-border, #333);
+  font-size: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+  z-index: 10;
+}
+.win-controls button[aria-disabled="true"][data-tooltip]:hover::after,
+.win-controls button[aria-disabled="true"][data-tooltip]:focus::after {
+  opacity: 1;
 }
 
-.win-controls button:active {
-  box-shadow: none;
-  transform: translateY(1px);
-}
+.win-controls button:active { box-shadow: none; transform: translateY(1px); background-color: var(--dd-controls-bg-active, var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit))); }
 
 .win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 

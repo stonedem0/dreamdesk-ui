@@ -121,6 +121,10 @@ class DreamDeskWindow extends DreamDeskComponent {
       "minimize-icon",
       "fullscreen-icon",
       "close-icon",
+      // disable specific controls
+      "disable-minimize",
+      "disable-fullscreen",
+      "disable-close",
     ];
   }
 
@@ -174,6 +178,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._setupResizeHandle();
     this._setupDragging();
     this._applyControlIcons();
+    this._applyControlsDisabled();
   }
 
   _syncSizeFromAttributes() {
@@ -186,15 +191,24 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   _bindButtons() {
     const root = this.shadowRoot;
+    const onClick = (actionFn) => (e) => {
+      const target = e.currentTarget;
+      if (target?.getAttribute?.('aria-disabled') === 'true') {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      actionFn();
+    };
     root
       .querySelector('[data-action="minimize"]')
-      ?.addEventListener("click", () => this.minimize());
+      ?.addEventListener("click", onClick(() => this.minimize()));
     root
       .querySelector('[data-action="fullscreen"]')
-      ?.addEventListener("click", () => this.fullscreen());
+      ?.addEventListener("click", onClick(() => this.fullscreen()));
     root
       .querySelector('[data-action="close"]')
-      ?.addEventListener("click", () => this.close());
+      ?.addEventListener("click", onClick(() => this.close()));
   }
 
   minimize() {
@@ -486,6 +500,45 @@ class DreamDeskWindow extends DreamDeskComponent {
     apply('.btn--close', 'close-icon');
   }
 
+  _applyControlsDisabled() {
+    const root = this.shadowRoot;
+    const setDisabled = (selector, attrName) => {
+      const btn = root.querySelector(selector);
+      if (!btn) return;
+      const v = this.getAttribute(attrName);
+      const isDisabled = v !== null && v !== 'false' && v !== '0';
+      btn.setAttribute('aria-disabled', String(isDisabled));
+      if (isDisabled) {
+        // keep focus out for disabled controls
+        btn.setAttribute('tabindex', '-1');
+        // Tooltip: if the disable-* attribute has a non-boolean string value, use it.
+        // Otherwise, look for a dedicated tooltip attribute like disable-minimize-tooltip.
+        let tooltip = null;
+        if (v && v !== 'true' && v !== '1') {
+          tooltip = v;
+        } else {
+          const tipAttr = `${attrName}-tooltip`;
+          const tipVal = this.getAttribute(tipAttr);
+          if (tipVal) tooltip = tipVal;
+        }
+        if (tooltip) {
+          btn.setAttribute('data-tooltip', tooltip);
+          btn.removeAttribute('title');
+        } else {
+          btn.removeAttribute('data-tooltip');
+          btn.removeAttribute('title');
+        }
+      } else {
+        btn.removeAttribute('tabindex');
+        btn.removeAttribute('title');
+        btn.removeAttribute('data-tooltip');
+      }
+    };
+    setDisabled('.btn--minimize', 'disable-minimize');
+    setDisabled('.btn--fullscreen', 'disable-fullscreen');
+    setDisabled('.btn--close', 'disable-close');
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'resizable') {
@@ -515,6 +568,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (name === 'minimize-icon' || name === 'fullscreen-icon' || name === 'close-icon') {
       // Re-apply icons when attributes change
       this._applyControlIcons();
+    }
+    if (name === 'disable-minimize' || name === 'disable-fullscreen' || name === 'disable-close') {
+      this._applyControlsDisabled();
     }
   }
 }
@@ -800,7 +856,7 @@ class DreamDeskTabPanel extends DreamDeskComponent {
 
 class DreamDeskButton extends DreamDeskComponent {
   static get observedAttributes() {
-    return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py"];
+    return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py", "disabled"];
   }
 
   static sizeVarMap = {
@@ -822,8 +878,9 @@ class DreamDeskButton extends DreamDeskComponent {
   template() {
     const actionAttr = this.action ? `data-action="${this.action}"` : "";
     const ariaLabel = this.action ? `aria-label="${this.action}"` : "";
+    const disabledAttr = this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false" && this.getAttribute("disabled") !== "0" ? "disabled aria-disabled=\"true\"" : "";
     return `
-      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel}>
+      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel} ${disabledAttr}>
         <slot></slot>
       </button>
     `;
@@ -833,6 +890,10 @@ class DreamDeskButton extends DreamDeskComponent {
     if (oldVal === newVal) return;
     if (name === 'size') {
       // size tokens handled via CSS :host selectors
+      return;
+    }
+    if (name === 'disabled') {
+      this._syncDisabled();
       return;
     }
     const varName = DreamDeskButton.sizeVarMap[name];
@@ -848,6 +909,7 @@ class DreamDeskButton extends DreamDeskComponent {
   connectedCallback() {
     super.connectedCallback();
     this._applyButtonSizeOverrides();
+    this._syncDisabled();
   }
 
   _applyButtonSizeOverrides() {
@@ -855,6 +917,20 @@ class DreamDeskButton extends DreamDeskComponent {
       const val = this.getAttribute(attr);
       if (val != null) this.style.setProperty(cssVar, val);
     });
+  }
+
+  _syncDisabled() {
+    const btn = this.shadowRoot?.querySelector('button');
+    if (!btn) return;
+    const isDisabled = this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false' && this.getAttribute('disabled') !== '0';
+    btn.disabled = isDisabled;
+    btn.setAttribute('aria-disabled', String(isDisabled));
+    btn.classList.toggle('btn--disable', isDisabled);
+    if (isDisabled) {
+      btn.setAttribute('tabindex', '-1');
+    } else {
+      btn.removeAttribute('tabindex');
+    }
   }
 }
 
