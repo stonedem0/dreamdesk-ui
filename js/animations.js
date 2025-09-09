@@ -17,13 +17,14 @@ export function minimize(win) {
 }
 
 export function fullscreen(win, previousState) {
+    // Ensure animation starts from the exact measured previous rect
     const animation = win.animate([
         {
             position: 'fixed',
-            top: `${previousState.top}px`,
-            left: `${previousState.left}px`,
-            width: `${previousState.width}px`,
-            height: `${previousState.height}px`,
+            top: `${Math.round(previousState.top)}px`,
+            left: `${Math.round(previousState.left)}px`,
+            width: `${Math.round(previousState.width)}px`,
+            height: `${Math.round(previousState.height)}px`,
             offset: 0,
             zIndex: 9999
         },
@@ -52,7 +53,7 @@ export function fullscreen(win, previousState) {
 }
 
 export function unfullscreen(win, previousState) {
-    win.animate([
+    const animation = win.animate([
         {
             position: 'fixed',
             top: '0px',
@@ -63,10 +64,10 @@ export function unfullscreen(win, previousState) {
         },
         {
             position: previousState.position,
-            top: `${previousState.top}px`,
-            left: `${previousState.left}px`,
-            width: `${previousState.width}px`,
-            height: `${previousState.height}px`,
+            top: `${Math.round(previousState.top)}px`,
+            left: `${Math.round(previousState.left)}px`,
+            width: `${Math.round(previousState.width)}px`,
+            height: `${Math.round(previousState.height)}px`,
             offset: 1,
     
         }
@@ -75,6 +76,13 @@ export function unfullscreen(win, previousState) {
         easing: 'ease-in-out',
         fill: 'forwards'
     });
+    animation.onfinish = () => {
+        win.style.position = previousState.position;
+        win.style.top = `${Math.round(previousState.top)}px`;
+        win.style.left = `${Math.round(previousState.left)}px`;
+        win.style.width = `${Math.round(previousState.width)}px`;
+        win.style.height = `${Math.round(previousState.height)}px`;
+    };
 }
 
 export function close(win, onfinish) {

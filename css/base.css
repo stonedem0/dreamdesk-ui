@@ -183,7 +183,7 @@ body {
   color: var(--dd-controls-fg, var(--line-color, #3d2d33));
 }
 
-.win-controls button:hover { box-shadow: none; background-color: var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit)); }
+.win-controls button:hover { box-shadow: none;}
 .win-controls button[aria-disabled="true"] { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
 
 /* Shadow-friendly tooltip for disabled controls */
@@ -212,7 +212,7 @@ body {
   opacity: 1;
 }
 
-.win-controls button:active { box-shadow: none; transform: translateY(1px); background-color: var(--dd-controls-bg-active, var(--dd-controls-bg-hover, var(--dd-controls-bg, inherit))); }
+.win-controls button:active { box-shadow: none; transform: translateY(1px);}
 
 .win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 

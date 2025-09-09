@@ -232,7 +232,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   }
 
   fullscreen() {
-    const win = this.shadowRoot.querySelector(".win");
+    const win = this; // animate the host to avoid inner/outer offset drift
     const goingFull = !this.state.isFullscreen;
     if (goingFull) this._freezeWindowState();
     const customId = this.getAttribute(goingFull ? 'fullscreen-animation' : 'unfullscreen-animation');
@@ -276,15 +276,17 @@ class DreamDeskWindow extends DreamDeskComponent {
   }
 
   _freezeWindowState() {
-    const rect = this.getBoundingClientRect();
-    const scrollTop = scrollY || document.documentElement.scrollTop;
-    const scrollLeft = scrollX || document.documentElement.scrollLeft;
+    const winEl = this; // capture host rect for fullscreen round-trip
+    const rect = winEl.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft || 0;
+    const pos = getComputedStyle(winEl).position || 'relative';
     this.state.previousState = {
       top: rect.top + scrollTop,
       left: rect.left + scrollLeft,
       width: rect.width,
       height: rect.height,
-      position: getComputedStyle(this).position || "static",
+      position: pos,
     };
   }
 
@@ -449,10 +451,21 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (this.state?.isFullscreen && !allowFSDrag) return;
       if (e.target.closest('.win-controls')) return;
 
+      // Kill any lingering animations that may be applying an animation style layer
+      try { this.getAnimations?.().forEach(a => a.cancel()); } catch (_) {}
+
       const hostRect = this.getBoundingClientRect();
       offsetX = e.clientX - hostRect.left;
       offsetY = e.clientY - hostRect.top;
       isDragging = true;
+
+      // Freeze current size to prevent layout-driven expansion during drag
+      const computed = getComputedStyle(this);
+      const currentW = computed.width;
+      const currentH = computed.height;
+      this.setAttribute('data-ddw-explicit', '');
+      this.style.setProperty('--ddw-w', currentW);
+      this.style.setProperty('--ddw-h', currentH);
 
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
