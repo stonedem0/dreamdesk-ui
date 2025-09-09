@@ -454,6 +454,14 @@ class DreamDeskWindow extends DreamDeskComponent {
       offsetY = e.clientY - hostRect.top;
       isDragging = true;
 
+      // Freeze current size to prevent layout-driven expansion during drag
+      const computed = getComputedStyle(this);
+      const currentW = computed.width;
+      const currentH = computed.height;
+      this.setAttribute('data-ddw-explicit', '');
+      this.style.setProperty('--ddw-w', currentW);
+      this.style.setProperty('--ddw-h', currentH);
+
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
 
