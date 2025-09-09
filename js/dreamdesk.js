@@ -451,6 +451,9 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (this.state?.isFullscreen && !allowFSDrag) return;
       if (e.target.closest('.win-controls')) return;
 
+      // Kill any lingering animations that may be applying an animation style layer
+      try { this.getAnimations?.().forEach(a => a.cancel()); } catch (_) {}
+
       const hostRect = this.getBoundingClientRect();
       offsetX = e.clientX - hostRect.left;
       offsetY = e.clientY - hostRect.top;
