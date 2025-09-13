@@ -1,3 +1,8 @@
+export function cancelRunningAnimations(el) {
+    const anims = el?.getAnimations?.() || [];
+    for (const a of anims) a.cancel();
+}
+
 export function minimize(win) {
     win.style.transformOrigin = '50% 100%';
     win.animate([
@@ -17,8 +22,6 @@ export function minimize(win) {
 }
 
 export function fullscreen(win, previousState) {
-    try { console.debug('DD: fullscreen start', { prev: previousState, zIndex: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
-    // Ensure animation starts from the exact measured previous rect
     const animation = win.animate([
         {
             position: 'fixed',
@@ -55,7 +58,7 @@ export function fullscreen(win, previousState) {
 }
 
 export function unfullscreen(win, previousState) {
-    try { win.getAnimations?.().forEach(a => a.cancel()); } catch(_) {}
+    cancelRunningAnimations(win);
     try { console.debug('DD: unfullscreen start', { prev: previousState, zIndex: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     const animation = win.animate([
         {
@@ -91,7 +94,7 @@ export function unfullscreen(win, previousState) {
         } else {
             win.style.removeProperty('z-index');
         }
-        try { animation.cancel(); } catch(_) {}
+        cancelRunningAnimations(win);
         try { console.debug('DD: unfullscreen finish', { final: { pos: win.style.position, left: win.style.left, top: win.style.top, w: win.style.width, h: win.style.height }, zIndex: win.style.zIndex, compZ: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     };
 }

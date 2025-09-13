@@ -1,4 +1,4 @@
-import { minimize, fullscreen, unfullscreen, close } from "./animations.js";
+import { minimize, fullscreen, unfullscreen, close, cancelRunningAnimations } from "./animations.js";
 
 class DreamDeskComponent extends HTMLElement {
   constructor() {
@@ -456,7 +456,7 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (e.target.closest('.win-controls')) return;
 
       // Kill any lingering animations that may be applying an animation style layer
-      try { this.getAnimations?.().forEach(a => a.cancel()); } catch (_) {}
+      cancelRunningAnimations(this);
 
       const hostRect = this.getBoundingClientRect();
       offsetX = e.clientX - hostRect.left;
