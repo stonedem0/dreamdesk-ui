@@ -1,4 +1,4 @@
-import { minimize, fullscreen, unfullscreen, close } from "./animations.js";
+import { minimize, fullscreen, unfullscreen, close, cancelRunningAnimations } from "./animations.js";
 
 class DreamDeskComponent extends HTMLElement {
   constructor() {
@@ -179,6 +179,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     this._setupDragging();
     this._applyControlIcons();
     this._applyControlsDisabled();
+    this._bindFocusRaise();
   }
 
   _syncSizeFromAttributes() {
@@ -280,13 +281,16 @@ class DreamDeskWindow extends DreamDeskComponent {
     const rect = winEl.getBoundingClientRect();
     const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
     const scrollLeft = window.scrollX || document.documentElement.scrollLeft || 0;
-    const pos = getComputedStyle(winEl).position || 'relative';
+    const cs = getComputedStyle(winEl);
+    const pos = cs.position || 'relative';
+    const z = cs.zIndex === 'auto' ? '' : cs.zIndex;
     this.state.previousState = {
       top: rect.top + scrollTop,
       left: rect.left + scrollLeft,
       width: rect.width,
       height: rect.height,
       position: pos,
+      zIndex: z,
     };
   }
 
@@ -452,7 +456,7 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (e.target.closest('.win-controls')) return;
 
       // Kill any lingering animations that may be applying an animation style layer
-      try { this.getAnimations?.().forEach(a => a.cancel()); } catch (_) {}
+      cancelRunningAnimations(this);
 
       const hostRect = this.getBoundingClientRect();
       offsetX = e.clientX - hostRect.left;
@@ -469,10 +473,22 @@ class DreamDeskWindow extends DreamDeskComponent {
 
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
+      try { console.debug('DD: raise via drag', { title: this.title, newZ: this.style.zIndex, compZ: getComputedStyle(this).zIndex, maxZ: DreamDeskWindow._z, anims: this.getAnimations?.().length }); } catch(_) {}
 
       document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
       document.addEventListener('pointerup', onPointerUp, { capture: true, signal: this._eventController?.signal });
     }, { signal: this._eventController?.signal });
+  }
+
+  _bindFocusRaise() {
+    const winRoot = this.shadowRoot.querySelector('.win');
+    if (!winRoot) return;
+    const raise = () => {
+      DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
+      this.style.zIndex = String(DreamDeskWindow._z);
+      try { console.debug('DD: raise via click', { title: this.title, newZ: this.style.zIndex, compZ: getComputedStyle(this).zIndex, maxZ: DreamDeskWindow._z, anims: this.getAnimations?.().length }); } catch(_) {}
+    };
+    winRoot.addEventListener('pointerdown', raise, { signal: this._eventController?.signal });
   }
 
   _applyControlIcons() {
