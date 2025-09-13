@@ -17,6 +17,7 @@ export function minimize(win) {
 }
 
 export function fullscreen(win, previousState) {
+    try { console.debug('DD: fullscreen start', { prev: previousState, zIndex: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     // Ensure animation starts from the exact measured previous rect
     const animation = win.animate([
         {
@@ -49,10 +50,13 @@ export function fullscreen(win, previousState) {
         win.style.width = '100vw';
         win.style.height = '100vh';
         win.style.zIndex = 9999;
+        try { console.debug('DD: fullscreen finish', { zIndex: win.style.zIndex, compZ: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     };
 }
 
 export function unfullscreen(win, previousState) {
+    try { win.getAnimations?.().forEach(a => a.cancel()); } catch(_) {}
+    try { console.debug('DD: unfullscreen start', { prev: previousState, zIndex: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     const animation = win.animate([
         {
             position: 'fixed',
@@ -77,11 +81,18 @@ export function unfullscreen(win, previousState) {
         fill: 'forwards'
     });
     animation.onfinish = () => {
-        win.style.position = previousState.position;
+        win.style.position = previousState.position || 'absolute';
         win.style.top = `${Math.round(previousState.top)}px`;
         win.style.left = `${Math.round(previousState.left)}px`;
         win.style.width = `${Math.round(previousState.width)}px`;
         win.style.height = `${Math.round(previousState.height)}px`;
+        if (previousState.zIndex) {
+            win.style.zIndex = previousState.zIndex;
+        } else {
+            win.style.removeProperty('z-index');
+        }
+        try { animation.cancel(); } catch(_) {}
+        try { console.debug('DD: unfullscreen finish', { final: { pos: win.style.position, left: win.style.left, top: win.style.top, w: win.style.width, h: win.style.height }, zIndex: win.style.zIndex, compZ: getComputedStyle(win).zIndex, anims: win.getAnimations?.().length }); } catch(_) {}
     };
 }
 
