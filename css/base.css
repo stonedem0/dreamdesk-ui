@@ -175,7 +175,7 @@ body {
   background-size: contain;
   border: var(--dd-controls-border, var(--color-window-border, var(--border)));
   background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
-  border-radius: var(--dd-controls-radius, 0);
+  border-radius: var(--dd-controls-radius, var(--controls-radius, 0));
   transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
 }
 
