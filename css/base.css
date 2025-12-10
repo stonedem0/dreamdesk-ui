@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 
 .win:hover { box-shadow: var(--dd-window-shadow-hover, var(--dd-window-shadow, 0 2px 8px rgba(0, 0, 0, 0.08))); }
@@ -50,9 +51,14 @@ body {
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
   text-shadow: var(--dd-header-text-shadow, none);
+  backdrop-filter: var(--dd-header-backdrop-filter, var(--header-backdrop-filter, none));
 }
 
 .win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
+/* apply same backdrop filter to body area for strong glass look */
+.win-body {
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
+}
 
 /* When an explicit size is set (attrs or size tokens), let body fill */
 :host([data-ddw-explicit]) .win-body,
