@@ -166,8 +166,8 @@ body {
 
 /* Window controls */
 .win-controls button {
-  width: 1.4rem;
-  height: 1.3rem;
+  width: var(--dd-controls-button-w, var(--controls-button-w, 1.4rem));
+  height: var(--dd-controls-button-h, var(--controls-button-h, 1.3rem));
   background-repeat: no-repeat;
   background-position: center;
   box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
@@ -175,6 +175,7 @@ body {
   background-size: contain;
   border: var(--dd-controls-border, var(--color-window-border, var(--border)));
   background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
+  border-radius: var(--dd-controls-radius, 0);
   transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
 }
 
@@ -222,6 +223,31 @@ body {
 
 .win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 
+/* Per-button themeable backgrounds (with safe fallbacks) */
+.win-controls .btn--minimize {
+  background-color: var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-minimize-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-minimize-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+}
+.win-controls .btn--fullscreen {
+  background-color: var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-fullscreen-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-fullscreen-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+}
+.win-controls .btn--close {
+  background-color: var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-close-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-close-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+}
+.win-controls .btn--minimize:hover {
+  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, inherit));
+}
+.win-controls .btn--fullscreen:hover {
+  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, inherit));
+}
+.win-controls .btn--close:hover {
+  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, inherit));
+}
 /* Scrollbars */
 ::-webkit-scrollbar-track { background: var(--scroll-track-bg, #fffefe); border: var(--color-window-border, var(--border)); }
 ::-webkit-scrollbar-thumb { background: var(--scroll-thumb-bg, #fffefe); border: var(--color-window-border, var(--border)); background-size: 300% 300%; }

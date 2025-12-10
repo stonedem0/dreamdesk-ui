@@ -65,9 +65,26 @@ html[data-theme="vista"] {
   --color-terminal-fg: #cfeaff;
 
   /* Control button icons */
-  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%232d4f73;stroke-width:7' /></svg>");
-  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:%23eaf4ff;stroke-width:3;stroke:%232d4f73' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:%232d4f73;stroke-width:7' /></svg>");
-  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%232d4f73' stroke-width='5' stroke-linecap='butt'/></svg>");
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%23ffffff;stroke-width:7' /></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='26' height='20' x='12' y='14' style='fill:none;stroke-width:4;stroke:%23ffffff' /></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%23ffffff' stroke-width='5' stroke-linecap='butt'/></svg>");
+
+  /* Vista-style caption buttons */
+  --dd-controls-radius: 0.25rem;
+  --dd-controls-border: 1px solid rgba(45,79,115,0.45);
+  --window-controls-button-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.15);
+  --color-window-control-bg: rgba(255,255,255,0.45);
+  --color-window-control-minimize-bg: rgba(214,232,251,0.95);
+  --color-window-control-fullscreen-bg: rgba(214,232,251,0.95);
+  --color-window-control-close-bg: rgba(221,96,96,0.98);
+  --color-window-control-minimize-bg-hover: rgba(232,243,255,1);
+  --color-window-control-fullscreen-bg-hover: rgba(232,243,255,1);
+  --color-window-control-close-bg-hover: rgba(233,110,110,1);
+
+  /* Control sizes - make close wider */
+  --controls-button-w: 1.4rem;
+  --controls-button-h: 1.3rem;
+  --controls-close-w: 2.2rem;
 
   /* Visual depth */
   --shadow: 0 2px 8px rgba(22, 40, 68, 0.15);
