@@ -1,0 +1,92 @@
+/* Vista Theme CSS */
+
+html[data-theme="vista"] {
+  /* Vista palette */
+  --vista-blue: #3a7bd5;
+  --vista-cyan: #4fc3f7;
+  --vista-sky: #eaf4ff;
+  --vista-deep: #274b74;
+
+  /* App surface */
+  --app-color: #eaf4ff;
+  --line-color: #2d4f73;
+
+  /* Semantic colors */
+  --color-primary: var(--vista-blue);
+  --color-secondary: var(--vista-cyan);
+  --color-accent: #68e0cf;
+  --color-tertiary: #8ec5fc;
+  --color-background: var(--app-color);
+  --color-surface: #ffffff;
+  --color-text: #0f1b2b;
+  --color-text-muted: #415a77;
+  --color-border: var(--line-color);
+
+  /* Interactive */
+  --color-hover: #4facfe;
+  --color-active: var(--vista-blue);
+  --color-disabled: #c7d8eb;
+  --color-error: #ff9aa2;
+  --color-success: #98f5a7;
+  --color-warning: #ffe299;
+
+  /* Window */
+  --color-window-header: linear-gradient(90deg, rgba(79,195,247,0.65) 0%, rgba(58,123,213,0.65) 100%);
+  --color-window-body: #ffffff;
+  --color-window-border: var(--border);
+  --resize-stripe-color: var(--line-color);
+
+  /* Inputs */
+  --color-input-background: #f7fbff;
+  --color-input-border: rgba(45,79,115,0.35);
+  --color-input-focus: #ffffff;
+
+  /* Toasts */
+  --color-toast-alert: #ffe7e7;
+  --color-toast-notification: #d6efff;
+  --color-toast-warning: #fff6d6;
+
+  /* Progress */
+  --color-progress-track: #d6e7f7;
+  --color-progress-bar: var(--vista-blue);
+  --color-progress-segment: var(--vista-cyan);
+  --color-progress-gradient: linear-gradient(90deg, #8ec5fc 0%, #e0c3fc 100%);
+
+  /* Toggle */
+  --color-toggle-background: #cfeaff;
+  --color-toggle-knob: #ffffff;
+  --color-toggle-active: var(--vista-blue);
+
+  /* Terminal */
+  --color-terminal-bg: #0e1525;
+  --color-terminal-fg: #cfeaff;
+
+  /* Control button icons */
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%232d4f73;stroke-width:7' /></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='30' height='30' x='10' y='10' style='fill:%23eaf4ff;stroke-width:3;stroke:%232d4f73' /><line x1='9' y1='14' x2='41' y2='14' style='stroke:%232d4f73;stroke-width:7' /></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%232d4f73' stroke-width='5' stroke-linecap='butt'/></svg>");
+
+  /* Visual depth */
+  --shadow: 0 2px 8px rgba(22, 40, 68, 0.15);
+  --window-shadow: 0 4px 16px rgba(22, 40, 68, 0.18);
+  --window-header-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.08);
+  --window-controls-button-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.1);
+  --toast-shadow: var(--shadow);
+  --progress-track-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.08);
+  --progress-bar-shadow: inset 0 2px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.08);
+  --toggle-slider-shadow: inset -2px 2px 0.6px rgba(22,40,68,0.08), inset 2px -2px 0.6px rgba(255,255,255,0.65);
+  --toggle-knob-shadow: inset -1.5px 1.5px 0.5px #ffffff, inset 1.5px -1.5px 0.5px #c6d7ea;
+  --input-shadow: inset -1px 1px 0 rgba(255,255,255,0.8), inset 1px -1px 0 rgba(198, 215, 234, 0.8);
+
+  /* Scrollbars */
+  --scroll-track-bg: #f3f8ff;
+  --scroll-thumb-bg: #9bd0ff;
+  --scroll-thumb-shadow-light: #ffffff;
+  --scroll-thumb-shadow-dark: #b7cff0;
+  --scroll-button-bg: #e7f1ff;
+  --scroll-button-shadow-light: #ffffff;
+  --scroll-button-shadow-dark: #b7c9e3;
+  --scroll-arrow-color: #1c2a3d;
+}
+
+
