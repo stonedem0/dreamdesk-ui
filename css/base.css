@@ -95,7 +95,7 @@ body {
 
 .win-controls {
   display: flex;
-  gap: 0.2rem;
+  gap: var(--dd-controls-gap, var(--controls-gap, 0.2rem));
   justify-content: flex-start;
 }
 
@@ -135,9 +135,9 @@ body {
 }
 
 /* remove legacy background-image icons; inline SVGs are used now */
-.btn--minimize { background-image: var(--btn-minimize-icon, none); }
-.btn--fullscreen { background-image: var(--btn-fullscreen-icon, none); }
-.btn--close { background-image: var(--btn-close-icon, none); }
+.btn--minimize { background-image: var(--btn-minimize-icon, none), var(--controls-minimize-gloss, var(--controls-gloss-image, none)); }
+.btn--fullscreen { background-image: var(--btn-fullscreen-icon, none), var(--controls-fullscreen-gloss, var(--controls-gloss-image, none)); }
+.btn--close { background-image: var(--btn-close-icon, none), var(--controls-close-gloss, var(--controls-gloss-image, none)); }
 
 .btn { background-color: var(--color-surface, #ffffff); }
 
