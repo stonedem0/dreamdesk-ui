@@ -230,18 +230,25 @@ body {
   width: var(--controls-minimize-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
   height: var(--controls-minimize-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
   border-radius: var(--controls-minimize-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-minimize-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  /* Optional side-specific override: remove seam when adjacent */
+  border-right: var(--controls-minimize-border-right, var(--dd-controls-border, var(--color-window-border, var(--border))));
 }
 .win-controls .btn--fullscreen {
   background-color: var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
   width: var(--controls-fullscreen-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
   height: var(--controls-fullscreen-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
   border-radius: var(--controls-fullscreen-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-fullscreen-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
 }
 .win-controls .btn--close {
   background-color: var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
   width: var(--controls-close-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
   height: var(--controls-close-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
   border-radius: var(--controls-close-radius, var(--dd-controls-close-radius, var(--dd-controls-radius, var(--controls-radius, 0))));
+  border: var(--controls-close-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  /* Optional side-specific override: remove seam when adjacent */
+  border-left: var(--controls-close-border-left, var(--dd-controls-border, var(--color-window-border, var(--border))));
 }
 .win-controls .btn--minimize:hover {
   background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, inherit));
