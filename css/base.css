@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  border-radius: var(--dd-window-radius, 0); /* only themed when explicitly set */
   backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 

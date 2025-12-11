@@ -35,6 +35,7 @@ html[data-theme="vista"] {
   --color-window-body: rgba(255,255,255,0.1);
   --color-window-border: var(--border);
   --resize-stripe-color: var(--line-color);
+  --dd-window-radius: 0.2rem;
   /* Glass blur */
   --window-backdrop-filter: blur(18px) saturate(130%) brightness(1.05);
   --header-backdrop-filter: blur(20px) saturate(140%) brightness(1.06);
@@ -101,8 +102,8 @@ html[data-theme="vista"] {
   /* Per-button radii to match Vista corners */
   --controls-minimize-radius: 0.2rem 0 0 0.2rem;   /* more round on left side */
   --controls-fullscreen-radius: 0;                 /* subtle round for center button */
-  --controls-close-radius: 0 0.6rem 0.6rem 0;      /* round right corners only */
-  --dd-controls-close-radius: 0 0.6rem 0.6rem 0;   /* theme-specific close radius */
+  --controls-close-radius: 0 0.2rem 0.2rem 0;      /* round right corners only */
+  --dd-controls-close-radius: 0 0.2rem 0.2rem 0;   /* theme-specific close radius */
 
   /* Visual depth */
   --shadow: 0 2px 8px rgba(22, 40, 68, 0.15);
