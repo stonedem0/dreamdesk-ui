@@ -67,7 +67,7 @@ html[data-theme="vista"] {
 
   /* Control button icons */
   --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><rect x='7' y='26' width='20' height='6' rx='1' ry='1' fill='%23ffffff' stroke='%230b1c2e' stroke-width='2'/></svg>");
-  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='26' height='20' x='12' y='14' style='fill:none;stroke:%230b1c2e;stroke-width:6' /><rect width='26' height='20' x='12' y='14' style='fill:none;stroke:%23ffffff;stroke-width:2' /></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='50'%20viewBox='0%200%2050%2050'%20aria-hidden='true'%3E%3Crect%20x='12'%20y='14'%20width='26'%20height='20'%20fill='none'%20stroke='%230b1c2e'%20stroke-width='9'/%3E%3Crect%20x='12'%20y='14'%20width='26'%20height='20'%20fill='none'%20stroke='%23ffffff'%20stroke-width='5'/%3E%3C/svg%3E");
   --btn-close-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='40'%20viewBox='0%200%2040%2040'%20aria-hidden='true'%3E%3Cpath%20d='M12%2012%20L28%2028%20M28%2012%20L12%2028'%20stroke='%230b1c2e'%20stroke-width='8'%20stroke-linecap='square'%20stroke-linejoin='bevel'/%3E%3Cpath%20d='M12%2012%20L28%2028%20M28%2012%20L12%2028'%20stroke='%23ffffff'%20stroke-width='5'%20stroke-linecap='square'%20stroke-linejoin='bevel'/%3E%3C/svg%3E");
 
   /* Vista-style caption buttons */
