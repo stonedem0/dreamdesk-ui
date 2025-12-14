@@ -66,9 +66,9 @@ html[data-theme="vista"] {
   --color-terminal-fg: #cfeaff;
 
   /* Control button icons */
-  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:%23ffffff;stroke-width:7' /></svg>");
-  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='26' height='20' x='12' y='14' style='fill:none;stroke-width:4;stroke:%23ffffff' /></svg>");
-  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%23ffffff' stroke-width='5' stroke-linecap='butt'/></svg>");
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><rect x='7' y='26' width='20' height='6' rx='1' ry='1' fill='%23ffffff' stroke='%230b1c2e' stroke-width='2'/></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='26' height='20' x='12' y='14' style='fill:none;stroke:%230b1c2e;stroke-width:6' /><rect width='26' height='20' x='12' y='14' style='fill:none;stroke:%23ffffff;stroke-width:2' /></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='%230b1c2e' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/><path d='M10,10 L30,30 M30,10 L10,30' stroke='%23ffffff' stroke-width='2' stroke-linejoin='bevel'/></svg>");
 
   /* Vista-style caption buttons */
   --dd-controls-radius: 0.5rem 0 0 0.5rem;
