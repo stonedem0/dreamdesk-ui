@@ -62,10 +62,15 @@ html[data-theme="vista"] {
   --color-toast-warning: #fff6d6;
 
   /* Progress */
-  --color-progress-track: #d6e7f7;
-  --color-progress-bar: var(--vista-blue);
-  --color-progress-segment: var(--vista-cyan);
-  --color-progress-gradient: linear-gradient(90deg, #8ec5fc 0%, #e0c3fc 100%);
+  --dd-pb-radius: 0.5rem;
+  --dd-pb-bar-radius: 0.5rem 0 0 0.5rem;
+  --dd-progress-enable-hue-rotate: 0;
+  --color-progress-track: linear-gradient(to bottom, #f4f4f4 0%, #e3e3e3 50%, #d7d7d7 51%, #d2d2d2 96%, #ffffff 100%);
+  --color-progress-bar: linear-gradient(to bottom, #b8ffb2 0%, #28d64f 40%, #1ec441 70%, #18a738 100%);
+  --color-progress-segment: #28d64f;
+  --color-progress-gradient: linear-gradient(90deg, #28d64f 0%, #18a738 100%);
+  --progress-track-shadow: inset 0 2px 0 rgba(255,255,255,0.85), inset 0 -2px 0 rgba(0,0,0,0.12);
+  --progress-bar-shadow: inset 0 2px 0 rgba(255,255,255,0.85);
 
   /* Toggle */
   --color-toggle-background: #cfeaff;

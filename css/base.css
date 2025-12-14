@@ -324,9 +324,9 @@ dreamdesk-tab-panel.active { display: block; }
 .dreamdesk-input { font-family: var(--font-ui); height: 1.4rem; width: 60%; border-radius: 0px; border: var(--color-window-border, var(--border)); background: var(--color-input-background, #fff); color: var(--color-text, var(--black)); box-shadow: var(--input-shadow, none); }
 
 /* Progress bar */
-.progress-bar { background-color: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); }
+.progress-bar { background: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); border-radius: var(--dd-pb-bar-radius, var(--progress-bar-radius, 0)); }
 .progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); }
-.progress-track { inline-size: 100%; height: var(--dd-pb-h, 1.5rem); background-color: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); }
+.progress-track { inline-size: 100%; height: var(--dd-pb-h, 1.5rem); background: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); border-radius: var(--dd-pb-radius, var(--progress-radius, 0)); }
 .progress-track--blocky { padding-left: 3.4px; padding-right: 3.4px; }
 .progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; box-shadow: var(--progress-segment-shadow, none); }
 

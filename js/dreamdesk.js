@@ -770,7 +770,18 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     } else if (this._bar) {
       this._bar.style.width = `${percent}%`;
       if (!isGradient) {
-        this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
+        // Allow themes to opt-out of hue-rotate color sweep
+        try {
+          const cs = getComputedStyle(this._bar);
+          const enabled = (cs.getPropertyValue('--dd-progress-enable-hue-rotate') || '').trim();
+          if (enabled && enabled === '0') {
+            this._bar.style.filter = 'none';
+          } else {
+            this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
+          }
+        } catch (_) {
+          this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
+        }
       }
       if (this._value >= 100) {
         this._bar.style.borderRight = "none";
