@@ -130,6 +130,7 @@ body {
   cursor: pointer;
   display: inline-block;
   text-align: center;
+  border-radius: var(--dd-btn-radius, var(--btn-radius, 0));
   transition: transform 0.1s ease, background-color 0.2s ease;
   box-sizing: border-box;
   line-height: 1;

@@ -45,6 +45,17 @@ html[data-theme="vista"] {
   --color-input-border: rgba(45,79,115,0.35);
   --color-input-focus: #ffffff;
 
+  /* Buttons */
+  --dd-btn-radius: 0.2rem;
+  --dd-btn-border: 1px solid rgba(11,28,46,0.6);
+  /* Vista blue primary */
+  --color-button-primary: linear-gradient(to bottom, #cfeaff 0%, #8fc8f7 50%, #66afea 51%, #3f86c6 96%, #e9f6ff 100%);
+  /* Vista silver ghost */
+  --color-button-ghost: linear-gradient(to bottom, #f4f4f4 0%, #e3e3e3 50%, #d7d7d7 51%, #d2d2d2 96%, #ffffff 100%);
+  /* Depth */
+  --button-shadow-primary: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.12);
+  --button-shadow-ghost: inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.1);
+
   /* Toasts */
   --color-toast-alert: #ffe7e7;
   --color-toast-notification: #d6efff;
