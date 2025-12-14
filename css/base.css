@@ -279,7 +279,7 @@ dreamdesk-tab-panel { display: none; }
 dreamdesk-tab-panel.active { display: block; }
 
 /* Toast styles */
-.toast { padding: 0.6rem; border: var(--color-window-border, var(--border)); width: 22rem; height: 2.2rem; box-shadow: var(--toast-shadow, var(--shadow, none)); background: var(--color-surface, #fff); color: var(--color-text, var(--black)); }
+.toast { padding: 0.6rem; border: var(--color-window-border, var(--border)); width: 22rem; height: 2.2rem; box-shadow: var(--toast-shadow, var(--shadow, none)); background: var(--dd-toast-bg, var(--color-surface, #fff)); color: var(--color-text, var(--black)); border-radius: var(--dd-toast-radius, 0); backdrop-filter: var(--dd-toast-backdrop-filter, none); }
 .toast-alert { background: var(--color-toast-alert, #ffd6d6); }
 .toast-notification { background: var(--color-toast-notification, #d6f0ff); }
 .toast-warning { background: var(--color-toast-warning, #fff4c2); }

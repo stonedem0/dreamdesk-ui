@@ -57,9 +57,12 @@ html[data-theme="vista"] {
   --button-shadow-ghost: inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.1);
 
   /* Toasts */
-  --color-toast-alert: #ffe7e7;
-  --color-toast-notification: #d6efff;
-  --color-toast-warning: #fff6d6;
+  --dd-toast-radius: 0.4rem;
+  --dd-toast-backdrop-filter: blur(12px) saturate(130%) brightness(1.03);
+  --dd-toast-bg: rgba(255,255,255,0.38);
+  --color-toast-alert: rgba(233, 110, 110, 0.38);
+  --color-toast-notification: rgba(214, 239, 255, 0.38);
+  --color-toast-warning: rgba(255, 244, 194, 0.38);
 
   /* Progress */
   --dd-pb-radius: 0.5rem;
