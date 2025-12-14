@@ -97,11 +97,12 @@ html[data-theme="vista"] {
   --controls-minimize-border-right: none;
   --controls-close-border-left: none;
   /* glossy mid-band highlight overlay (painted under icon via layered background) */
-  --controls-gloss-image: linear-gradient(to bottom,  #f3c3bd 0%,#e86958 50%,#e92203 51%,#c81b00 96%,#ffffff 100%);;
+  --controls-gloss-image-close: linear-gradient(to bottom,  #f3c3bd 0%,#e86958 50%,#e92203 51%,#c81b00 96%,#ffffff 100%);
+  --controls-gloss-image:  linear-gradient(to bottom, #f4f4f4 0%,#e3e3e3 50%,#d7d7d7 51%,#d2d2d2 96%,#ffffff 100%);
   /* Per-button gloss overrides: neutral silver for minimize/fullscreen */
-  --controls-minimize-gloss: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.45) 40%, rgba(255,255,255,0.28) 60%, rgba(0,0,0,0.08) 100%);
-  --controls-fullscreen-gloss: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.45) 40%, rgba(255,255,255,0.28) 60%, rgba(0,0,0,0.08) 100%);
-  --controls-close-gloss: var(--controls-gloss-image);
+  --controls-minimize-gloss: var(--controls-gloss-image);
+  --controls-fullscreen-gloss: var(--controls-gloss-image);
+  --controls-close-gloss: var(--controls-gloss-image-close);
   /* Control sizes - make close wider */
   --controls-button-w: 1.4rem;
   --controls-button-h: 1.3rem;
