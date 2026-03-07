@@ -1,0 +1,13 @@
+export { ThemeProvider, useTheme } from "./context/ThemeContext";
+export type { DreamDeskTheme } from "./context/ThemeContext";
+
+export { Window } from "./components/Window";
+export type { WindowProps } from "./components/Window";
+
+// export { Button } from "./components/Button";
+// export { Toast } from "./components/Toast";
+// export { Input } from "./components/Input";
+// export { ProgressBar } from "./components/ProgressBar";
+// export { Tabs, Tab, TabPanel } from "./components/Tabs";
+// export { Toggle } from "./components/Toggle";
+// export { TerminalWindow } from "./components/TerminalWindow";
