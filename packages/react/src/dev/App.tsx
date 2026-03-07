@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
+import { Tabs, Tab, TabPanel } from "../components/Tabs";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
@@ -69,6 +70,24 @@ export default function App() {
           closeIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'
         >
           <p className="win-content">Minimize is disabled with tooltip.</p>
+        </Window>
+
+        {/* Tabs */}
+        <Window title="Tabs" onMinimize={(v) => push(`minimize: ${v}`)}>
+          <Tabs>
+            <Tab>General</Tab>
+            <Tab>Appearance</Tab>
+            <Tab>Advanced</Tab>
+            <TabPanel>
+              <p className="win-content" style={{ padding: "0.5rem" }}>General settings panel.</p>
+            </TabPanel>
+            <TabPanel>
+              <p className="win-content" style={{ padding: "0.5rem" }}>Appearance panel.</p>
+            </TabPanel>
+            <TabPanel>
+              <p className="win-content" style={{ padding: "0.5rem" }}>Advanced settings panel.</p>
+            </TabPanel>
+          </Tabs>
         </Window>
 
         {/* Buttons */}
