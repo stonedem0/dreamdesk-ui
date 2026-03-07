@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
+import { ProgressBar } from "../components/ProgressBar";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
@@ -20,6 +21,19 @@ function ThemeToggle() {
 export default function App() {
   const [log, setLog] = useState<string[]>([]);
   const push = (msg: string) => setLog((l) => [...l, msg]);
+
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    let val = 0;
+    let rafId: number;
+    const tick = () => {
+      val = Math.min(100, val + Math.random() * 0.8);
+      setProgress(parseFloat(val.toFixed(1)));
+      if (val < 100) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   return (
     <ThemeProvider defaultTheme="pastelcore">
@@ -81,6 +95,14 @@ export default function App() {
             <Button variant="ghost">Cancel</Button>
           </div>
         </Window>
+
+        {/* Progress bars */}
+        <div className="progress-bar-container" style={{ width: "24rem" }}>
+          <ProgressBar value={progress} />
+          <ProgressBar value={progress} blocky />
+          <ProgressBar value={progress} gradient />
+          <ProgressBar value={progress} gradient blocky />
+        </div>
 
         {/* Toasts */}
         <div className="toast-container">

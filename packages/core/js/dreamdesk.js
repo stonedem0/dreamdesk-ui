@@ -473,7 +473,6 @@ class DreamDeskWindow extends DreamDeskComponent {
 
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
-      try { console.debug('DD: raise via drag', { title: this.title, newZ: this.style.zIndex, compZ: getComputedStyle(this).zIndex, maxZ: DreamDeskWindow._z, anims: this.getAnimations?.().length }); } catch(_) {}
 
       document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
       document.addEventListener('pointerup', onPointerUp, { capture: true, signal: this._eventController?.signal });
@@ -486,7 +485,6 @@ class DreamDeskWindow extends DreamDeskComponent {
     const raise = () => {
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
-      try { console.debug('DD: raise via click', { title: this.title, newZ: this.style.zIndex, compZ: getComputedStyle(this).zIndex, maxZ: DreamDeskWindow._z, anims: this.getAnimations?.().length }); } catch(_) {}
     };
     winRoot.addEventListener('pointerdown', raise, { signal: this._eventController?.signal });
   }

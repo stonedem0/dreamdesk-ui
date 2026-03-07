@@ -8,4 +8,6 @@ export { Toast } from './components/Toast';
 export type { ToastProps } from './components/Toast';
 export { Input } from './components/Input';
 export type { InputProps } from './components/Input';
+export { ProgressBar } from './components/ProgressBar';
+export type { ProgressBarProps } from './components/ProgressBar';
 //# sourceMappingURL=index.d.ts.map
