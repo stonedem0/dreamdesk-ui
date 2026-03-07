@@ -1,30 +1,30 @@
-import { jsx as l, jsxs as D } from "react/jsx-runtime";
-import { createContext as dt, useState as W, useCallback as M, useContext as at, useRef as b, useEffect as S } from "react";
-const U = dt(null);
+import { jsx as d, jsxs as k } from "react/jsx-runtime";
+import { createContext as ct, useState as X, useCallback as T, useContext as dt, useRef as D, useEffect as S, useId as lt } from "react";
+const O = ct(null);
 function gt({ children: t, defaultTheme: e = "pastelcore" }) {
-  const [o, a] = W(e), f = M((u) => {
-    a(u), document.documentElement.setAttribute("data-theme", u);
+  const [n, r] = X(e), a = T((s) => {
+    r(s), document.documentElement.setAttribute("data-theme", s);
   }, []);
-  return /* @__PURE__ */ l(U.Provider, { value: { theme: o, setTheme: f }, children: t });
+  return /* @__PURE__ */ d(O.Provider, { value: { theme: n, setTheme: a }, children: t });
 }
-function vt() {
-  const t = at(U);
+function wt() {
+  const t = dt(O);
   if (!t) throw new Error("useTheme must be used inside <ThemeProvider>");
   return t;
 }
-function X(t) {
-  var o;
-  const e = ((o = t == null ? void 0 : t.getAnimations) == null ? void 0 : o.call(t)) ?? [];
-  for (const a of e) a.cancel();
+function F(t) {
+  var n;
+  const e = ((n = t == null ? void 0 : t.getAnimations) == null ? void 0 : n.call(t)) ?? [];
+  for (const r of e) r.cancel();
 }
-function lt(t) {
+function ut(t) {
   t.style.transformOrigin = "50% 100%", t.animate(
     [{ transform: "scale(1)", offset: 0 }, { transform: "scale(0)", offset: 1 }],
     { duration: 600, easing: "ease-in-out", fill: "forwards" }
   );
 }
-function ut(t, e) {
-  const o = t.animate(
+function ft(t, e) {
+  const n = t.animate(
     [
       {
         position: "fixed",
@@ -39,13 +39,13 @@ function ut(t, e) {
     ],
     { duration: 400, easing: "ease-in-out", fill: "forwards" }
   );
-  o.onfinish = () => {
+  n.onfinish = () => {
     t.style.position = "fixed", t.style.top = "0px", t.style.left = "0px", t.style.width = "100vw", t.style.height = "100vh", t.style.zIndex = "9999";
   };
 }
-function ft(t, e) {
-  X(t);
-  const o = t.animate(
+function ht(t, e) {
+  F(t);
+  const n = t.animate(
     [
       { position: "fixed", top: "0px", left: "0px", width: "100vw", height: "100vh", offset: 0 },
       {
@@ -59,11 +59,11 @@ function ft(t, e) {
     ],
     { duration: 400, easing: "ease-in-out", fill: "forwards" }
   );
-  o.onfinish = () => {
-    t.style.position = e.position || "absolute", t.style.top = `${Math.round(e.top)}px`, t.style.left = `${Math.round(e.left)}px`, t.style.width = `${Math.round(e.width)}px`, t.style.height = `${Math.round(e.height)}px`, e.zIndex ? t.style.zIndex = e.zIndex : t.style.removeProperty("z-index"), X(t);
+  n.onfinish = () => {
+    t.style.position = e.position || "absolute", t.style.top = `${Math.round(e.top)}px`, t.style.left = `${Math.round(e.left)}px`, t.style.width = `${Math.round(e.width)}px`, t.style.height = `${Math.round(e.height)}px`, e.zIndex ? t.style.zIndex = e.zIndex : t.style.removeProperty("z-index"), F(t);
   };
 }
-function ht(t, e) {
+function mt(t, e) {
   t.animate(
     [
       { opacity: 1, transform: "scale(1)" },
@@ -72,187 +72,187 @@ function ht(t, e) {
     { duration: 300, easing: "ease", fill: "forwards" }
   ).onfinish = e;
 }
-let _ = 1e3;
-function mt(t) {
-  const e = t.getBoundingClientRect(), o = getComputedStyle(t);
+let U = 1e3;
+function pt(t) {
+  const e = t.getBoundingClientRect(), n = getComputedStyle(t);
   return {
     top: e.top + (window.scrollY || 0),
     left: e.left + (window.scrollX || 0),
     width: e.width,
     height: e.height,
-    position: o.position || "relative",
-    zIndex: o.zIndex === "auto" ? "" : o.zIndex
+    position: n.position || "relative",
+    zIndex: n.zIndex === "auto" ? "" : n.zIndex
   };
 }
-function k(t) {
+function W(t) {
   if (!t) return null;
   const e = t.trim();
   return e.startsWith("<svg") ? e : null;
 }
-function B({
+function H({
   className: t,
   icon: e,
-  disabled: o,
-  tooltip: a,
-  onClick: f,
-  ariaLabel: u
+  disabled: n,
+  tooltip: r,
+  onClick: a,
+  ariaLabel: s
 }) {
-  const m = o !== void 0 && o !== !1 && o !== "false" && o !== "0", z = typeof o == "string" && o !== "true" && o !== "1" ? o : a;
-  return /* @__PURE__ */ l(
+  const l = n !== void 0 && n !== !1 && n !== "false" && n !== "0", f = typeof n == "string" && n !== "true" && n !== "1" ? n : r;
+  return /* @__PURE__ */ d(
     "button",
     {
       className: t,
-      "aria-label": u,
-      "aria-disabled": m ? "true" : void 0,
-      tabIndex: m ? -1 : void 0,
-      "data-tooltip": m && z ? z : void 0,
-      onClick: (T) => {
-        if (m) {
-          T.preventDefault();
+      "aria-label": s,
+      "aria-disabled": l ? "true" : void 0,
+      tabIndex: l ? -1 : void 0,
+      "data-tooltip": l && f ? f : void 0,
+      onClick: (p) => {
+        if (l) {
+          p.preventDefault();
           return;
         }
-        f();
+        a();
       },
       dangerouslySetInnerHTML: e ? { __html: e } : void 0
     }
   );
 }
-function wt({
+function yt({
   title: t = "Window",
   size: e,
-  resizable: o = !0,
-  movable: a = !0,
-  width: f,
-  height: u,
-  minimizeIcon: m,
-  fullscreenIcon: z,
-  closeIcon: Y,
-  disableMinimize: T,
-  disableFullscreen: O,
-  disableClose: V,
-  fullscreenMode: H,
-  onMinimize: I,
-  onFullscreen: $,
-  onClose: C,
+  resizable: n = !0,
+  movable: r = !0,
+  width: a,
+  height: s,
+  minimizeIcon: l,
+  fullscreenIcon: f,
+  closeIcon: x,
+  disableMinimize: p,
+  disableFullscreen: z,
+  disableClose: w,
+  fullscreenMode: v,
+  onMinimize: y,
+  onFullscreen: b,
+  onClose: L,
   children: G,
   style: J,
   className: K
 }) {
-  const c = b(null), j = b(null), q = b(null), [F, Q] = W(!1), [p, Z] = W(!1), P = b(null), tt = !!(f || u), et = {
-    ...f ? { "--ddw-w": f } : {},
-    ...u ? { "--ddw-h": u } : {},
+  const h = D(null), q = D(null), V = D(null), [_, Q] = X(!1), [E, Z] = X(!1), B = D(null), tt = !!(a || s), et = {
+    ...a ? { "--ddw-w": a } : {},
+    ...s ? { "--ddw-h": s } : {},
     ...J
-  }, N = M(() => {
-    _ += 1, c.current && (c.current.style.zIndex = String(_));
-  }, []), nt = M(() => {
-    var r;
-    const i = (r = c.current) == null ? void 0 : r.querySelector(".dd-win");
+  }, Y = T(() => {
+    U += 1, h.current && (h.current.style.zIndex = String(U));
+  }, []), nt = T(() => {
+    var c;
+    const i = (c = h.current) == null ? void 0 : c.querySelector(".dd-win");
     if (!i) return;
-    const n = !F;
-    lt(i), Q(n), I == null || I(n);
-  }, [F, I]), ot = M(() => {
-    const i = c.current;
+    const o = !_;
+    ut(i), Q(o), y == null || y(o);
+  }, [_, y]), ot = T(() => {
+    const i = h.current;
     if (!i) return;
-    const n = !p;
-    n ? (P.current = mt(i), ut(i, P.current)) : P.current && ft(i, P.current);
-    const r = n;
-    Z(r), $ == null || $(r);
-  }, [p, $]), it = M(() => {
-    var n;
-    const i = (n = c.current) == null ? void 0 : n.querySelector(".dd-win");
-    i && ht(i, () => {
-      c.current && (c.current.style.display = "none"), C == null || C();
+    const o = !E;
+    o ? (B.current = pt(i), ft(i, B.current)) : B.current && ht(i, B.current);
+    const c = o;
+    Z(c), b == null || b(c);
+  }, [E, b]), it = T(() => {
+    var o;
+    const i = (o = h.current) == null ? void 0 : o.querySelector(".dd-win");
+    i && mt(i, () => {
+      h.current && (h.current.style.display = "none"), L == null || L();
     });
-  }, [C]);
+  }, [L]);
   S(() => {
-    const i = j.current, n = c.current;
-    if (!i || !n || !a) return;
-    let r = !1, y = 0, L = 0, x = null;
-    const g = (d) => {
-      if (!r) return;
-      const v = d.clientX - y, h = d.clientY - L;
-      x && cancelAnimationFrame(x), x = requestAnimationFrame(() => {
-        const s = n.getBoundingClientRect(), w = Math.max(0, window.innerWidth - s.width), A = Math.max(0, window.innerHeight - s.height);
-        getComputedStyle(n).position === "static" && (n.style.position = "absolute"), n.style.left = `${Math.max(0, Math.min(v, w))}px`, n.style.top = `${Math.max(0, Math.min(h, A))}px`;
+    const i = q.current, o = h.current;
+    if (!i || !o || !r) return;
+    let c = !1, P = 0, C = 0, I = null;
+    const M = (m) => {
+      if (!c) return;
+      const $ = m.clientX - P, g = m.clientY - C;
+      I && cancelAnimationFrame(I), I = requestAnimationFrame(() => {
+        const u = o.getBoundingClientRect(), N = Math.max(0, window.innerWidth - u.width), j = Math.max(0, window.innerHeight - u.height);
+        getComputedStyle(o).position === "static" && (o.style.position = "absolute"), o.style.left = `${Math.max(0, Math.min($, N))}px`, o.style.top = `${Math.max(0, Math.min(g, j))}px`;
       });
-    }, E = () => {
-      r = !1, document.removeEventListener("pointermove", g, { capture: !0 }), document.removeEventListener("pointerup", E, { capture: !0 });
-    }, R = (d) => {
-      if (d.target.closest(".dd-win-controls") || p && !(H === "expand")) return;
-      X(n);
-      const h = n.getBoundingClientRect();
-      y = d.clientX - h.left, L = d.clientY - h.top;
-      const s = getComputedStyle(n);
-      n.setAttribute("data-explicit", ""), n.style.setProperty("--ddw-w", s.width), n.style.setProperty("--ddw-h", s.height), r = !0, N(), document.addEventListener("pointermove", g, { capture: !0 }), document.addEventListener("pointerup", E, { capture: !0 });
+    }, R = () => {
+      c = !1, document.removeEventListener("pointermove", M, { capture: !0 }), document.removeEventListener("pointerup", R, { capture: !0 });
+    }, A = (m) => {
+      if (m.target.closest(".dd-win-controls") || E && !(v === "expand")) return;
+      F(o);
+      const g = o.getBoundingClientRect();
+      P = m.clientX - g.left, C = m.clientY - g.top;
+      const u = getComputedStyle(o);
+      o.setAttribute("data-explicit", ""), o.style.setProperty("--ddw-w", u.width), o.style.setProperty("--ddw-h", u.height), c = !0, Y(), document.addEventListener("pointermove", M, { capture: !0 }), document.addEventListener("pointerup", R, { capture: !0 });
     };
-    return i.addEventListener("pointerdown", R), () => {
-      i.removeEventListener("pointerdown", R), document.removeEventListener("pointermove", g, { capture: !0 }), document.removeEventListener("pointerup", E, { capture: !0 });
+    return i.addEventListener("pointerdown", A), () => {
+      i.removeEventListener("pointerdown", A), document.removeEventListener("pointermove", M, { capture: !0 }), document.removeEventListener("pointerup", R, { capture: !0 });
     };
-  }, [a, p, H, N]), S(() => {
-    const i = q.current, n = c.current;
-    if (!i || !n || !o) return;
-    let r = !1, y = 0, L = 0, x = 0, g = 0;
-    const E = 180, R = 120, d = (s) => {
-      if (!r) return;
-      const w = Math.max(E, x + (s.clientX - y)), A = Math.max(R, g + (s.clientY - L));
-      n.style.setProperty("--ddw-w", `${w}px`), n.style.setProperty("--ddw-h", `${A}px`), n.setAttribute("data-explicit", "");
-    }, v = () => {
-      r = !1, document.removeEventListener("pointermove", d, { capture: !0 }), document.removeEventListener("pointerup", v, { capture: !0 });
-    }, h = (s) => {
-      if (p) return;
-      r = !0, y = s.clientX, L = s.clientY;
-      const w = n.getBoundingClientRect();
-      x = w.width, g = w.height, document.addEventListener("pointermove", d, { capture: !0 }), document.addEventListener("pointerup", v, { capture: !0 });
+  }, [r, E, v, Y]), S(() => {
+    const i = V.current, o = h.current;
+    if (!i || !o || !n) return;
+    let c = !1, P = 0, C = 0, I = 0, M = 0;
+    const R = 180, A = 120, m = (u) => {
+      if (!c) return;
+      const N = Math.max(R, I + (u.clientX - P)), j = Math.max(A, M + (u.clientY - C));
+      o.style.setProperty("--ddw-w", `${N}px`), o.style.setProperty("--ddw-h", `${j}px`), o.setAttribute("data-explicit", "");
+    }, $ = () => {
+      c = !1, document.removeEventListener("pointermove", m, { capture: !0 }), document.removeEventListener("pointerup", $, { capture: !0 });
+    }, g = (u) => {
+      if (E) return;
+      c = !0, P = u.clientX, C = u.clientY;
+      const N = o.getBoundingClientRect();
+      I = N.width, M = N.height, document.addEventListener("pointermove", m, { capture: !0 }), document.addEventListener("pointerup", $, { capture: !0 });
     };
-    return i.addEventListener("pointerdown", h), () => {
-      i.removeEventListener("pointerdown", h), document.removeEventListener("pointermove", d, { capture: !0 }), document.removeEventListener("pointerup", v, { capture: !0 });
+    return i.addEventListener("pointerdown", g), () => {
+      i.removeEventListener("pointerdown", g), document.removeEventListener("pointermove", m, { capture: !0 }), document.removeEventListener("pointerup", $, { capture: !0 });
     };
-  }, [o, p]);
-  const rt = k(m), st = k(z), ct = k(Y);
-  return /* @__PURE__ */ l(
+  }, [n, E]);
+  const rt = W(l), st = W(f), at = W(x);
+  return /* @__PURE__ */ d(
     "div",
     {
-      ref: c,
+      ref: h,
       className: ["dd-window", K].filter(Boolean).join(" "),
       "data-size": e,
       "data-explicit": tt ? "" : void 0,
       style: et,
-      onPointerDown: N,
-      children: /* @__PURE__ */ D("div", { className: "dd-win", children: [
-        /* @__PURE__ */ D(
+      onPointerDown: Y,
+      children: /* @__PURE__ */ k("div", { className: "dd-win", children: [
+        /* @__PURE__ */ k(
           "div",
           {
-            ref: j,
-            className: ["dd-win-header", a ? "" : "dd-win-header--no-move"].filter(Boolean).join(" "),
+            ref: q,
+            className: ["dd-win-header", r ? "" : "dd-win-header--no-move"].filter(Boolean).join(" "),
             children: [
-              /* @__PURE__ */ l("span", { className: "dd-win-title", children: t }),
-              /* @__PURE__ */ D("div", { className: "dd-win-controls", children: [
-                /* @__PURE__ */ l(
-                  B,
+              /* @__PURE__ */ d("span", { className: "dd-win-title", children: t }),
+              /* @__PURE__ */ k("div", { className: "dd-win-controls", children: [
+                /* @__PURE__ */ d(
+                  H,
                   {
                     className: "dd-btn--minimize",
                     icon: rt,
-                    disabled: T,
+                    disabled: p,
                     onClick: nt,
                     ariaLabel: "minimize"
                   }
                 ),
-                /* @__PURE__ */ l(
-                  B,
+                /* @__PURE__ */ d(
+                  H,
                   {
                     className: "dd-btn--fullscreen",
                     icon: st,
-                    disabled: O,
+                    disabled: z,
                     onClick: ot,
                     ariaLabel: "fullscreen"
                   }
                 ),
-                /* @__PURE__ */ l(
-                  B,
+                /* @__PURE__ */ d(
+                  H,
                   {
                     className: "dd-btn--close",
-                    icon: ct,
-                    disabled: V,
+                    icon: at,
+                    disabled: w,
                     onClick: it,
                     ariaLabel: "close"
                   }
@@ -261,14 +261,104 @@ function wt({
             ]
           }
         ),
-        /* @__PURE__ */ l("div", { className: "dd-win-body", children: G }),
-        o && /* @__PURE__ */ l("div", { ref: q, className: "dd-win-resize-handle" })
+        /* @__PURE__ */ d("div", { className: "dd-win-body", children: G }),
+        n && /* @__PURE__ */ d("div", { ref: V, className: "dd-win-resize-handle" })
       ] })
     }
   );
 }
+function bt({
+  variant: t = "primary",
+  size: e,
+  disabled: n = !1,
+  action: r,
+  minWidth: a,
+  width: s,
+  height: l,
+  fontSize: f,
+  px: x,
+  py: p,
+  onClick: z,
+  children: w,
+  className: v,
+  style: y
+}) {
+  const b = {
+    ...a ? { "--dd-btn-min-w": a } : {},
+    ...s ? { "--dd-btn-w": s } : {},
+    ...l ? { "--dd-btn-h": l } : {},
+    ...f ? { "--dd-btn-fs": f } : {},
+    ...x ? { "--dd-btn-px": x } : {},
+    ...p ? { "--dd-btn-py": p } : {},
+    ...y
+  }, L = [
+    "btn",
+    `btn--${t}`,
+    n ? "btn--disable" : "",
+    e ? `btn--size-${e}` : "",
+    v
+  ].filter(Boolean).join(" ");
+  return /* @__PURE__ */ d(
+    "button",
+    {
+      className: L,
+      style: b,
+      disabled: n,
+      "aria-disabled": n ? "true" : void 0,
+      tabIndex: n ? -1 : void 0,
+      "data-action": r,
+      "aria-label": r,
+      onClick: n ? void 0 : z,
+      children: w
+    }
+  );
+}
+function Lt({ type: t = "notification", message: e, onClose: n }) {
+  const [r, a] = X(!0);
+  if (!r) return null;
+  const s = () => {
+    a(!1), n == null || n();
+  };
+  return /* @__PURE__ */ k("div", { className: `toast toast-${t}`, children: [
+    /* @__PURE__ */ d("span", { className: "toast-btn--close", onClick: s, role: "button", "aria-label": "close", children: "×" }),
+    e
+  ] });
+}
+function Et({
+  type: t = "text",
+  label: e,
+  id: n,
+  value: r,
+  defaultValue: a,
+  placeholder: s,
+  disabled: l,
+  onChange: f,
+  className: x,
+  style: p
+}) {
+  const z = lt(), w = n ?? z;
+  return /* @__PURE__ */ k("div", { className: ["input-grid", x].filter(Boolean).join(" "), style: p, children: [
+    e && /* @__PURE__ */ d("label", { className: "input-label", htmlFor: w, children: e }),
+    /* @__PURE__ */ d(
+      "input",
+      {
+        type: t,
+        id: w,
+        className: "dreamdesk-input",
+        value: r,
+        defaultValue: a,
+        placeholder: s,
+        disabled: l,
+        onChange: f ? (v) => f(v.target.value, v) : void 0
+      }
+    )
+  ] });
+}
 export {
+  bt as Button,
+  Et as Input,
   gt as ThemeProvider,
-  wt as Window,
-  vt as useTheme
+  Lt as Toast,
+  yt as Window,
+  wt as useTheme
 };

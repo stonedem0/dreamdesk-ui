@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Window } from "../components/Window";
+import { Button } from "../components/Button";
+import { Input } from "../components/Input";
+import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 function ThemeToggle() {
@@ -53,6 +56,38 @@ export default function App() {
         >
           <p className="win-content">Minimize is disabled with tooltip.</p>
         </Window>
+
+        {/* Buttons */}
+        <Window title="Buttons" size="sm" resizable={false}>
+          <div className="win-content" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <Button variant="primary">Primary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="help">Help</Button>
+            <Button variant="primary" disabled>Disabled</Button>
+            <Button variant="primary" size="sm">Small</Button>
+            <Button variant="primary" size="lg">Large</Button>
+            <Button variant="primary" px="1rem" py="0.4rem" fontSize="1.05rem">Custom</Button>
+          </div>
+        </Window>
+
+        {/* Inputs */}
+        <Window title="Login" size="sm" resizable={false}>
+          <div className="win-content input-grid pc-input-grid">
+            <Input type="text" label="Username:" placeholder="enter username" />
+            <Input type="password" label="Password:" placeholder="••••••••" />
+          </div>
+          <div className="win-actions">
+            <Button variant="primary">OK</Button>
+            <Button variant="ghost">Cancel</Button>
+          </div>
+        </Window>
+
+        {/* Toasts */}
+        <div className="toast-container">
+          <Toast type="alert" message="This is an alert." />
+          <Toast type="notification" message="This is a notification." />
+          <Toast type="warning" message="This is a warning." />
+        </div>
 
         {/* Event log */}
         {log.length > 0 && (
