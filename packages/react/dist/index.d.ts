@@ -12,4 +12,8 @@ export { ProgressBar } from './components/ProgressBar';
 export type { ProgressBarProps } from './components/ProgressBar';
 export { Tabs, Tab, TabPanel } from './components/Tabs';
 export type { TabsProps, TabProps, TabPanelProps } from './components/Tabs';
+export { Toggle } from './components/Toggle';
+export type { ToggleProps } from './components/Toggle';
+export { TerminalWindow } from './components/TerminalWindow';
+export type { TerminalWindowProps } from './components/TerminalWindow';
 //# sourceMappingURL=index.d.ts.map

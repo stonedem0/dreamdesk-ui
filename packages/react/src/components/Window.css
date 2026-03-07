@@ -133,6 +133,21 @@
   box-sizing: border-box;
 }
 
+.terminal-window .dd-win-body {
+  padding: 0;
+}
+
+.terminal-win-body {
+  flex: 1;
+  background-color: var(--color-terminal-bg, #000);
+  color: var(--color-terminal-fg, #fafafa);
+  padding: 0.5rem;
+  font-family: var(--font-ui);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .dd-win-resize-handle {
   position: absolute;
   right: 0;

@@ -3,6 +3,8 @@ import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
 import { Tabs, Tab, TabPanel } from "../components/Tabs";
+import { Toggle } from "../components/Toggle";
+import { TerminalWindow } from "../components/TerminalWindow";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
@@ -129,6 +131,15 @@ export default function App() {
           <Toast type="notification" message="This is a notification." />
           <Toast type="warning" message="This is a warning." />
         </div>
+
+        {/* Toggle */}
+        <Toggle onChange={(v) => push(`toggle: ${v}`)} />
+
+        {/* Terminal */}
+        <TerminalWindow title="terminal" style={{ "--ddw-w": "28rem", "--ddw-h": "12rem" } as React.CSSProperties} data-ddw-explicit>
+          <p>$ hello world</p>
+          <p>$ _</p>
+        </TerminalWindow>
 
         {/* Event log */}
         {log.length > 0 && (
