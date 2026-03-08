@@ -1,0 +1,33 @@
+{
+  "name": "@dreamdesk/core",
+  "version": "0.1.9",
+  "description": "Vanilla JS Web Components for retro-style windows and UI.",
+  "type": "module",
+  "module": "js/dreamdesk.js",
+  "exports": {
+    ".": "./js/dreamdesk.js",
+    "./css/base.css": "./css/base.css",
+    "./css/globals.css": "./css/globals.css",
+    "./css/pastelcore.css": "./css/pastelcore.css",
+    "./css/dark.css": "./css/dark.css"
+  },
+  "files": [
+    "js/*.js",
+    "css/base.css",
+    "css/pastelcore.css",
+    "css/globals.css",
+    "css/dark.css",
+    "README.md"
+  ],
+  "keywords": [
+    "web-components",
+    "ui",
+    "retro",
+    "windows",
+    "vanilla-js"
+  ],
+  "scripts": {
+    "dev": "npx serve . --listen 3001"
+  },
+  "license": "MIT"
+}

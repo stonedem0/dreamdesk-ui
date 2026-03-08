@@ -219,7 +219,7 @@ body {
 
 
 /* Input styles */
-.dreamdesk-input {
+html[data-theme="dark"] .dreamdesk-input {
   background-color: var(--black);
   border: 1px solid var(--dark-toxic-green);
   color: var(--dark-toxic-green);
