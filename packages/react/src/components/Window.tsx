@@ -10,7 +10,6 @@ import {
   minimize as animMinimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
-  closeAnimation,
   cancelRunningAnimations,
   type PreviousState,
 } from "../animations";
@@ -167,12 +166,8 @@ export function Window({
   }, [isFullscreen, onFullscreen]);
 
   const handleClose = useCallback(() => {
-    const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
-    if (!win) return;
-    closeAnimation(win, () => {
-      if (hostRef.current) hostRef.current.style.display = "none";
-      onClose?.();
-    });
+    if (hostRef.current) hostRef.current.style.display = "none";
+    onClose?.();
   }, [onClose]);
 
   // Dragging
