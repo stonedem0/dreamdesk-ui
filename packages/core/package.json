@@ -26,5 +26,8 @@
     "windows",
     "vanilla-js"
   ],
+  "scripts": {
+    "dev": "npx serve . --listen 3001"
+  },
   "license": "MIT"
 }

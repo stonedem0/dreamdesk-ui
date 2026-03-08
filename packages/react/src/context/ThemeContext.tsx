@@ -24,8 +24,11 @@ export function ThemeProvider({ children, defaultTheme = "pastelcore" }: { child
   );
 }
 
+const fallbackTheme: ThemeContextValue = {
+  theme: "pastelcore",
+  setTheme: () => {},
+};
+
 export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
-  return ctx;
+  return useContext(ThemeContext) ?? fallbackTheme;
 }

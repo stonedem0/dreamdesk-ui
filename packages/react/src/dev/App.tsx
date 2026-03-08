@@ -11,13 +11,16 @@ import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <button
-      onClick={() => setTheme(theme === "pastelcore" ? "dark" : "pastelcore")}
-      style={{ margin: "1rem", fontFamily: "monospace", cursor: "pointer" }}
-    >
-      Theme: {theme}
-    </button>
+    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "monospace" }}>
+      <span>pastelcore</span>
+      <Toggle
+        checked={isDark}
+        onChange={(v) => setTheme(v ? "dark" : "pastelcore")}
+      />
+      <span>dark</span>
+    </div>
   );
 }
 
@@ -136,7 +139,7 @@ export default function App() {
         <Toggle onChange={(v) => push(`toggle: ${v}`)} />
 
         {/* Terminal */}
-        <TerminalWindow title="terminal" style={{ "--ddw-w": "28rem", "--ddw-h": "12rem" } as React.CSSProperties} data-ddw-explicit>
+        <TerminalWindow title="terminal" width="28rem" height="12rem">
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>
