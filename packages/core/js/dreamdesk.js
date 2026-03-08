@@ -218,7 +218,11 @@ class DreamDeskWindow extends DreamDeskComponent {
     const customFn = window.DreamDeskAnimations?.[customId];
     const done = () => {
       this.state.isMinimized = !this.state.isMinimized;
-      this.setAttribute("minimized", "");
+      if (this.state.isMinimized) {
+        this.setAttribute("minimized", "");
+      } else {
+        this.removeAttribute("minimized");
+      }
       this.dispatchEvent(
         new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } })
       );
@@ -306,20 +310,23 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     const setupScrollableElements = () => {
       const selector = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
-      let hasScrollable = false;
+      if (this._observedScrollables) {
+        this._observedScrollables.forEach((el) => observer.unobserve(el));
+      }
+      this._observedScrollables = [];
       assignedElements.forEach((node) => {
         const selfMatches = node.matches?.(selector) ? [node] : [];
         const descendants = node.querySelectorAll?.(selector) ?? [];
         const candidates = [...selfMatches, ...descendants];
 
         candidates.forEach((el) => {
-          hasScrollable = true;
           el.classList.forEach((className) => {
             if (className.endsWith("-scroll")) {
               el.classList.remove(className);
             }
           });
           observer.observe(el);
+          this._observedScrollables.push(el);
           this._checkOverflow(el);
         });
       });
@@ -357,6 +364,7 @@ class DreamDeskWindow extends DreamDeskComponent {
     let handle = win.querySelector('.win-resize-handle');
     if (!this._resizable) {
       if (handle) handle.remove();
+      this._resizeHandleBound = false;
       return;
     }
     if (!handle) {
@@ -364,6 +372,8 @@ class DreamDeskWindow extends DreamDeskComponent {
       handle.className = 'win-resize-handle';
       win.appendChild(handle);
     }
+    if (this._resizeHandleBound) return;
+    this._resizeHandleBound = true;
 
     let isResizing = false;
     let startX = 0;
@@ -411,8 +421,11 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     if (!this._movable) {
       header.style.cursor = 'default';
+      this._dragBound = false;
       return;
     }
+    if (this._dragBound) return;
+    this._dragBound = true;
     header.style.cursor = 'move';
 
     let isDragging = false;
@@ -983,7 +996,6 @@ class DreamDeskToast extends DreamDeskComponent {
 
   connectedCallback() {
     super.connectedCallback();
-    this.setup();
   }
 
   setup() {

@@ -1,10 +1,7 @@
-html {
-  background-color: var(--black);
-  color: var(--app-color);
-}
-
 /* Dark Theme Semantic Color Overrides */
 html[data-theme="dark"] {
+  background-color: var(--black);
+  color: var(--dark-toxic-green);
   /* Dark Theme Colors */
   --dark-toxic-green: #3ff10b;
   
@@ -51,7 +48,7 @@ html[data-theme="dark"] {
   --color-progress-track: var(--black);
   --color-progress-bar: var(--dark-toxic-green);
   --color-progress-segment: var(--dark-toxic-green);
-  --color-progress-gradient: var(--pc-pink-mint-gradient);
+  --color-progress-gradient: var(--dark-toxic-green);
   
   --color-toggle-background: var(--black);
   --color-toggle-knob: var(--dark-toxic-green);
