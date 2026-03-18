@@ -11,15 +11,15 @@ import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const isVista = theme === "vista";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "monospace" }}>
       <span>pastelcore</span>
       <Toggle
-        checked={isDark}
-        onChange={(v) => setTheme(v ? "dark" : "pastelcore")}
+        checked={isVista}
+        onChange={(v) => setTheme(v ? "vista" : "pastelcore")}
       />
-      <span>dark</span>
+      <span>vista</span>
     </div>
   );
 }
