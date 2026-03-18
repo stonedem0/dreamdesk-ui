@@ -195,11 +195,13 @@
 .terminal-win-body::-webkit-scrollbar-track {
   background: var(--scroll-track-bg, #f1f1f1);
   border-left: var(--color-window-border, var(--border));
+  border-right: none;
 }
 
 .dd-win-body::-webkit-scrollbar-thumb,
 .terminal-win-body::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb-bg, #c0c0c0);
+  border-right: none;
   box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light, #fff),
               inset 2px -2px 1px var(--scroll-thumb-shadow-dark, #aaa);
 }
@@ -228,6 +230,7 @@
   background-repeat: no-repeat;
   background-position: center;
   border-left: var(--color-window-border, var(--border));
+  border-right: none;
   box-shadow: inset -2px 2px 1px var(--scroll-button-shadow-light, #ffffff),
               inset 2px -2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
 }

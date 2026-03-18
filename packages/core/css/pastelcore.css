@@ -105,7 +105,7 @@ html[data-theme="pastelcore"] {
   --scroll-thumb-bg: var(--pastelcore-cyan);
   --scroll-thumb-shadow-light: #ffffff;
   --scroll-thumb-shadow-dark: var(--pasteclore-cyan-shadow);
-  --scroll-button-bg: #fffefe;
+  --scroll-button-bg: #ccc;
   --scroll-button-shadow-light: #ffffff;
   --scroll-button-shadow-dark: #a2a2a2;
   --scroll-arrow-color: #1c1c1c;
