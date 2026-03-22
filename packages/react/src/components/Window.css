@@ -2,7 +2,7 @@
   display: block;
   --ddw-w: auto;
   --ddw-h: auto;
-  inline-size: clamp(180px, 90vw, 48rem);
+  inline-size: clamp(180px, 78vw, 48rem);
   block-size: clamp(120px, 80svh, 32rem);
 }
 
@@ -176,10 +176,12 @@
 
 .dd-win-body {
   padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem));
+  margin: var(--dd-body-margin, 0);
   flex: 1 1 auto;
   min-height: 0;
   overflow: var(--dd-body-overflow, auto);
   box-sizing: border-box;
+  background-color: var(--dd-body-bg, transparent);
   backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 

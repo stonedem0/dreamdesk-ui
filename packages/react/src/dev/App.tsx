@@ -53,6 +53,8 @@ export default function App() {
           onFullscreen={(v) => push(`fullscreen: ${v}`)}
           onClose={() => push("close")}
           bodyOverflow="hidden"
+          width="567px"
+          height="500px"
         >
           <Tabs>
             <Tab>General</Tab>
@@ -60,7 +62,7 @@ export default function App() {
             <Tab>Advanced</Tab>
             <Tab>Settings</Tab>
             <TabPanel>
-              <p className="win-content dd-scrollable" style={{ "--dd-scrollable-max-h": "14rem" } as CSSProperties}>
+              <p className="win-content dd-scrollable" style={{ "--dd-scrollable-max-h": "23rem" } as CSSProperties}>
                 Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
                 classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
                 Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
