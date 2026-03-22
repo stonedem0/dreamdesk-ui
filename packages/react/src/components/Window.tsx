@@ -30,6 +30,7 @@ export interface WindowProps {
   disableFullscreen?: boolean | string;
   disableClose?: boolean | string;
   fullscreenMode?: "expand";
+  bodyOverflow?: "auto" | "hidden" | "scroll";
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   onClose?: () => void;
@@ -112,6 +113,7 @@ export function Window({
   disableFullscreen,
   disableClose,
   fullscreenMode,
+  bodyOverflow,
   onMinimize,
   onFullscreen,
   onClose,
@@ -321,7 +323,10 @@ export function Window({
             />
           </div>
         </div>
-        <div className="dd-win-body">{children}</div>
+        <div
+          className="dd-win-body"
+          style={bodyOverflow ? { "--dd-body-overflow": bodyOverflow } as React.CSSProperties : undefined}
+        >{children}</div>
         {resizable && <div ref={handleRef} className="dd-win-resize-handle" />}
       </div>
     </div>
