@@ -8,9 +8,8 @@ export interface ProgressBarProps {
   style?: CSSProperties;
 }
 
+const TARGET_SEG_W = 10;
 const GAP = 1;
-const SEG_W = 10;
-const FULL_SEG = SEG_W + GAP;
 
 function useBlockySegments(
   trackRef: React.RefObject<HTMLDivElement | null>,
@@ -18,7 +17,7 @@ function useBlockySegments(
   gradient: boolean,
   enabled: boolean
 ) {
-  const [segments, setSegments] = useState(0);
+  const [layout, setLayout] = useState({ count: 0, segW: TARGET_SEG_W });
 
   useEffect(() => {
     if (!enabled) return;
@@ -26,8 +25,15 @@ function useBlockySegments(
     if (!track) return;
 
     const rebuild = () => {
-      const trackWidth = track.getBoundingClientRect().width;
-      setSegments(Math.floor((trackWidth + GAP) / FULL_SEG));
+      const cs = getComputedStyle(track);
+      const pl = parseFloat(cs.paddingLeft) || 0;
+      const pr = parseFloat(cs.paddingRight) || 0;
+      const bl = parseFloat(cs.borderLeftWidth) || 0;
+      const br = parseFloat(cs.borderRightWidth) || 0;
+      const innerWidth = track.getBoundingClientRect().width - pl - pr - bl - br;
+      const count = Math.max(1, Math.round((innerWidth + GAP) / (TARGET_SEG_W + GAP)));
+      const segW = (innerWidth - (count - 1) * GAP) / count;
+      setLayout({ count, segW });
     };
 
     const ro = new ResizeObserver(rebuild);
@@ -36,14 +42,15 @@ function useBlockySegments(
     return () => ro.disconnect();
   }, [enabled, trackRef]);
 
+  const { count: segments, segW } = layout;
   const percent = Math.min(Math.max(value, 0), 100);
   const activeCount = Math.floor((percent / 100) * segments);
-  const fullVisualWidth = segments * FULL_SEG - GAP;
+  const fullVisualWidth = segments * (segW + GAP) - GAP;
 
   const segmentEls = Array.from({ length: segments }, (_, i) => {
     const active = i < activeCount;
     const style: CSSProperties = {
-      width: `${SEG_W}px`,
+      width: `${segW}px`,
       height: "100%",
       marginRight: i < segments - 1 ? `${GAP}px` : "0",
       opacity: active ? 1 : 0.2,
@@ -57,7 +64,7 @@ function useBlockySegments(
     if (gradient) {
       style.backgroundImage = "var(--color-progress-gradient, none)";
       style.backgroundSize = `${fullVisualWidth}px 100%`;
-      style.backgroundPosition = `-${i * FULL_SEG}px 0`;
+      style.backgroundPosition = `-${i * (segW + GAP)}px 0`;
       style.backgroundRepeat = "no-repeat";
       style.backgroundColor = "transparent";
     } else {

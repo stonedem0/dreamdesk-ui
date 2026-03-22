@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -52,6 +52,7 @@ export default function App() {
           onMinimize={(v) => push(`minimize: ${v}`)}
           onFullscreen={(v) => push(`fullscreen: ${v}`)}
           onClose={() => push("close")}
+          bodyOverflow="hidden"
         >
           <Tabs>
             <Tab>General</Tab>
@@ -59,7 +60,7 @@ export default function App() {
             <Tab>Advanced</Tab>
             <Tab>Settings</Tab>
             <TabPanel>
-              <p className="win-content" style={{ overflowY: "auto", maxHeight: "14rem", display: "block" }}>
+              <p className="win-content dd-scrollable" style={{ "--dd-scrollable-max-h": "14rem" } as CSSProperties}>
                 Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
                 classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
                 Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
@@ -84,10 +85,10 @@ export default function App() {
         </Window>
 
         {/* Login window */}
-        <Window title="Hello" size="sm" resizable={false}>
-          <div className="win-content input-grid pc-input-grid">
-            <Input type="text" label="Username:" placeholder="" />
-            <Input type="password" label="Password:" placeholder="" />
+        <Window title="Hello" size="sm" resizable={false} bodyOverflow="hidden">
+          <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <Input type="text" label="Username:" placeholder="" layout="inline" />
+            <Input type="password" label="Password:" placeholder="" layout="inline" />
           </div>
           <div className="win-actions">
             <Button variant="primary">Ok</Button>

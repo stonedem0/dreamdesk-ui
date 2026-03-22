@@ -3,6 +3,7 @@ import { useId, type CSSProperties } from "react";
 export interface InputProps {
   type?: "text" | "password" | "email" | "number" | "search";
   label?: string;
+  layout?: "block" | "inline";
   id?: string;
   value?: string;
   defaultValue?: string;
@@ -16,6 +17,7 @@ export interface InputProps {
 export function Input({
   type = "text",
   label,
+  layout = "block",
   id: idProp,
   value,
   defaultValue,
@@ -28,8 +30,12 @@ export function Input({
   const generatedId = useId();
   const id = idProp ?? generatedId;
 
+  const gridStyle: CSSProperties = layout === "inline"
+    ? { display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", gap: "0.5rem" }
+    : {};
+
   return (
-    <div className={["input-grid", className].filter(Boolean).join(" ")} style={style}>
+    <div className={["input-grid", className].filter(Boolean).join(" ")} style={{ ...gridStyle, ...style }}>
       {label && (
         <label className="input-label" htmlFor={id}>
           {label}
