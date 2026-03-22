@@ -37,7 +37,8 @@
 
 .dd-win-header {
   display: flex;
-  height: var(--dd-header-height, 1.5rem);
+  box-sizing: border-box;
+  height: var(--dd-header-height, 1.9rem);
   padding: var(--dd-header-padding, 0.2rem 0.5rem);
   font-weight: var(--dd-header-font-weight, bold);
   font-size: var(--dd-header-font-size, 0.95rem);
