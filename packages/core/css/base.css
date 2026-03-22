@@ -26,6 +26,8 @@ body {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  border-radius: var(--dd-window-radius, 0); /* only themed when explicitly set */
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 
 .win:hover { box-shadow: var(--dd-window-shadow-hover, var(--dd-window-shadow, 0 2px 8px rgba(0, 0, 0, 0.08))); }
@@ -49,9 +51,14 @@ body {
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
   text-shadow: var(--dd-header-text-shadow, none);
+  backdrop-filter: var(--dd-header-backdrop-filter, var(--header-backdrop-filter, none));
 }
 
 .win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
+/* apply same backdrop filter to body area for strong glass look */
+.win-body {
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
+}
 
 /* When an explicit size is set (attrs or size tokens), let body fill */
 :host([data-ddw-explicit]) .win-body,
@@ -88,7 +95,7 @@ body {
 
 .win-controls {
   display: flex;
-  gap: 0.2rem;
+  gap: var(--dd-controls-gap, var(--controls-gap, 0.2rem));
   justify-content: flex-start;
 }
 
@@ -122,15 +129,16 @@ body {
   cursor: pointer;
   display: inline-block;
   text-align: center;
+  border-radius: var(--dd-btn-radius, var(--btn-radius, 0));
   transition: transform 0.1s ease, background-color 0.2s ease;
   box-sizing: border-box;
   line-height: 1;
 }
 
 /* remove legacy background-image icons; inline SVGs are used now */
-.btn--minimize { background-image: var(--btn-minimize-icon, none); }
-.btn--fullscreen { background-image: var(--btn-fullscreen-icon, none); }
-.btn--close { background-image: var(--btn-close-icon, none); }
+.btn--minimize { background-image: var(--btn-minimize-icon, none), var(--controls-minimize-gloss, var(--controls-gloss-image, none)); }
+.btn--fullscreen { background-image: var(--btn-fullscreen-icon, none), var(--controls-fullscreen-gloss, var(--controls-gloss-image, none)); }
+.btn--close { background-image: var(--btn-close-icon, none), var(--controls-close-gloss, var(--controls-gloss-image, none)); }
 
 .btn { background-color: var(--color-surface, #ffffff); }
 
@@ -159,8 +167,8 @@ body {
 
 /* Window controls */
 .win-controls button {
-  width: 1.4rem;
-  height: 1.3rem;
+  width: var(--dd-controls-button-w, var(--controls-button-w, 1.4rem));
+  height: var(--dd-controls-button-h, var(--controls-button-h, 1.3rem));
   background-repeat: no-repeat;
   background-position: center;
   box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
@@ -168,6 +176,7 @@ body {
   background-size: contain;
   border: var(--dd-controls-border, var(--color-window-border, var(--border)));
   background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
+  border-radius: var(--dd-controls-radius, var(--controls-radius, 0));
   transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
 }
 
@@ -215,6 +224,41 @@ body {
 
 .win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 
+/* Per-button themeable backgrounds (with safe fallbacks) */
+.win-controls .btn--minimize {
+  background-color: var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-minimize-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-minimize-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-minimize-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-minimize-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  /* Optional side-specific override: remove seam when adjacent */
+  border-right: var(--controls-minimize-border-right, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.win-controls .btn--fullscreen {
+  background-color: var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-fullscreen-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-fullscreen-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-fullscreen-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-fullscreen-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.win-controls .btn--close {
+  background-color: var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-close-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-close-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-close-radius, var(--dd-controls-close-radius, var(--dd-controls-radius, var(--controls-radius, 0))));
+  border: var(--controls-close-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  /* Optional side-specific override: remove seam when adjacent */
+  border-left: var(--controls-close-border-left, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.win-controls .btn--minimize:hover {
+  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, inherit));
+}
+.win-controls .btn--fullscreen:hover {
+  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, inherit));
+}
+.win-controls .btn--close:hover {
+  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, inherit));
+}
 /* Scrollbars */
 ::-webkit-scrollbar-track { background: var(--scroll-track-bg, #fffefe); border: var(--color-window-border, var(--border)); }
 ::-webkit-scrollbar-thumb { background: var(--scroll-thumb-bg, #fffefe); border: var(--color-window-border, var(--border)); background-size: 300% 300%; }
@@ -234,7 +278,7 @@ dreamdesk-tab-panel { display: none; }
 dreamdesk-tab-panel.active { display: block; }
 
 /* Toast styles */
-.toast { padding: 0.6rem; border: var(--color-window-border, var(--border)); width: 22rem; height: 2.2rem; box-shadow: var(--toast-shadow, var(--shadow, none)); background: var(--color-surface, #fff); color: var(--color-text, var(--black)); }
+.toast { padding: 0.6rem; border: var(--color-window-border, var(--border)); width: 22rem; height: 2.2rem; box-shadow: var(--toast-shadow, var(--shadow, none)); background: var(--dd-toast-bg, var(--color-surface, #fff)); color: var(--color-text, var(--black)); border-radius: var(--dd-toast-radius, 0); backdrop-filter: var(--dd-toast-backdrop-filter, none); }
 .toast-alert { background: var(--color-toast-alert, #ffd6d6); }
 .toast-notification { background: var(--color-toast-notification, #d6f0ff); }
 .toast-warning { background: var(--color-toast-warning, #fff4c2); }
@@ -279,9 +323,9 @@ dreamdesk-tab-panel.active { display: block; }
 .dreamdesk-input { font-family: var(--font-ui); height: 1.4rem; width: 60%; border-radius: 0px; border: var(--color-window-border, var(--border)); background: var(--color-input-background, #fff); color: var(--color-text, var(--black)); box-shadow: var(--input-shadow, none); }
 
 /* Progress bar */
-.progress-bar { background-color: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); }
+.progress-bar { background: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); border-radius: var(--dd-pb-bar-radius, var(--progress-bar-radius, 0)); }
 .progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); }
-.progress-track { inline-size: 100%; height: var(--dd-pb-h, 1.5rem); background-color: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); }
+.progress-track { inline-size: 100%; height: var(--dd-pb-h, 1.5rem); background: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); border-radius: var(--dd-pb-radius, var(--progress-radius, 0)); }
 .progress-track--blocky { padding-left: 3.4px; padding-right: 3.4px; }
 .progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; box-shadow: var(--progress-segment-shadow, none); }
 

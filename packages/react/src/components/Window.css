@@ -27,6 +27,8 @@
   box-sizing: border-box;
   inline-size: 100%;
   block-size: 100%;
+  border-radius: var(--dd-window-radius, 0);
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 
 .dd-win:hover {
@@ -50,6 +52,7 @@
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
   text-shadow: var(--dd-header-text-shadow, none);
+  backdrop-filter: var(--dd-header-backdrop-filter, var(--header-backdrop-filter, none));
 }
 
 .dd-win-header--no-move { cursor: default; }
@@ -61,20 +64,21 @@
 
 .dd-win-controls {
   display: flex;
-  gap: 0.2rem;
+  gap: var(--dd-controls-gap, var(--controls-gap, 0.2rem));
   justify-content: flex-start;
 }
 
 .dd-win-controls button {
-  width: 1.4rem;
-  height: 1.3rem;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+  width: var(--dd-controls-button-w, var(--controls-button-w, 1.4rem));
+  height: var(--dd-controls-button-h, var(--controls-button-h, 1.3rem));
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
+  background-size: contain, 100% 100%;
   box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
   cursor: pointer;
   border: var(--dd-controls-border, var(--color-window-border, var(--border)));
   background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
+  border-radius: var(--dd-controls-radius, var(--controls-radius, 0));
   transition: box-shadow 0.08s ease, transform 0.08s ease, background-color 0.08s ease;
   display: inline-flex;
   align-items: center;
@@ -121,9 +125,41 @@
   opacity: 1;
 }
 
-.dd-btn--minimize { background-image: var(--btn-minimize-icon, none); }
-.dd-btn--fullscreen { background-image: var(--btn-fullscreen-icon, none); }
-.dd-btn--close { background-image: var(--btn-close-icon, none); }
+.dd-win-controls .dd-btn--minimize {
+  background-image: var(--btn-minimize-icon, none), var(--controls-minimize-gloss, var(--controls-gloss-image, none));
+  background-color: var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-minimize-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-minimize-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-minimize-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-minimize-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  border-right: var(--controls-minimize-border-right, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.dd-win-controls .dd-btn--fullscreen {
+  background-image: var(--btn-fullscreen-icon, none), var(--controls-fullscreen-gloss, var(--controls-gloss-image, none));
+  background-color: var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-fullscreen-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-fullscreen-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-fullscreen-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
+  border: var(--controls-fullscreen-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.dd-win-controls .dd-btn--close {
+  background-image: var(--btn-close-icon, none), var(--controls-close-gloss, var(--controls-gloss-image, none));
+  background-color: var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
+  width: var(--controls-close-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
+  height: var(--controls-close-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
+  border-radius: var(--controls-close-radius, var(--dd-controls-close-radius, var(--dd-controls-radius, var(--controls-radius, 0))));
+  border: var(--controls-close-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  border-left: var(--controls-close-border-left, var(--dd-controls-border, var(--color-window-border, var(--border))));
+}
+.dd-win-controls .dd-btn--minimize:hover {
+  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, inherit));
+}
+.dd-win-controls .dd-btn--fullscreen:hover {
+  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, inherit));
+}
+.dd-win-controls .dd-btn--close:hover {
+  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, inherit));
+}
 
 .dd-win-body {
   padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem));
@@ -131,6 +167,7 @@
   min-height: 0;
   overflow: auto;
   box-sizing: border-box;
+  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 
 .terminal-window .dd-win-body {
@@ -146,6 +183,76 @@
   overflow: auto;
   height: 100%;
   box-sizing: border-box;
+}
+
+/* ── Custom scrollbar for window body ── */
+.dd-win-body::-webkit-scrollbar,
+.terminal-win-body::-webkit-scrollbar {
+  width: 1.4rem;
+}
+
+.dd-win-body::-webkit-scrollbar-track,
+.terminal-win-body::-webkit-scrollbar-track {
+  background: var(--scroll-track-bg, #f1f1f1);
+  border-left: var(--color-window-border, var(--border));
+  border-right: none;
+}
+
+.dd-win-body::-webkit-scrollbar-thumb,
+.terminal-win-body::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb-bg, #c0c0c0);
+  border-right: none;
+  box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light, #fff),
+              inset 2px -2px 1px var(--scroll-thumb-shadow-dark, #aaa);
+}
+
+.dd-win-body::-webkit-scrollbar-thumb:hover,
+.terminal-win-body::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-bg, #c0c0c0);
+  box-shadow: inset 2px -2px 1px var(--scroll-thumb-shadow-light, #fff),
+              inset -2px 2px 1px var(--scroll-thumb-shadow-dark, #aaa);
+}
+
+.dd-win-body::-webkit-scrollbar-button:hover,
+.terminal-win-body::-webkit-scrollbar-button:hover {
+  background-color: var(--scroll-button-bg, #bbb);
+  box-shadow: inset 2px -2px 1px var(--scroll-button-shadow-light, #ffffff),
+              inset -2px 2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+}
+
+.dd-win-body::-webkit-scrollbar-button,
+.terminal-win-body::-webkit-scrollbar-button {
+  display: block;
+  height: 1rem;
+  width: 1rem;
+  background-color: var(--scroll-button-bg, #ccc);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-left: var(--color-window-border, var(--border));
+  border-right: none;
+  box-shadow: inset -2px 2px 1px var(--scroll-button-shadow-light, #ffffff),
+              inset 2px -2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+}
+
+.dd-win-body::-webkit-scrollbar-button:vertical:decrement,
+.terminal-win-body::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>');
+  border-bottom: none;
+}
+
+.dd-win-body::-webkit-scrollbar-button:vertical:increment,
+.terminal-win-body::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>');
+  border-top: none;
+}
+
+.dd-win-body::-webkit-scrollbar-button:vertical:increment:start,
+.dd-win-body::-webkit-scrollbar-button:vertical:decrement:end,
+.terminal-win-body::-webkit-scrollbar-button:vertical:increment:start,
+.terminal-win-body::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
 }
 
 .dd-win-resize-handle {

@@ -11,15 +11,15 @@ import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const isVista = theme === "vista";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "monospace" }}>
       <span>pastelcore</span>
       <Toggle
-        checked={isDark}
-        onChange={(v) => setTheme(v ? "dark" : "pastelcore")}
+        checked={isVista}
+        onChange={(v) => setTheme(v ? "vista" : "pastelcore")}
       />
-      <span>dark</span>
+      <span>vista</span>
     </div>
   );
 }
@@ -46,45 +46,30 @@ export default function App() {
       <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "flex-start" }}>
         <ThemeToggle />
 
-        {/* Basic window */}
+        {/* Main demo window: tabs + scrollable content */}
         <Window
-          title="Basic Window"
+          title="Custom scroll"
           onMinimize={(v) => push(`minimize: ${v}`)}
           onFullscreen={(v) => push(`fullscreen: ${v}`)}
           onClose={() => push("close")}
         >
-          <p className="win-content">Hello from React!</p>
-        </Window>
-
-        {/* Small window, not resizable */}
-        <Window title="Error" size="sm" resizable={false}>
-          <p className="win-content">Something went wrong.</p>
-          <div className="win-actions">
-            <button className="btn btn--primary">OK</button>
-            <button className="btn btn--ghost">Cancel</button>
-          </div>
-        </Window>
-
-        {/* Disabled controls with tooltips */}
-        <Window
-          title="Locked"
-          size="sm"
-          disableMinimize="Not available"
-          disableFullscreen
-          minimizeIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="11" width="14" height="2"/></svg>'
-          closeIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'
-        >
-          <p className="win-content">Minimize is disabled with tooltip.</p>
-        </Window>
-
-        {/* Tabs */}
-        <Window title="Tabs" onMinimize={(v) => push(`minimize: ${v}`)}>
           <Tabs>
             <Tab>General</Tab>
             <Tab>Appearance</Tab>
             <Tab>Advanced</Tab>
+            <Tab>Settings</Tab>
             <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>General settings panel.</p>
+              <p className="win-content" style={{ overflowY: "auto", maxHeight: "14rem", display: "block" }}>
+                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
+                classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
+                Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
+                words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
+                classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32
+                and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,
+                written in 45 BC. This book is a treatise on the theory of ethics, very popular during the
+                Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line
+                in section 1.10.32.
+              </p>
             </TabPanel>
             <TabPanel>
               <p className="win-content" style={{ padding: "0.5rem" }}>Appearance panel.</p>
@@ -92,30 +77,20 @@ export default function App() {
             <TabPanel>
               <p className="win-content" style={{ padding: "0.5rem" }}>Advanced settings panel.</p>
             </TabPanel>
+            <TabPanel>
+              <p className="win-content" style={{ padding: "0.5rem" }}>Configure your preferences here.</p>
+            </TabPanel>
           </Tabs>
         </Window>
 
-        {/* Buttons */}
-        <Window title="Buttons" size="sm" resizable={false}>
-          <div className="win-content" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <Button variant="primary">Primary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="help">Help</Button>
-            <Button variant="primary" disabled>Disabled</Button>
-            <Button variant="primary" size="sm">Small</Button>
-            <Button variant="primary" size="lg">Large</Button>
-            <Button variant="primary" px="1rem" py="0.4rem" fontSize="1.05rem">Custom</Button>
-          </div>
-        </Window>
-
-        {/* Inputs */}
-        <Window title="Login" size="sm" resizable={false}>
+        {/* Login window */}
+        <Window title="Hello" size="sm" resizable={false}>
           <div className="win-content input-grid pc-input-grid">
-            <Input type="text" label="Username:" placeholder="enter username" />
-            <Input type="password" label="Password:" placeholder="••••••••" />
+            <Input type="text" label="Username:" placeholder="" />
+            <Input type="password" label="Password:" placeholder="" />
           </div>
           <div className="win-actions">
-            <Button variant="primary">OK</Button>
+            <Button variant="primary">Ok</Button>
             <Button variant="ghost">Cancel</Button>
           </div>
         </Window>

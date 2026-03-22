@@ -10,12 +10,12 @@ window.addEventListener('load', () => {
     if (!toggle) return; 
     toggle.addEventListener('toggle-changed', (e) => {
       const checked = e.detail?.checked;
-      const theme = checked ? 'dark' : 'pastelcore';
+      const theme = checked ? 'vista' : 'pastelcore';
       document.documentElement.setAttribute('data-theme', theme);
       document.dispatchEvent(new CustomEvent('dreamdesk-theme-changed', { detail: { theme } }));
-      if (theme === 'dark') {
-        document.body.style.background = '#242426';
-        document.body.style.color = '#3ff10b';
+      if (theme === 'vista') {
+        document.body.style.background = 'var(--app-color, #eaf4ff)';
+        document.body.style.color = 'var(--color-text, #0f1b2b)';
       } else {
         document.body.style.background = 'var(--app-color, #fff5fa)';
         document.body.style.color = 'var(--black)';

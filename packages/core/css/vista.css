@@ -1,0 +1,160 @@
+/* Vista Theme CSS */
+
+html[data-theme="vista"] {
+  /* Vista palette */
+  --vista-blue: #3a7bd5;
+  --vista-cyan: #4fc3f7;
+  --vista-sky: #eaf4ff;
+  --vista-deep: #274b74;
+
+  /* App surface */
+  --app-color: #eaf4ff;
+  --line-color: #2d4f73;
+
+  /* Semantic colors */
+  --color-primary: var(--vista-blue);
+  --color-secondary: var(--vista-cyan);
+  --color-accent: #68e0cf;
+  --color-tertiary: #8ec5fc;
+  --color-background: var(--app-color);
+  --color-surface: #ffffff;
+  --color-text: #0f1b2b;
+  --color-text-muted: #415a77;
+  --color-border: var(--line-color);
+
+  /* Interactive */
+  --color-hover: #4facfe;
+  --color-active: var(--vista-blue);
+  --color-disabled: #c7d8eb;
+  --color-error: #ff9aa2;
+  --color-success: #98f5a7;
+  --color-warning: #ffe299;
+
+  /* Window */
+  --color-window-header: linear-gradient(90deg, rgba(79,195,247,0.1) 0%, rgba(58,123,213,0.1) 100%);
+  --color-window-body: rgba(255,255,255,0.1);
+  --color-window-border: var(--border);
+  --resize-stripe-color: var(--line-color);
+  --dd-window-radius: 0.2rem;
+  /* Glass blur */
+  --window-backdrop-filter: blur(18px) saturate(130%) brightness(1.05);
+  --header-backdrop-filter: blur(20px) saturate(140%) brightness(1.06);
+
+  /* Inputs */
+  --color-input-background: #f7fbff;
+  --color-input-border: rgba(45,79,115,0.35);
+  --color-input-focus: #ffffff;
+
+  /* Buttons */
+  --dd-btn-radius: 0.2rem;
+  --dd-btn-border: 1px solid rgba(11,28,46,0.6);
+  /* Vista blue primary */
+  --color-button-primary: linear-gradient(to bottom, #cfeaff 0%, #8fc8f7 50%, #66afea 51%, #3f86c6 96%, #e9f6ff 100%);
+  /* Vista silver ghost */
+  --color-button-ghost: linear-gradient(to bottom, #f4f4f4 0%, #e3e3e3 50%, #d7d7d7 51%, #d2d2d2 96%, #ffffff 100%);
+  /* Depth */
+  --button-shadow-primary: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.12);
+  --button-shadow-ghost: inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.1);
+
+  /* Toasts */
+  --dd-toast-radius: 0.4rem;
+  --dd-toast-backdrop-filter: blur(12px) saturate(130%) brightness(1.03);
+  --dd-toast-bg: rgba(255,255,255,0.38);
+  --color-toast-alert: rgba(233, 110, 110, 0.38);
+  --color-toast-notification: rgba(214, 239, 255, 0.38);
+  --color-toast-warning: rgba(255, 244, 194, 0.38);
+
+  /* Progress */
+  --dd-pb-radius: 0.5rem;
+  --dd-pb-bar-radius: 0.5rem 0 0 0.5rem;
+  --dd-progress-enable-hue-rotate: 0;
+  --color-progress-track: linear-gradient(to bottom, #f4f4f4 0%, #e3e3e3 50%, #d7d7d7 51%, #d2d2d2 96%, #ffffff 100%);
+  --color-progress-bar: linear-gradient(to bottom, #b8ffb2 0%, #28d64f 40%, #1ec441 70%, #18a738 100%);
+  --color-progress-segment: #28d64f;
+  --color-progress-gradient: linear-gradient(90deg, #28d64f 0%, #18a738 100%);
+  --progress-track-shadow: inset 0 2px 0 rgba(255,255,255,0.85), inset 0 -2px 0 rgba(0,0,0,0.12);
+  --progress-bar-shadow: inset 0 2px 0 rgba(255,255,255,0.85);
+
+  /* Toggle */
+  --color-toggle-background: #cfeaff;
+  --color-toggle-knob: #ffffff;
+  --color-toggle-active: var(--vista-blue);
+
+  /* Terminal */
+  --color-terminal-bg: #0e1525;
+  --color-terminal-fg: #cfeaff;
+
+  /* Control button icons */
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><rect x='7' y='26' width='20' height='6' rx='1' ry='1' fill='%23ffffff' stroke='%230b1c2e' stroke-width='2'/></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='40'%20viewBox='0%200%2050%2050'%20aria-hidden='true'%3E%3Crect%20x='12'%20y='14'%20width='26'%20height='20'%20fill='none'%20stroke='%230b1c2e'%20stroke-width='9'/%3E%3Crect%20x='12'%20y='14'%20width='26'%20height='20'%20fill='none'%20stroke='%23ffffff'%20stroke-width='5'/%3E%3C/svg%3E");
+  --btn-close-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='40'%20viewBox='0%200%2040%2040'%20aria-hidden='true'%3E%3Cpath%20d='M12%2012%20L28%2028%20M28%2012%20L12%2028'%20stroke='%230b1c2e'%20stroke-width='8'%20stroke-linecap='square'%20stroke-linejoin='bevel'/%3E%3Cpath%20d='M12%2012%20L28%2028%20M28%2012%20L12%2028'%20stroke='%23ffffff'%20stroke-width='5'%20stroke-linecap='square'%20stroke-linejoin='bevel'/%3E%3C/svg%3E");
+
+  /* Vista-style caption buttons */
+  --dd-controls-radius: 0.5rem 0 0 0.5rem;
+  --dd-controls-border: 1.2px solid rgba(11, 28, 46, 0.7);
+  /* Customizable radius and border width/color for caption buttons */
+
+  --controls-border-width: 4px;
+  --controls-border-style: solid;
+  --controls-border-color: rgba(45,79,115,0.45);
+  --window-controls-button-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.15);
+  --color-window-control-bg: rgba(255,255,255,0.45);
+  /* Make minimize/maximize gray again; keep close red */
+  --color-window-control-minimize-bg: #dfe5ef;
+  --color-window-control-fullscreen-bg: #dfe5ef;
+  --color-window-control-close-bg: rgba(221,96,96,0.98);
+  --color-window-control-minimize-bg-hover: #eef2f8;
+  --color-window-control-fullscreen-bg-hover: #eef2f8;
+  --color-window-control-close-bg-hover: rgba(233,110,110,1);
+  /* Per-button border overrides to avoid clashing seams */
+  /* Keep all borders on fullscreen; rely on theme default */
+  --controls-fullscreen-border: var(--dd-controls-border);
+  /* Minimize: keep borders but drop the right edge */
+  --controls-minimize-border: var(--dd-controls-border);
+  --controls-close-border: var(--dd-controls-border);
+  /* Remove only the clashing sides */
+  --controls-minimize-border-right: none;
+  --controls-close-border-left: none;
+  /* glossy mid-band highlight overlay (painted under icon via layered background) */
+  --controls-gloss-image-close: linear-gradient(to bottom,  #f3c3bd 0%,#e86958 50%,#e92203 51%,#c81b00 96%,#ffffff 100%);
+  --controls-gloss-image:  linear-gradient(to bottom, #f4f4f4 0%,#e3e3e3 50%,#d7d7d7 51%,#d2d2d2 96%,#ffffff 100%);
+  /* Per-button gloss overrides: neutral silver for minimize/fullscreen */
+  --controls-minimize-gloss: var(--controls-gloss-image);
+  --controls-fullscreen-gloss: var(--controls-gloss-image);
+  --controls-close-gloss: var(--controls-gloss-image-close);
+  /* Control sizes - make close wider */
+  --controls-button-w: 1.4rem;
+  --controls-button-h: 1.3rem;
+  --controls-close-w: 2.2rem;
+  /* Custom gap between caption buttons */
+  --controls-gap: 0rem;
+  /* Per-button radii to match Vista corners */
+  --controls-minimize-radius: 0.2rem 0 0 0.2rem;   /* more round on left side */
+  --controls-fullscreen-radius: 0;                 /* subtle round for center button */
+  --controls-close-radius: 0 0.2rem 0.2rem 0;      /* round right corners only */
+  --dd-controls-close-radius: 0 0.2rem 0.2rem 0;   /* theme-specific close radius */
+
+  /* Visual depth */
+  --shadow: 0 2px 8px rgba(22, 40, 68, 0.15);
+  --window-shadow: 0 4px 16px rgba(22, 40, 68, 0.18);
+  --window-header-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.08);
+  --window-controls-button-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.1);
+  --toast-shadow: var(--shadow);
+  --progress-track-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.08);
+  --progress-bar-shadow: inset 0 2px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.08);
+  --toggle-slider-shadow: inset -2px 2px 0.6px rgba(22,40,68,0.08), inset 2px -2px 0.6px rgba(255,255,255,0.65);
+  --toggle-knob-shadow: inset -1.5px 1.5px 0.5px #ffffff, inset 1.5px -1.5px 0.5px #c6d7ea;
+  --input-shadow: inset -1px 1px 0 rgba(255,255,255,0.8), inset 1px -1px 0 rgba(198, 215, 234, 0.8);
+
+  /* Scrollbars */
+  --scroll-track-bg: #f3f8ff;
+  --scroll-thumb-bg: #9bd0ff;
+  --scroll-thumb-shadow-light: #ffffff;
+  --scroll-thumb-shadow-dark: #b7cff0;
+  --scroll-button-bg: #e7f1ff;
+  --scroll-button-shadow-light: #ffffff;
+  --scroll-button-shadow-dark: #b7c9e3;
+  --scroll-arrow-color: #1c2a3d;
+}
+
+
