@@ -86,9 +86,9 @@ export default function App() {
 
         {/* Login window */}
         <Window title="Hello" size="sm" resizable={false} bodyOverflow="hidden">
-          <div className="win-content input-grid pc-input-grid">
-            <Input type="text" label="Username:" placeholder="" />
-            <Input type="password" label="Password:" placeholder="" />
+          <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <Input type="text" label="Username:" placeholder="" layout="inline" />
+            <Input type="password" label="Password:" placeholder="" layout="inline" />
           </div>
           <div className="win-actions">
             <Button variant="primary">Ok</Button>

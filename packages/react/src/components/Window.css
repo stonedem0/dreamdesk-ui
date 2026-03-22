@@ -200,10 +200,12 @@
 /* ── Scrollable content block (use on inner elements, not the window body) ── */
 .dd-scrollable {
   overflow-y: auto;
+  width: var(--dd-scrollable-w, 100%);
   max-height: var(--dd-scrollable-max-h, 16rem);
   border: var(--color-window-border, var(--border));
-  background: var(--dd-scrollable-bg, var(--color-window-body, #fff));
+  background: var(--dd-scrollable-bg, var(--color-input-background, var(--app-color, #fff5fa)));
   scrollbar-gutter: stable;
+  box-sizing: border-box;
 }
 
 .dd-scrollable::-webkit-scrollbar-track { border-right: var(--color-window-border, var(--border)); }
