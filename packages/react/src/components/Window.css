@@ -2,7 +2,7 @@
   display: block;
   --ddw-w: auto;
   --ddw-h: auto;
-  inline-size: clamp(180px, 90vw, 48rem);
+  inline-size: clamp(180px, 78vw, 48rem);
   block-size: clamp(120px, 80svh, 32rem);
 }
 
@@ -176,10 +176,12 @@
 
 .dd-win-body {
   padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem));
+  margin: var(--dd-body-margin, 0);
   flex: 1 1 auto;
   min-height: 0;
   overflow: var(--dd-body-overflow, auto);
   box-sizing: border-box;
+  background-color: var(--dd-body-bg, transparent);
   backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
 }
 
@@ -207,6 +209,7 @@
   background: var(--dd-scrollable-bg, var(--color-input-background, var(--app-color, #fff5fa)));
   scrollbar-gutter: stable;
   box-sizing: border-box;
+  box-shadow: var(--dd-scrollable-shadow, none);
 }
 
 .dd-scrollable::-webkit-scrollbar-track { border-right: var(--color-window-border, var(--border)); }
@@ -217,7 +220,7 @@
 .dd-win-body::-webkit-scrollbar,
 .terminal-win-body::-webkit-scrollbar,
 .dd-scrollable::-webkit-scrollbar {
-  width: 1.4rem;
+  width: var(--scroll-width, 1.4rem);
 }
 
 .dd-win-body::-webkit-scrollbar-track,
@@ -231,18 +234,26 @@
 .dd-win-body::-webkit-scrollbar-thumb,
 .terminal-win-body::-webkit-scrollbar-thumb,
 .dd-scrollable::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb-bg, #c0c0c0);
+  background-image: var(--scroll-thumb-icon, none), var(--scroll-thumb-gradient-image, none);
+  background-color: var(--scroll-thumb-bg, #c0c0c0);
+  background-size: var(--scroll-thumb-icon-size, 16px 16px), 100% 100%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
   border-right: none;
-  box-shadow: inset -2px 2px 1px var(--scroll-thumb-shadow-light, #fff),
-              inset 2px -2px 1px var(--scroll-thumb-shadow-dark, #aaa);
+  border-radius: var(--scroll-thumb-radius, 0);
+  box-shadow: var(--scroll-thumb-box-shadow,
+    inset -2px 2px 1px var(--scroll-thumb-shadow-light, #fff),
+    inset 2px -2px 1px var(--scroll-thumb-shadow-dark, #aaa));
 }
 
 .dd-win-body::-webkit-scrollbar-thumb:hover,
 .terminal-win-body::-webkit-scrollbar-thumb:hover,
 .dd-scrollable::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-bg, #c0c0c0);
-  box-shadow: inset 2px -2px 1px var(--scroll-thumb-shadow-light, #fff),
-              inset -2px 2px 1px var(--scroll-thumb-shadow-dark, #aaa);
+  background-image: var(--scroll-thumb-icon-hover, var(--scroll-thumb-icon, none)), var(--scroll-thumb-gradient-image-hover, var(--scroll-thumb-gradient-image, none));
+  background-color: var(--scroll-thumb-bg-hover, var(--scroll-thumb-bg, #c0c0c0));
+  box-shadow: var(--scroll-thumb-box-shadow-hover, var(--scroll-thumb-box-shadow,
+    inset 2px -2px 1px var(--scroll-thumb-shadow-light, #fff),
+    inset -2px 2px 1px var(--scroll-thumb-shadow-dark, #aaa)));
 }
 
 .dd-win-body::-webkit-scrollbar-button:hover,
