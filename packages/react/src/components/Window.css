@@ -209,6 +209,7 @@
   background: var(--dd-scrollable-bg, var(--color-input-background, var(--app-color, #fff5fa)));
   scrollbar-gutter: stable;
   box-sizing: border-box;
+  box-shadow: var(--dd-scrollable-shadow, none);
 }
 
 .dd-scrollable::-webkit-scrollbar-track { border-right: var(--color-window-border, var(--border)); }
