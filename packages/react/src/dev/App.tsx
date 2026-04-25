@@ -1,4 +1,4 @@
-import { useState, useEffect, type CSSProperties } from "react";
+import { useState, useEffect } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -52,9 +52,9 @@ export default function App() {
           onMinimize={(v) => push(`minimize: ${v}`)}
           onFullscreen={(v) => push(`fullscreen: ${v}`)}
           onClose={() => push("close")}
-          bodyOverflow="hidden"
+          scrollContent
           width="567px"
-          height="500px"
+          height="400px"
         >
           <Tabs>
             <Tab>General</Tab>
@@ -62,7 +62,7 @@ export default function App() {
             <Tab>Advanced</Tab>
             <Tab>Settings</Tab>
             <TabPanel>
-              <p className="win-content dd-scrollable" style={{ "--dd-scrollable-max-h": "23rem" } as CSSProperties}>
+              <p className="win-content dd-scrollable dd-scrollable--fill">
                 Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
                 classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
                 Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
