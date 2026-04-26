@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-export type DreamDeskTheme = "pastelcore" | "dark";
+export type DreamDeskTheme = "pastelcore" | "dark" | "vista";
 interface ThemeContextValue {
     theme: DreamDeskTheme;
     setTheme: (theme: DreamDeskTheme) => void;

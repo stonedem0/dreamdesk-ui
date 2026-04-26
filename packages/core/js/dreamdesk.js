@@ -1,5 +1,38 @@
 import { minimize, fullscreen, unfullscreen, close, cancelRunningAnimations } from "./animations.js";
 
+function sanitizeSvg(raw) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(raw, "image/svg+xml");
+    if (doc.querySelector("parsererror")) return "";
+    const walk = (node) => {
+      if (node.tagName.toLowerCase() === "script") {
+        node.parentNode?.removeChild(node);
+        return;
+      }
+      for (const attr of Array.from(node.attributes)) {
+        if (attr.name.startsWith("on") || attr.value.toLowerCase().includes("javascript:")) {
+          node.removeAttribute(attr.name);
+        }
+      }
+      Array.from(node.children).forEach(walk);
+    };
+    walk(doc.documentElement);
+    return new XMLSerializer().serializeToString(doc.documentElement);
+  } catch {
+    return "";
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 class DreamDeskComponent extends HTMLElement {
   constructor() {
     super();
@@ -421,11 +454,16 @@ class DreamDeskWindow extends DreamDeskComponent {
 
     if (!this._movable) {
       header.style.cursor = 'default';
-      this._dragBound = false;
+      if (this._dragController) {
+        this._dragController.abort();
+        this._dragController = null;
+      }
       return;
     }
-    if (this._dragBound) return;
-    this._dragBound = true;
+    if (this._dragController) return;
+
+    this._dragController = new AbortController();
+    const { signal } = this._dragController;
     header.style.cursor = 'move';
 
     let isDragging = false;
@@ -468,7 +506,6 @@ class DreamDeskWindow extends DreamDeskComponent {
       if (this.state?.isFullscreen && !allowFSDrag) return;
       if (e.target.closest('.win-controls')) return;
 
-      // Kill any lingering animations that may be applying an animation style layer
       cancelRunningAnimations(this);
 
       const hostRect = this.getBoundingClientRect();
@@ -476,7 +513,6 @@ class DreamDeskWindow extends DreamDeskComponent {
       offsetY = e.clientY - hostRect.top;
       isDragging = true;
 
-      // Freeze current size to prevent layout-driven expansion during drag
       const computed = getComputedStyle(this);
       const currentW = computed.width;
       const currentH = computed.height;
@@ -487,9 +523,17 @@ class DreamDeskWindow extends DreamDeskComponent {
       DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
       this.style.zIndex = String(DreamDeskWindow._z);
 
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
-      document.addEventListener('pointerup', onPointerUp, { capture: true, signal: this._eventController?.signal });
-    }, { signal: this._eventController?.signal });
+      document.addEventListener('pointermove', onPointerMove, { capture: true, signal });
+      document.addEventListener('pointerup', onPointerUp, { capture: true, signal });
+    }, { signal });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._dragController) {
+      this._dragController.abort();
+      this._dragController = null;
+    }
   }
 
   _bindFocusRaise() {
@@ -515,15 +559,17 @@ class DreamDeskWindow extends DreamDeskComponent {
       let svgMarkup = "";
       const trimmed = iconIdOrSvg.trim();
       if (trimmed.startsWith("<svg")) {
-        svgMarkup = trimmed;
+        svgMarkup = sanitizeSvg(trimmed);
       } else if (window.DreamDeskIcons && typeof window.DreamDeskIcons[trimmed] === "string") {
-        svgMarkup = window.DreamDeskIcons[trimmed];
+        svgMarkup = sanitizeSvg(window.DreamDeskIcons[trimmed]);
       } else {
         // Not a known key or inline SVG; ignore gracefully
         return;
       }
 
-      // Clear existing content and inject SVG
+      if (!svgMarkup) return;
+
+      // Clear existing content and inject sanitized SVG
       btn.innerHTML = svgMarkup;
       // Ensure background-image (CSS var) doesn't clash visually
       btn.style.backgroundImage = "none";
@@ -751,7 +797,11 @@ class DreamDeskProgressBar extends DreamDeskComponent {
       if (this._progressResizeObserver) {
         try { this._progressResizeObserver.disconnect(); } catch(_) {}
       }
-      this._progressResizeObserver = new ResizeObserver(() => rebuild());
+      let _rebuildTimer = null;
+      this._progressResizeObserver = new ResizeObserver(() => {
+        if (_rebuildTimer) clearTimeout(_rebuildTimer);
+        _rebuildTimer = setTimeout(rebuild, 50);
+      });
       this._progressResizeObserver.observe(track);
     } else {
       this._bar = this.shadowRoot.querySelector(".progress-bar");
@@ -858,13 +908,20 @@ class DreamDeskTabs extends DreamDeskComponent {
   }
 
   setupEventListeners() {
+    if (this._tabListenerBound) return;
+    this._tabListenerBound = true;
     this.addEventListener("click", (e) => {
       const tab = e.target.closest("[data-tab-index]");
       if (tab) {
         const index = parseInt(tab.getAttribute("data-tab-index"), 10);
         this._activateTab(index);
       }
-    });
+    }, { signal: this._eventController?.signal });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._tabListenerBound = false;
   }
 
   _activateTab(index) {
@@ -940,11 +997,30 @@ class DreamDeskButton extends DreamDeskComponent {
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'size') {
-      // size tokens handled via CSS :host selectors
       return;
     }
     if (name === 'disabled') {
       this._syncDisabled();
+      return;
+    }
+    if (name === 'variant') {
+      this.variant = newVal || 'primary';
+      const btn = this.shadowRoot?.querySelector('button');
+      if (btn) btn.className = `btn btn--${this.variant}`;
+      return;
+    }
+    if (name === 'action') {
+      this.action = newVal;
+      const btn = this.shadowRoot?.querySelector('button');
+      if (btn) {
+        if (newVal) {
+          btn.setAttribute('data-action', newVal);
+          btn.setAttribute('aria-label', newVal);
+        } else {
+          btn.removeAttribute('data-action');
+          btn.removeAttribute('aria-label');
+        }
+      }
       return;
     }
     const varName = DreamDeskButton.sizeVarMap[name];
@@ -998,9 +1074,9 @@ class DreamDeskToast extends DreamDeskComponent {
 
   template() {
     return `
-      <div class="toast toast-${this._type}">
-        <span class="toast-btn--close" data-action="close">&times;</span>
-        ${this._message}
+      <div class="toast toast-${escapeHtml(this._type)}">
+        <button class="toast-btn--close" data-action="close" aria-label="close">&times;</button>
+        ${escapeHtml(this._message)}
       </div>
     `;
   }

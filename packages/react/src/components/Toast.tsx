@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 
 export interface ToastProps {
   type?: "alert" | "notification" | "warning";
@@ -8,6 +8,14 @@ export interface ToastProps {
 
 export function Toast({ type = "notification", message, onClose }: ToastProps) {
   const [visible, setVisible] = useState(true);
+  const prevMessageRef = useRef(message);
+
+  useEffect(() => {
+    if (message !== prevMessageRef.current) {
+      prevMessageRef.current = message;
+      setVisible(true);
+    }
+  }, [message]);
 
   if (!visible) return null;
 
@@ -18,9 +26,9 @@ export function Toast({ type = "notification", message, onClose }: ToastProps) {
 
   return (
     <div className={`toast toast-${type}`}>
-      <span className="toast-btn--close" onClick={handleClose} role="button" aria-label="close">
+      <button className="toast-btn--close" onClick={handleClose} aria-label="close">
         &times;
-      </span>
+      </button>
       {message}
     </div>
   );

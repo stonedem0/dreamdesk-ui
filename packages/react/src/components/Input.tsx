@@ -45,11 +45,12 @@ export function Input({
         type={type}
         id={id}
         className="dreamdesk-input"
-        value={value}
-        defaultValue={defaultValue}
+        {...(value !== undefined
+          ? { value, onChange: onChange ? (e) => onChange(e.target.value, e) : undefined }
+          : { defaultValue, onChange: onChange ? (e) => onChange(e.target.value, e) : undefined }
+        )}
         placeholder={placeholder}
         disabled={disabled}
-        onChange={onChange ? (e) => onChange(e.target.value, e) : undefined}
       />
     </div>
   );

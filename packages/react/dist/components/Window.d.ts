@@ -13,6 +13,8 @@ export interface WindowProps {
     disableFullscreen?: boolean | string;
     disableClose?: boolean | string;
     fullscreenMode?: "expand";
+    bodyOverflow?: "auto" | "hidden" | "scroll";
+    scrollContent?: boolean;
     onMinimize?: (isMinimized: boolean) => void;
     onFullscreen?: (isFullscreen: boolean) => void;
     onClose?: () => void;
@@ -20,5 +22,5 @@ export interface WindowProps {
     style?: CSSProperties;
     className?: string;
 }
-export declare function Window({ title, size, resizable, movable, width, height, minimizeIcon, fullscreenIcon, closeIcon, disableMinimize, disableFullscreen, disableClose, fullscreenMode, onMinimize, onFullscreen, onClose, children, style, className, }: WindowProps): import("react/jsx-runtime").JSX.Element;
+export declare function Window({ title, size, resizable, movable, width, height, minimizeIcon, fullscreenIcon, closeIcon, disableMinimize, disableFullscreen, disableClose, fullscreenMode, bodyOverflow, scrollContent, onMinimize, onFullscreen, onClose, children, style, className, }: WindowProps): import("react/jsx-runtime").JSX.Element;
 //# sourceMappingURL=Window.d.ts.map
