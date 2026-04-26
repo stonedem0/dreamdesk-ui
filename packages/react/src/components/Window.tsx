@@ -31,6 +31,7 @@ export interface WindowProps {
   disableClose?: boolean | string;
   fullscreenMode?: "expand";
   bodyOverflow?: "auto" | "hidden" | "scroll";
+  scrollContent?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   onClose?: () => void;
@@ -54,10 +55,34 @@ function freezeState(el: HTMLElement): PreviousState {
   };
 }
 
+function sanitizeSvg(raw: string): string {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(raw, "image/svg+xml");
+    if (doc.querySelector("parsererror")) return "";
+    const walk = (node: Element) => {
+      if (node.tagName.toLowerCase() === "script") {
+        node.parentNode?.removeChild(node);
+        return;
+      }
+      for (const attr of Array.from(node.attributes)) {
+        if (attr.name.startsWith("on") || attr.value.toLowerCase().includes("javascript:")) {
+          node.removeAttribute(attr.name);
+        }
+      }
+      Array.from(node.children).forEach(walk);
+    };
+    walk(doc.documentElement);
+    return new XMLSerializer().serializeToString(doc.documentElement);
+  } catch {
+    return "";
+  }
+}
+
 function resolveIcon(iconProp?: string) {
   if (!iconProp) return null;
   const trimmed = iconProp.trim();
-  if (trimmed.startsWith("<svg")) return trimmed;
+  if (trimmed.startsWith("<svg")) return sanitizeSvg(trimmed) || null;
   return null;
 }
 
@@ -114,6 +139,7 @@ export function Window({
   disableClose,
   fullscreenMode,
   bodyOverflow,
+  scrollContent,
   onMinimize,
   onFullscreen,
   onClose,
@@ -247,6 +273,7 @@ export function Window({
       header.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("pointermove", onPointerMove, { capture: true });
       document.removeEventListener("pointerup", onPointerUp, { capture: true });
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [movable, isFullscreen, fullscreenMode, raise]);
 
@@ -340,8 +367,13 @@ export function Window({
         </div>
         <div
           className="dd-win-body"
-          style={bodyOverflow ? { "--dd-body-overflow": bodyOverflow } as React.CSSProperties : undefined}
-        >{children}</div>
+          style={{
+            ...(bodyOverflow ? { "--dd-body-overflow": bodyOverflow } as React.CSSProperties : {}),
+            ...(scrollContent ? { "--dd-body-overflow": "hidden", padding: 0, display: "flex", flexDirection: "column", flex: "1 1 0", minHeight: 0 } as React.CSSProperties : {}),
+          }}
+        >
+          {scrollContent ? <div className="dd-win-scroll-content">{children}</div> : children}
+        </div>
         {resizable && <div ref={handleRef} className="dd-win-resize-handle" />}
       </div>
     </div>

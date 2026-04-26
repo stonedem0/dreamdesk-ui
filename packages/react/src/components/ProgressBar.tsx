@@ -36,10 +36,17 @@ function useBlockySegments(
       setLayout({ count, segW });
     };
 
-    const ro = new ResizeObserver(rebuild);
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const ro = new ResizeObserver(() => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(rebuild, 50);
+    });
     ro.observe(track);
     rebuild();
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
   }, [enabled, trackRef]);
 
   const { count: segments, segW } = layout;

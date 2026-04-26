@@ -282,7 +282,7 @@ dreamdesk-tab-panel.active { display: block; }
 .toast-alert { background: var(--color-toast-alert, #ffd6d6); }
 .toast-notification { background: var(--color-toast-notification, #d6f0ff); }
 .toast-warning { background: var(--color-toast-warning, #fff4c2); }
-.toast-btn--close { color: var(--color-text, var(--black)); font-weight: bold; float: right; font-size: 18px; line-height: 13px; cursor: pointer; transition: 0.3s; width: 11px; }
+.toast-btn--close { appearance: none; background: none; border: none; padding: 0; margin: 0; color: var(--color-text, var(--black)); font-weight: bold; float: right; font-size: 18px; line-height: 13px; cursor: pointer; transition: 0.3s; width: 11px; }
 
 /* Alerts shadow emphasis */
 .toast-alert, .toast-notification, .toast-warning {
