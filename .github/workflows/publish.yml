@@ -51,7 +51,6 @@ jobs:
           fi
           if [ -n "$TAG" ]; then
             echo "Using tag $TAG"
-            git checkout --quiet "$TAG" || true
             VER="${TAG#v}"
             CUR=$(node -p "require('./package.json').version")
             if [ "$CUR" != "$VER" ]; then
