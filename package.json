@@ -1,6 +1,6 @@
 {
   "name": "dreamdesk-ui",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "private": true,
   "description": "Dreamdesk UI — Web Components and React component library.",
   "scripts": {
