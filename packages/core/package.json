@@ -12,11 +12,8 @@
     "./css/dark.css": "./css/dark.css"
   },
   "files": [
-    "js/*.js",
-    "css/base.css",
-    "css/pastelcore.css",
-    "css/globals.css",
-    "css/dark.css",
+    "js/",
+    "css/",
     "README.md"
   ],
   "keywords": [
@@ -28,8 +25,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "dev": "vite build --watch",
-    "serve": "npx serve . --listen 3001",
+    "dev": "npx concurrently \"vite build --watch\" \"npx serve . --listen 3001\"",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
