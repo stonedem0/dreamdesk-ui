@@ -3,6 +3,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useId,
   type ReactNode,
   type CSSProperties,
 } from "react";
@@ -40,7 +41,36 @@ export interface WindowProps {
   className?: string;
 }
 
-let _z = 1000;
+const BASE_Z = 1000;
+const _zRegistry = new Map<string, HTMLElement>();
+const _zStack: string[] = [];
+
+function _reassignZ() {
+  _zStack.forEach((id, i) => {
+    const el = _zRegistry.get(id);
+    if (el) el.style.zIndex = String(BASE_Z + i);
+  });
+}
+
+function zRegister(id: string, el: HTMLElement) {
+  _zRegistry.set(id, el);
+  if (!_zStack.includes(id)) _zStack.push(id);
+  _reassignZ();
+}
+
+function zUnregister(id: string) {
+  _zRegistry.delete(id);
+  const idx = _zStack.indexOf(id);
+  if (idx !== -1) _zStack.splice(idx, 1);
+  _reassignZ();
+}
+
+function zRaise(id: string) {
+  const idx = _zStack.indexOf(id);
+  if (idx !== -1) _zStack.splice(idx, 1);
+  _zStack.push(id);
+  _reassignZ();
+}
 
 function freezeState(el: HTMLElement): PreviousState {
   const rect = el.getBoundingClientRect();
@@ -150,6 +180,7 @@ export function Window({
   const hostRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
+  const windowId = useId();
 
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -164,11 +195,16 @@ export function Window({
     ...style,
   };
 
-  // Raise z-index on click
+  useEffect(() => {
+    const el = hostRef.current;
+    if (!el) return;
+    zRegister(windowId, el);
+    return () => zUnregister(windowId);
+  }, [windowId]);
+
   const raise = useCallback(() => {
-    _z += 1;
-    if (hostRef.current) hostRef.current.style.zIndex = String(_z);
-  }, []);
+    zRaise(windowId);
+  }, [windowId]);
 
   const handleMinimize = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
