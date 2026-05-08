@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   minimize as animMinimize,
+  unminimize as animUnminimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
   closeAnimation,
@@ -210,7 +211,11 @@ export function Window({
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
     if (!win) return;
     const next = !isMinimized;
-    animMinimize(win);
+    if (next) {
+      animMinimize(win);
+    } else {
+      animUnminimize(win);
+    }
     setIsMinimized(next);
     onMinimize?.(next);
   }, [isMinimized, onMinimize]);
@@ -285,9 +290,12 @@ export function Window({
         host.style.setProperty("--ddw-w", `${hostRect.width}px`);
         host.style.setProperty("--ddw-h", `${hostRect.height}px`);
         host.setAttribute("data-explicit", "");
-        if (getComputedStyle(host).position === "static") host.style.position = "absolute";
-        host.style.left = `${hostRect.left}px`;
-        host.style.top = `${hostRect.top}px`;
+      }
+      const pos = getComputedStyle(host).position;
+      if (pos === "static" || pos === "relative") {
+        host.style.position = "absolute";
+        host.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
+        host.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
       }
       isDragging = true;
       raise();

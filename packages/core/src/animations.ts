@@ -13,10 +13,20 @@ export function cancelRunningAnimations(el: Element): void {
 }
 
 export function minimize(win: HTMLElement): void {
+  cancelRunningAnimations(win);
   win.style.transformOrigin = '50% 100%';
   win.animate(
-    [{ transform: 'scale(1)', offset: 0 }, { transform: 'scale(0)', offset: 1 }],
-    { duration: 600, easing: 'ease-in-out', fill: 'forwards' }
+    [{ transform: 'scale(1)' }, { transform: 'scale(0)' }],
+    { duration: 300, easing: 'ease-in', fill: 'forwards' }
+  );
+}
+
+export function unminimize(win: HTMLElement): void {
+  cancelRunningAnimations(win);
+  win.style.transformOrigin = '50% 100%';
+  win.animate(
+    [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
+    { duration: 300, easing: 'ease-out' }
   );
 }
 
@@ -24,10 +34,10 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
   cancelRunningAnimations(win);
   const fsW = window.innerWidth;
   const fsH = window.innerHeight;
-  const fromW = previousState.width;
-  const fromH = previousState.height;
   const fromTop = previousState.top - (window.scrollY || 0);
   const fromLeft = previousState.left - (window.scrollX || 0);
+  const fromW = previousState.width;
+  const fromH = previousState.height;
 
   win.style.position = 'fixed';
   win.style.top = '0';
@@ -46,7 +56,7 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
       { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
       { transform: 'none' },
     ],
-    { duration: 400, easing: 'ease-in-out' }
+    { duration: 500, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
   );
 }
 
@@ -59,29 +69,35 @@ export function unfullscreen(win: HTMLElement, previousState: PreviousState): vo
   const toTop = previousState.top - (window.scrollY || 0);
   const toLeft = previousState.left - (window.scrollX || 0);
 
-  win.style.position = previousState.position || 'absolute';
-  win.style.top = `${Math.round(previousState.top)}px`;
-  win.style.left = `${Math.round(previousState.left)}px`;
-  win.style.width = `${Math.round(toW)}px`;
-  win.style.height = `${Math.round(toH)}px`;
-  if (previousState.zIndex) {
-    win.style.zIndex = previousState.zIndex;
-  } else {
-    win.style.removeProperty('z-index');
-  }
+  // Animate from fullscreen → target size/position, then apply final state
+  const scaleX = toW / fsW;
+  const scaleY = toH / fsH;
+  const tx = (toLeft + toW / 2) - fsW / 2;
+  const ty = (toTop + toH / 2) - fsH / 2;
 
-  const scaleX = fsW / toW;
-  const scaleY = fsH / toH;
-  const tx = fsW / 2 - (toLeft + toW / 2);
-  const ty = fsH / 2 - (toTop + toH / 2);
-
-  win.animate(
+  const animation = win.animate(
     [
-      { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
       { transform: 'none' },
+      { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
     ],
-    { duration: 400, easing: 'ease-in-out' }
+    { duration: 300, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }
   );
+
+  const applyFinal = () => {
+    win.style.position = previousState.position || 'absolute';
+    win.style.top = `${Math.round(previousState.top)}px`;
+    win.style.left = `${Math.round(previousState.left)}px`;
+    win.style.width = `${Math.round(toW)}px`;
+    win.style.height = `${Math.round(toH)}px`;
+    if (previousState.zIndex) {
+      win.style.zIndex = previousState.zIndex;
+    } else {
+      win.style.removeProperty('z-index');
+    }
+  };
+
+  animation.onfinish = () => { applyFinal(); win.getAnimations().forEach(a => a.cancel()); };
+  animation.oncancel = applyFinal;
 }
 
 export function close(win: HTMLElement, onfinish?: () => void): void {

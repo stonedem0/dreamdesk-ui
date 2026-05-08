@@ -1,4 +1,4 @@
-import { minimize, fullscreen, unfullscreen, close, cancelRunningAnimations, type PreviousState } from './animations';
+import { minimize, unminimize, fullscreen, unfullscreen, close, cancelRunningAnimations, type PreviousState } from './animations';
 
 // Derive the directory of this script once — plain string op, Vite won't treat it as an asset URL
 const _moduleUrl: string = import.meta.url;
@@ -250,8 +250,12 @@ class DreamDeskWindow extends DreamDeskComponent {
       this.dispatchEvent(new CustomEvent('minimize', { detail: { isMinimized: this.state.isMinimized } }));
     };
     if (typeof customFn === 'function') {
-      Promise.resolve(customFn(win, { defaultFns: { minimize }, previousState: this.state.previousState })).then(done);
-    } else { minimize(win); done(); }
+      Promise.resolve(customFn(win, { defaultFns: { minimize, unminimize }, previousState: this.state.previousState })).then(done);
+    } else {
+      const goingMinimized = !this.state.isMinimized;
+      goingMinimized ? minimize(win) : unminimize(win);
+      done();
+    }
   }
 
   fullscreen(): void {
