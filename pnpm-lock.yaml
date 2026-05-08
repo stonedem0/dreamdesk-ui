@@ -8,7 +8,14 @@ importers:
 
   .: {}
 
-  packages/core: {}
+  packages/core:
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.21
 
   packages/react:
     devDependencies:
