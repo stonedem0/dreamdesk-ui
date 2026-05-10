@@ -42,8 +42,10 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
   win.style.position = 'fixed';
   win.style.top = '0';
   win.style.left = '0';
-  win.style.width = '100vw';
-  win.style.height = '100vh';
+  win.style.width = '';
+  win.style.height = '';
+  win.style.setProperty('--ddw-w', '100vw');
+  win.style.setProperty('--ddw-h', '100vh');
   win.style.zIndex = '9999';
 
   const scaleX = fromW / fsW;
@@ -87,8 +89,10 @@ export function unfullscreen(win: HTMLElement, previousState: PreviousState): vo
     win.style.position = previousState.position || 'absolute';
     win.style.top = `${Math.round(previousState.top)}px`;
     win.style.left = `${Math.round(previousState.left)}px`;
-    win.style.width = `${Math.round(toW)}px`;
-    win.style.height = `${Math.round(toH)}px`;
+    win.style.width = '';
+    win.style.height = '';
+    win.style.setProperty('--ddw-w', `${Math.round(toW)}px`);
+    win.style.setProperty('--ddw-h', `${Math.round(toH)}px`);
     if (previousState.zIndex) {
       win.style.zIndex = previousState.zIndex;
     } else {

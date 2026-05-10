@@ -1,9 +1,9 @@
 import { jsx as c, jsxs as I } from "react/jsx-runtime";
-import { createContext as bt, useState as A, useEffect as P, useCallback as D, useContext as wt, useRef as B, useId as it, Children as xt, isValidElement as yt } from "react";
-const at = bt(null);
+import { createContext as yt, useState as A, useEffect as B, useCallback as D, useContext as wt, useRef as S, useId as it, Children as bt, isValidElement as xt } from "react";
+const at = yt(null);
 function jt({ children: t, defaultTheme: e = "pastelcore" }) {
   const [n, r] = A(e);
-  P(() => {
+  B(() => {
     document.documentElement.setAttribute("data-theme", n);
   }, [n]);
   const o = D((i) => {
@@ -39,7 +39,7 @@ function Nt(t) {
 function $t(t, e) {
   _(t);
   const n = window.innerWidth, r = window.innerHeight, o = e.top - (window.scrollY || 0), i = e.left - (window.scrollX || 0), s = e.width, d = e.height;
-  t.style.position = "fixed", t.style.top = "0", t.style.left = "0", t.style.width = "100vw", t.style.height = "100vh", t.style.zIndex = "9999";
+  t.style.position = "fixed", t.style.top = "0", t.style.left = "0", t.style.width = "", t.style.height = "", t.style.setProperty("--ddw-w", "100vw"), t.style.setProperty("--ddw-h", "100vh"), t.style.zIndex = "9999";
   const f = s / n, h = d / r, v = i + s / 2 - n / 2, w = o + d / 2 - r / 2;
   t.animate(
     [
@@ -58,7 +58,7 @@ function Tt(t, e) {
     ],
     { duration: 300, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }
   ), u = () => {
-    t.style.position = e.position || "absolute", t.style.top = `${Math.round(e.top)}px`, t.style.left = `${Math.round(e.left)}px`, t.style.width = `${Math.round(o)}px`, t.style.height = `${Math.round(i)}px`, e.zIndex ? t.style.zIndex = e.zIndex : t.style.removeProperty("z-index");
+    t.style.position = e.position || "absolute", t.style.top = `${Math.round(e.top)}px`, t.style.left = `${Math.round(e.left)}px`, t.style.width = "", t.style.height = "", t.style.setProperty("--ddw-w", `${Math.round(o)}px`), t.style.setProperty("--ddw-h", `${Math.round(i)}px`), e.zIndex ? t.style.zIndex = e.zIndex : t.style.removeProperty("z-index");
   };
   l.onfinish = () => {
     u(), t.getAnimations().forEach((p) => p.cancel());
@@ -89,7 +89,7 @@ function Wt(t) {
   const e = N.indexOf(t);
   e !== -1 && N.splice(e, 1), N.push(t), et();
 }
-function St(t) {
+function Pt(t) {
   const e = t.getBoundingClientRect(), n = getComputedStyle(t);
   return {
     top: e.top + (window.scrollY || 0),
@@ -100,7 +100,7 @@ function St(t) {
     zIndex: n.zIndex === "auto" ? "" : n.zIndex
   };
 }
-function Bt(t) {
+function St(t) {
   try {
     const n = new DOMParser().parseFromString(t, "image/svg+xml");
     if (n.querySelector("parsererror")) return "";
@@ -122,7 +122,7 @@ function Bt(t) {
 function K(t) {
   if (!t) return null;
   const e = t.trim();
-  return e.startsWith("<svg") && Bt(e) || null;
+  return e.startsWith("<svg") && St(e) || null;
 }
 function Q({
   className: t,
@@ -152,7 +152,7 @@ function Q({
     }
   );
 }
-function Pt({
+function Bt({
   title: t = "Window",
   size: e,
   resizable: n = !0,
@@ -175,86 +175,86 @@ function Pt({
   style: U,
   className: Z
 }) {
-  const y = B(null), R = B(null), O = B(null), C = it(), [nt, ct] = A(!1), [W, lt] = A(!1), q = B(null), dt = !!(o || i), ut = {
+  const x = S(null), R = S(null), O = S(null), C = it(), [nt, ct] = A(!1), [W, lt] = A(!1), q = S(null), dt = !!(o || i), ut = {
     ...o ? { "--ddw-w": o } : {},
     ...i ? { "--ddw-h": i } : {},
     ...U
   };
-  P(() => {
-    const m = y.current;
+  B(() => {
+    const m = x.current;
     if (m)
       return Mt(C, m), () => Rt(C);
   }, [C]);
   const J = D(() => {
     Wt(C);
   }, [C]), ft = D(() => {
-    var x;
-    const m = (x = y.current) == null ? void 0 : x.querySelector(".dd-win");
+    var b;
+    const m = (b = x.current) == null ? void 0 : b.querySelector(".dd-win");
     if (!m) return;
     const a = !nt;
     a ? Lt(m) : Nt(m), ct(a), g == null || g(a);
   }, [nt, g]), mt = D(() => {
-    const m = y.current;
+    const m = x.current;
     if (!m) return;
     const a = !W;
-    a ? (q.current = St(m), $t(m, q.current)) : q.current && Tt(m, q.current);
-    const x = a;
-    lt(x), k == null || k(x);
+    a ? (q.current = Pt(m), $t(m, q.current)) : q.current && Tt(m, q.current);
+    const b = a;
+    lt(b), k == null || k(b);
   }, [W, k]), pt = D(() => {
     var a;
-    const m = (a = y.current) == null ? void 0 : a.querySelector(".dd-win");
+    const m = (a = x.current) == null ? void 0 : a.querySelector(".dd-win");
     m && zt(m, () => {
-      y.current && (y.current.style.display = "none"), M == null || M();
+      x.current && (x.current.style.display = "none"), M == null || M();
     });
   }, [M]);
-  P(() => {
-    const m = R.current, a = y.current;
+  B(() => {
+    const m = R.current, a = x.current;
     if (!m || !a || !r) return;
-    let x = !1, X = 0, j = 0, H = 0, Y = 0, $ = null;
+    let b = !1, X = 0, j = 0, H = 0, Y = 0, $ = null;
     const F = (E) => {
-      if (!x) return;
-      const L = E.clientX - X, b = E.clientY - j;
+      if (!b) return;
+      const L = E.clientX - X, y = E.clientY - j;
       $ && cancelAnimationFrame($), $ = requestAnimationFrame(() => {
-        a.style.left = `${Math.max(0, Math.min(L, H))}px`, a.style.top = `${Math.max(0, Math.min(b, Y))}px`;
+        a.style.left = `${Math.max(0, Math.min(L, H))}px`, a.style.top = `${Math.max(0, Math.min(y, Y))}px`;
       });
     }, T = () => {
-      x = !1, document.removeEventListener("pointermove", F, { capture: !0 }), document.removeEventListener("pointerup", T, { capture: !0 });
-    }, S = (E) => {
+      b = !1, document.removeEventListener("pointermove", F, { capture: !0 }), document.removeEventListener("pointerup", T, { capture: !0 });
+    }, P = (E) => {
       if (E.target.closest(".dd-win-controls") || W && !(l === "expand")) return;
       _(a);
-      const b = a.getBoundingClientRect();
-      X = E.clientX - b.left, j = E.clientY - b.top, H = Math.max(0, window.innerWidth - b.width), Y = Math.max(0, window.innerHeight - b.height), a.hasAttribute("data-explicit") || (a.style.setProperty("--ddw-w", `${b.width}px`), a.style.setProperty("--ddw-h", `${b.height}px`), a.setAttribute("data-explicit", ""));
+      const y = a.getBoundingClientRect();
+      X = E.clientX - y.left, j = E.clientY - y.top, H = Math.max(0, window.innerWidth - y.width), Y = Math.max(0, window.innerHeight - y.height), a.hasAttribute("data-explicit") || (a.style.setProperty("--ddw-w", `${y.width}px`), a.style.setProperty("--ddw-h", `${y.height}px`), a.setAttribute("data-explicit", ""));
       const G = getComputedStyle(a).position;
-      (G === "static" || G === "relative") && (a.style.position = "absolute", a.style.left = `${b.left + (window.scrollX || 0)}px`, a.style.top = `${b.top + (window.scrollY || 0)}px`), x = !0, J(), document.addEventListener("pointermove", F, { capture: !0 }), document.addEventListener("pointerup", T, { capture: !0 });
+      (G === "static" || G === "relative") && (a.style.position = "absolute", a.style.left = `${y.left + (window.scrollX || 0)}px`, a.style.top = `${y.top + (window.scrollY || 0)}px`), b = !0, J(), document.addEventListener("pointermove", F, { capture: !0 }), document.addEventListener("pointerup", T, { capture: !0 });
     };
-    return m.addEventListener("pointerdown", S), () => {
-      m.removeEventListener("pointerdown", S), document.removeEventListener("pointermove", F, { capture: !0 }), document.removeEventListener("pointerup", T, { capture: !0 }), $ && cancelAnimationFrame($);
+    return m.addEventListener("pointerdown", P), () => {
+      m.removeEventListener("pointerdown", P), document.removeEventListener("pointermove", F, { capture: !0 }), document.removeEventListener("pointerup", T, { capture: !0 }), $ && cancelAnimationFrame($);
     };
-  }, [r, W, l, J]), P(() => {
-    const m = O.current, a = y.current;
+  }, [r, W, l, J]), B(() => {
+    const m = O.current, a = x.current;
     if (!m || !a || !n) return;
-    let x = !1, X = 0, j = 0, H = 0, Y = 0;
+    let b = !1, X = 0, j = 0, H = 0, Y = 0;
     const $ = 180, F = 120, T = (L) => {
-      if (!x) return;
-      const b = Math.max($, H + (L.clientX - X)), G = Math.max(F, Y + (L.clientY - j));
-      a.style.setProperty("--ddw-w", `${b}px`), a.style.setProperty("--ddw-h", `${G}px`), a.setAttribute("data-explicit", "");
-    }, S = () => {
-      x = !1, document.removeEventListener("pointermove", T, { capture: !0 }), document.removeEventListener("pointerup", S, { capture: !0 });
+      if (!b) return;
+      const y = Math.max($, H + (L.clientX - X)), G = Math.max(F, Y + (L.clientY - j));
+      a.style.setProperty("--ddw-w", `${y}px`), a.style.setProperty("--ddw-h", `${G}px`), a.setAttribute("data-explicit", "");
+    }, P = () => {
+      b = !1, document.removeEventListener("pointermove", T, { capture: !0 }), document.removeEventListener("pointerup", P, { capture: !0 });
     }, E = (L) => {
       if (W) return;
-      x = !0, X = L.clientX, j = L.clientY;
-      const b = a.getBoundingClientRect();
-      H = b.width, Y = b.height, document.addEventListener("pointermove", T, { capture: !0 }), document.addEventListener("pointerup", S, { capture: !0 });
+      b = !0, X = L.clientX, j = L.clientY;
+      const y = a.getBoundingClientRect();
+      H = y.width, Y = y.height, document.addEventListener("pointermove", T, { capture: !0 }), document.addEventListener("pointerup", P, { capture: !0 });
     };
     return m.addEventListener("pointerdown", E), () => {
-      m.removeEventListener("pointerdown", E), document.removeEventListener("pointermove", T, { capture: !0 }), document.removeEventListener("pointerup", S, { capture: !0 });
+      m.removeEventListener("pointerdown", E), document.removeEventListener("pointermove", T, { capture: !0 }), document.removeEventListener("pointerup", P, { capture: !0 });
     };
   }, [n, W]);
   const ht = K(s), gt = K(d), vt = K(f);
   return /* @__PURE__ */ c(
     "div",
     {
-      ref: y,
+      ref: x,
       className: ["dd-window", Z].filter(Boolean).join(" "),
       "data-size": e,
       "data-explicit": dt ? "" : void 0,
@@ -366,8 +366,8 @@ function Ht({
   );
 }
 function Yt({ type: t = "notification", message: e, onClose: n }) {
-  const [r, o] = A(!0), i = B(e);
-  if (P(() => {
+  const [r, o] = A(!0), i = S(e);
+  if (B(() => {
     e !== i.current && (i.current = e, o(!0));
   }, [e]), !r) return null;
   const s = () => {
@@ -410,12 +410,12 @@ function Ft({
 const rt = 10, z = 1;
 function At(t, e, n, r) {
   const [o, i] = A({ count: 0, segW: rt });
-  P(() => {
+  B(() => {
     if (!r) return;
     const l = t.current;
     if (!l) return;
     const u = () => {
-      const k = getComputedStyle(l), M = parseFloat(k.paddingLeft) || 0, V = parseFloat(k.paddingRight) || 0, U = parseFloat(k.borderLeftWidth) || 0, Z = parseFloat(k.borderRightWidth) || 0, y = l.getBoundingClientRect().width - M - V - U - Z, R = Math.max(1, Math.round((y + z) / (rt + z))), O = (y - (R - 1) * z) / R;
+      const k = getComputedStyle(l), M = parseFloat(k.paddingLeft) || 0, V = parseFloat(k.paddingRight) || 0, U = parseFloat(k.borderLeftWidth) || 0, Z = parseFloat(k.borderRightWidth) || 0, x = l.getBoundingClientRect().width - M - V - U - Z, R = Math.max(1, Math.round((x + z) / (rt + z))), O = (x - (R - 1) * z) / R;
       i({ count: R, segW: O });
     };
     let p = null;
@@ -449,7 +449,7 @@ function Dt({
   className: r,
   style: o
 }) {
-  const i = B(null), s = At(i, t, n, e), d = Math.min(Math.max(t, 0), 100), f = [
+  const i = S(null), s = At(i, t, n, e), d = Math.min(Math.max(t, 0), 100), f = [
     "progress-track",
     e ? "progress-track--blocky" : "",
     r
@@ -500,8 +500,8 @@ function _t({
   const [s, d] = A(t), f = e ?? s, h = (l) => {
     e === void 0 && d(l), n == null || n(l);
   }, v = [], w = [];
-  return xt.forEach(r, (l) => {
-    if (yt(l)) {
+  return bt.forEach(r, (l) => {
+    if (xt(l)) {
       if (l.type === ot) {
         const u = v.length;
         v.push(
@@ -536,7 +536,7 @@ function Vt({ checked: t, defaultChecked: e, onChange: n, style: r, className: o
 }
 function Ot({ children: t, className: e, ...n }) {
   return /* @__PURE__ */ c(
-    Pt,
+    Bt,
     {
       ...n,
       className: ["terminal-window", e].filter(Boolean).join(" "),
@@ -555,6 +555,6 @@ export {
   jt as ThemeProvider,
   Yt as Toast,
   Vt as Toggle,
-  Pt as Window,
+  Bt as Window,
   Et as useTheme
 };
