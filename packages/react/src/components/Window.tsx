@@ -22,6 +22,7 @@ import { sanitizeSvg } from "../utils/svg";
 import "./Window.css";
 
 export interface WindowProps {
+  windowId?: string;
   title?: string;
   icon?: string;
   size?: "sm" | "md" | "lg";
@@ -107,6 +108,7 @@ function ControlButton({
 }
 
 export function Window({
+  windowId: windowIdProp,
   title = "Window",
   icon,
   size,
@@ -133,7 +135,8 @@ export function Window({
   const hostRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
-  const windowId = useId();
+  const generatedId = useId();
+  const windowId = windowIdProp ?? generatedId;
   const wm = useWindowManager();
   const desktopRef = useDesktopContainer();
   const taskbarHeight = useDesktopTaskbarHeight();
@@ -153,11 +156,24 @@ export function Window({
   };
 
   const toggleRef = useRef<() => void>(() => {});
+  const closeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
     wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+    wm.registerClose(windowId, () => closeRef.current());
+    wm.registerOpen(windowId, () => {
+      if (!el || !document.contains(el)) return;
+      el.style.display = "";
+      const inner = el.querySelector<HTMLElement>(".dd-win");
+      if (inner) {
+        inner.getAnimations().forEach((a) => a.cancel());
+        animUnminimize(inner);
+      }
+      wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+      wm.raise(windowId);
+    });
     return () => wm.unregister(windowId);
   }, [windowId, title, icon, wm]);
 
@@ -167,18 +183,21 @@ export function Window({
 
   const handleMinimize = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
-    if (!win) return;
+    const host = hostRef.current;
+    if (!win || !host) return;
     const next = !isMinimized;
     if (next) {
       animMinimize(win);
       wm.minimize(windowId);
+      host.style.pointerEvents = "none";
     } else {
       animUnminimize(win);
       wm.restore(windowId);
+      host.style.pointerEvents = "";
     }
     setIsMinimized(next);
     onMinimize?.(next);
-  }, [isMinimized, onMinimize, windowId]);
+  }, [isMinimized, onMinimize, windowId, wm]);
 
   toggleRef.current = handleMinimize;
 
@@ -200,13 +219,16 @@ export function Window({
 
   const handleClose = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
-    if (!win) return;
+    const host = hostRef.current;
+    if (!win || !host) return;
     closeAnimation(win, () => {
-      if (hostRef.current) hostRef.current.style.display = "none";
+      host.style.display = "none";
       wm.unregister(windowId);
       onClose?.();
     });
   }, [onClose, wm, windowId]);
+
+  closeRef.current = handleClose;
 
   // Dragging
   useEffect(() => {
