@@ -4,6 +4,7 @@ export interface DragOptions {
   handle: HTMLElement;
   host: HTMLElement;
   container?: HTMLElement | null;
+  reservedBottom?: number;
   signal?: AbortSignal;
   disabled?: () => boolean;
   exclude?: string;
@@ -11,7 +12,7 @@ export interface DragOptions {
   onStart?: (hostRect: DOMRect) => void;
 }
 
-export function setupDrag({ handle, host, container, signal, disabled, exclude, getBounds, onStart }: DragOptions): () => void {
+export function setupDrag({ handle, host, container, reservedBottom = 0, signal, disabled, exclude, getBounds, onStart }: DragOptions): () => void {
   let isDragging = false;
   let offsetX = 0, offsetY = 0;
   let maxLeft = 0, maxTop = 0;
@@ -54,8 +55,8 @@ export function setupDrag({ handle, host, container, signal, disabled, exclude, 
         ? containerRect.width - hostRect.width
         : Math.max(0, window.innerWidth - hostRect.width),
       maxTop: containerRect
-        ? containerRect.height - hostRect.height
-        : Math.max(0, window.innerHeight - hostRect.height),
+        ? containerRect.height - hostRect.height - reservedBottom
+        : Math.max(0, window.innerHeight - hostRect.height - reservedBottom),
     };
     maxLeft = b.maxLeft;
     maxTop = b.maxTop;

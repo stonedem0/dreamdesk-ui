@@ -2,6 +2,15 @@ export { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 export { Desktop, useWindowManager } from "./components/Desktop";
 export type { DesktopProps } from "./components/Desktop";
+
+export { Taskbar } from "./components/Taskbar";
+export type { TaskbarProps } from "./components/Taskbar";
+
+export { DesktopIcon } from "./components/DesktopIcon";
+export type { DesktopIconProps } from "./components/DesktopIcon";
+
+export { Icon } from "./components/Icon";
+export type { IconProps } from "./components/Icon";
 export type { DreamDeskTheme } from "./context/ThemeContext";
 
 export { Window } from "./components/Window";

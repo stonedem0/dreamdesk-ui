@@ -1,0 +1,84 @@
+.dd-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--dd-taskbar-h, 36px);
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 4px;
+  background: var(--color-taskbar-bg, var(--color-surface, #d4d0c8));
+  border-top: var(--dd-border, 2px solid #000);
+  box-sizing: border-box;
+  z-index: 9999;
+  font-family: inherit;
+}
+
+.dd-taskbar-windows {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dd-taskbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: calc(var(--dd-taskbar-h, 36px) - 8px);
+  min-width: 120px;
+  max-width: 160px;
+  padding: 0 8px;
+  background: var(--color-taskbar-btn-bg, var(--color-surface, #d4d0c8));
+  border: var(--dd-border, 2px solid #000);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: opacity 0.2s ease, max-width 0.2s ease, min-width 0.2s ease, padding 0.2s ease, border-width 0.2s ease;
+}
+
+.dd-taskbar-btn--leaving {
+  opacity: 0;
+  max-width: 0;
+  min-width: 0;
+  padding: 0;
+  border-width: 0;
+}
+
+.dd-taskbar-btn:hover {
+  background: var(--color-taskbar-btn-bg-hover, var(--color-surface-hover, #e8e8e8));
+}
+
+.dd-taskbar-btn--active {
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.dd-taskbar-btn--minimized {
+  opacity: 0.7;
+}
+
+.dd-taskbar-btn-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.dd-taskbar-clock {
+  flex-shrink: 0;
+  padding: 0 8px;
+  height: calc(var(--dd-taskbar-h, 36px) - 8px);
+  display: flex;
+  align-items: center;
+  border: var(--dd-border, 2px solid #000);
+  font-size: 0.8rem;
+  background: var(--color-taskbar-btn-bg, var(--color-surface, #d4d0c8));
+  box-sizing: border-box;
+}

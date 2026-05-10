@@ -8,17 +8,16 @@ import { TerminalWindow } from "../components/TerminalWindow";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { Desktop } from "../components/Desktop";
+import { Taskbar } from "../components/Taskbar";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const isVista = theme === "vista";
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "monospace" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
       <span>pastelcore</span>
-      <Toggle
-        checked={isVista}
-        onChange={(v) => setTheme(v ? "vista" : "pastelcore")}
-      />
+      <Toggle checked={isVista} onChange={(v) => setTheme(v ? "vista" : "pastelcore")} />
       <span>vista</span>
     </div>
   );
@@ -40,48 +39,37 @@ export default function App() {
 
   return (
     <ThemeProvider defaultTheme="pastelcore">
-      <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "flex-start" }}>
-        <ThemeToggle />
+      <Desktop style={{ width: "100vw", height: "100vh" }}>
 
-        {/* Main demo window: tabs + scrollable content */}
-        <Window
-          title="Custom scroll"
-          scrollContent
-          width="567px"
-          height="400px"
-        >
+        {/* Notes — tabbed scrollable window, top-left */}
+        <Window title="Notes" scrollContent width="560px" height="430px"
+          style={{ top: "16px", left: "16px" }}>
           <Tabs>
             <Tab>General</Tab>
             <Tab>Appearance</Tab>
             <Tab>Advanced</Tab>
-            <Tab>Settings</Tab>
             <TabPanel>
               <p className="win-content dd-scrollable dd-scrollable--fill">
-                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-                classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-                Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
-                words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-                classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32
-                and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,
-                written in 45 BC. This book is a treatise on the theory of ethics, very popular during the
-                Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line
-                in section 1.10.32.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contrary to popular belief,
+                Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
+                literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
+                professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
+                Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of
+                the word in classical literature, discovered the undoubtable source.
               </p>
             </TabPanel>
             <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>Appearance panel.</p>
+              <p className="win-content" style={{ padding: "0.5rem" }}>Appearance settings.</p>
             </TabPanel>
             <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>Advanced settings panel.</p>
-            </TabPanel>
-            <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>Configure your preferences here.</p>
+              <p className="win-content" style={{ padding: "0.5rem" }}>Advanced settings.</p>
             </TabPanel>
           </Tabs>
         </Window>
 
-        {/* Login window */}
-        <Window title="Hello" size="sm" resizable={false} bodyOverflow="hidden">
+        {/* Login — below Notes, left */}
+        <Window title="Login" size="sm" resizable={false} bodyOverflow="hidden"
+          style={{ top: "462px", left: "16px" }}>
           <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <Input type="text" label="Username:" placeholder="" layout="inline" />
             <Input type="password" label="Password:" placeholder="" layout="inline" />
@@ -92,31 +80,34 @@ export default function App() {
           </div>
         </Window>
 
-        {/* Progress bars */}
-        <div className="progress-bar-container" style={{ width: "24rem" }}>
-          <ProgressBar value={progress} />
-          <ProgressBar value={progress} blocky />
-          <ProgressBar value={progress} gradient />
-          <ProgressBar value={progress} gradient blocky />
-        </div>
+        {/* Components — top-right */}
+        <Window title="Components" width="620px" height="560px" scrollContent
+          style={{ top: "16px", left: "calc(100vw - 636px)" }}>
+          <div className="win-content dd-scrollable dd-scrollable--fill" style={{ display: "flex", flexDirection: "column", gap: "0.75rem", padding: "0.5rem" }}>
+            <ThemeToggle />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              <ProgressBar value={progress} />
+              <ProgressBar value={progress} blocky />
+              <ProgressBar value={progress} gradient />
+              <ProgressBar value={progress} gradient blocky />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              <Toast type="alert" message="This is an alert." />
+              <Toast type="notification" message="This is a notification." />
+              <Toast type="warning" message="This is a warning." />
+            </div>
+          </div>
+        </Window>
 
-        {/* Toasts */}
-        <div className="toast-container">
-          <Toast type="alert" message="This is an alert." />
-          <Toast type="notification" message="This is a notification." />
-          <Toast type="warning" message="This is a warning." />
-        </div>
-
-        {/* Toggle */}
-        <Toggle />
-
-        {/* Terminal */}
-        <TerminalWindow title="terminal" width="28rem" height="12rem">
+        {/* Terminal — bottom-right */}
+        <TerminalWindow title="Terminal" width="500px" height="220px"
+          style={{ top: "460px", left: "calc(100vw - 516px)" }}>
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>
 
-      </div>
+        <Taskbar />
+      </Desktop>
     </ThemeProvider>
   );
 }

@@ -17,11 +17,13 @@ import {
   setupResize,
   type PreviousState,
 } from "@dreamdesk/core";
-import { useWindowManager, useDesktopContainer } from "./Desktop";
+import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
+import { sanitizeSvg } from "../utils/svg";
 import "./Window.css";
 
 export interface WindowProps {
   title?: string;
+  icon?: string;
   size?: "sm" | "md" | "lg";
   resizable?: boolean;
   movable?: boolean;
@@ -58,29 +60,6 @@ function freezeState(el: HTMLElement): PreviousState {
   };
 }
 
-function sanitizeSvg(raw: string): string {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(raw, "image/svg+xml");
-    if (doc.querySelector("parsererror")) return "";
-    const walk = (node: Element) => {
-      if (node.tagName.toLowerCase() === "script") {
-        node.parentNode?.removeChild(node);
-        return;
-      }
-      for (const attr of Array.from(node.attributes)) {
-        if (attr.name.startsWith("on") || attr.value.toLowerCase().includes("javascript:")) {
-          node.removeAttribute(attr.name);
-        }
-      }
-      Array.from(node.children).forEach(walk);
-    };
-    walk(doc.documentElement);
-    return new XMLSerializer().serializeToString(doc.documentElement);
-  } catch {
-    return "";
-  }
-}
 
 function resolveIcon(iconProp?: string) {
   if (!iconProp) return null;
@@ -129,6 +108,7 @@ function ControlButton({
 
 export function Window({
   title = "Window",
+  icon,
   size,
   resizable = true,
   movable = true,
@@ -156,6 +136,7 @@ export function Window({
   const windowId = useId();
   const wm = useWindowManager();
   const desktopRef = useDesktopContainer();
+  const taskbarHeight = useDesktopTaskbarHeight();
 
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -167,15 +148,18 @@ export function Window({
   const cssVars: CSSProperties = {
     ...(width ? { "--ddw-w": width } as CSSProperties : {}),
     ...(height ? { "--ddw-h": height } as CSSProperties : {}),
+    ...(desktopRef ? { position: "absolute" } : {}),
     ...style,
   };
+
+  const toggleRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    wm.register(windowId, el, title ?? "Window");
+    wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
     return () => wm.unregister(windowId);
-  }, [windowId, title]);
+  }, [windowId, title, icon, wm]);
 
   const raise = useCallback(() => {
     wm.raise(windowId);
@@ -195,6 +179,8 @@ export function Window({
     setIsMinimized(next);
     onMinimize?.(next);
   }, [isMinimized, onMinimize, windowId]);
+
+  toggleRef.current = handleMinimize;
 
   const handleFullscreen = useCallback(() => {
     const host = hostRef.current;
@@ -217,9 +203,10 @@ export function Window({
     if (!win) return;
     closeAnimation(win, () => {
       if (hostRef.current) hostRef.current.style.display = "none";
+      wm.unregister(windowId);
       onClose?.();
     });
-  }, [onClose]);
+  }, [onClose, wm, windowId]);
 
   // Dragging
   useEffect(() => {
@@ -230,6 +217,7 @@ export function Window({
       handle: header,
       host,
       container: desktopRef?.current,
+      reservedBottom: taskbarHeight,
       exclude: ".dd-win-controls",
       disabled: () => isFullscreen && fullscreenMode !== "expand",
       onStart: (hostRect) => {
@@ -248,7 +236,7 @@ export function Window({
         raise();
       },
     });
-  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight]);
 
   // Resize
   useEffect(() => {

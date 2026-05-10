@@ -1,0 +1,6 @@
+.dd-desktop {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding-bottom: var(--dd-taskbar-h, 36px);
+}
