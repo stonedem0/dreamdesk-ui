@@ -15,6 +15,9 @@ import { Window } from "./Window";
 import "./Desktop.css";
 
 const TASKBAR_H_DEFAULT = 36;
+const CASCADE_BASE = 40;
+const CASCADE_STEP = 24;
+const CASCADE_MAX = 10;
 
 export interface ReactAppDef extends AppDef {
   component: ComponentType;
@@ -23,6 +26,8 @@ export interface ReactAppDef extends AppDef {
 interface LaunchedApp {
   instanceId: string;
   def: ReactAppDef;
+  top: number;
+  left: number;
 }
 
 interface DesktopContextValue {
@@ -48,6 +53,7 @@ export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_
   const containerRef = useRef<HTMLDivElement>(null);
   const appRegistry = useRef(new Map<string, ReactAppDef>());
   const [launchedApps, setLaunchedApps] = useState<LaunchedApp[]>([]);
+  const cascadeCount = useRef(0);
 
   const registerApp = useCallback((def: ReactAppDef) => {
     appRegistry.current.set(def.id, def);
@@ -57,7 +63,11 @@ export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_
     const def = appRegistry.current.get(appId);
     if (!def) return null;
     const instanceId = `${appId}__${Math.random().toString(36).slice(2)}`;
-    setLaunchedApps((prev) => [...prev, { instanceId, def }]);
+    const step = cascadeCount.current % CASCADE_MAX;
+    const top = CASCADE_BASE + step * CASCADE_STEP;
+    const left = CASCADE_BASE + step * CASCADE_STEP;
+    cascadeCount.current++;
+    setLaunchedApps((prev) => [...prev, { instanceId, def, top, left }]);
     return instanceId;
   }, []);
 
@@ -76,13 +86,14 @@ export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_
         } as CSSProperties}
       >
         {children}
-        {launchedApps.map(({ instanceId, def }) => (
+        {launchedApps.map(({ instanceId, def, top, left }) => (
           <Window
             key={instanceId}
             title={def.title}
             icon={def.icon}
             width={def.defaultWidth}
             height={def.defaultHeight}
+            style={{ top, left }}
             onClose={() => closeApp(instanceId)}
           >
             <def.component />
