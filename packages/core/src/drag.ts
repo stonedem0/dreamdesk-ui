@@ -15,23 +15,26 @@ export function setupDrag({ handle, host, signal, disabled, exclude, getBounds, 
   let offsetX = 0, offsetY = 0;
   let maxLeft = 0, maxTop = 0;
   let rafId: number | null = null;
+  let pendingLeft = 0, pendingTop = 0;
+
+  const applyPosition = () => {
+    host.style.left = `${Math.max(0, Math.min(pendingLeft, maxLeft))}px`;
+    host.style.top = `${Math.max(0, Math.min(pendingTop, maxTop))}px`;
+  };
 
   const onPointerMove = (e: PointerEvent) => {
     if (!isDragging) return;
-    const desiredLeft = e.clientX - offsetX;
-    const desiredTop = e.clientY - offsetY;
+    pendingLeft = e.clientX - offsetX;
+    pendingTop = e.clientY - offsetY;
     if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => {
-      host.style.left = `${Math.max(0, Math.min(desiredLeft, maxLeft))}px`;
-      host.style.top = `${Math.max(0, Math.min(desiredTop, maxTop))}px`;
-    });
+    rafId = requestAnimationFrame(() => { applyPosition(); rafId = null; });
   };
 
   const onPointerUp = () => {
     isDragging = false;
     document.removeEventListener('pointermove', onPointerMove, { capture: true });
     document.removeEventListener('pointerup', onPointerUp, { capture: true });
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; applyPosition(); }
   };
 
   const onPointerDown = (e: PointerEvent) => {

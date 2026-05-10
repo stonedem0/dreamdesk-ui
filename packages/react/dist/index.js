@@ -1,118 +1,118 @@
-import { jsx as f, jsxs as L } from "react/jsx-runtime";
-import { createContext as ot, useState as I, useEffect as M, useCallback as W, useContext as it, useRef as $, useId as Z, Children as at, isValidElement as ct } from "react";
-const q = ot(null);
-function Lt({ children: n, defaultTheme: t = "pastelcore" }) {
-  const [e, r] = I(t);
-  M(() => {
-    document.documentElement.setAttribute("data-theme", e);
-  }, [e]);
-  const s = W((i) => {
-    r(i);
+import { jsx as d, jsxs as T } from "react/jsx-runtime";
+import { createContext as rt, useState as W, useEffect as P, useCallback as I, useContext as st, useRef as $, useId as V, Children as it, isValidElement as ot } from "react";
+const q = rt(null);
+function Et({ children: e, defaultTheme: t = "pastelcore" }) {
+  const [n, r] = W(t);
+  P(() => {
+    document.documentElement.setAttribute("data-theme", n);
+  }, [n]);
+  const i = I((o) => {
+    r(o);
   }, []);
-  return /* @__PURE__ */ f(q.Provider, { value: { theme: e, setTheme: s }, children: n });
+  return /* @__PURE__ */ d(q.Provider, { value: { theme: n, setTheme: i }, children: e });
 }
-const lt = {
+const at = {
   theme: "pastelcore",
   setTheme: () => {
   }
 };
-function dt() {
-  return it(q) ?? lt;
+function ct() {
+  return st(q) ?? at;
 }
-function P(n) {
-  var e;
-  const t = ((e = n == null ? void 0 : n.getAnimations) == null ? void 0 : e.call(n)) ?? [];
+function A(e) {
+  var n;
+  const t = ((n = e == null ? void 0 : e.getAnimations) == null ? void 0 : n.call(e)) ?? [];
   for (const r of t) r.cancel();
 }
-function ut(n) {
-  P(n), n.style.transformOrigin = "50% 100%", n.animate(
+function lt(e) {
+  A(e), e.style.transformOrigin = "50% 100%", e.animate(
     [{ transform: "scale(1)" }, { transform: "scale(0)" }],
     { duration: 300, easing: "ease-in", fill: "forwards" }
   );
 }
-function ft(n) {
-  P(n), n.style.transformOrigin = "50% 100%", n.animate(
+function dt(e) {
+  A(e), e.style.transformOrigin = "50% 100%", e.animate(
     [{ transform: "scale(0)" }, { transform: "scale(1)" }],
     { duration: 300, easing: "ease-out" }
   );
 }
-function mt(n, t) {
-  P(n);
-  const e = window.innerWidth, r = window.innerHeight, s = t.top - (window.scrollY || 0), i = t.left - (window.scrollX || 0), o = t.width, c = t.height;
-  n.style.position = "fixed", n.style.top = "0", n.style.left = "0", n.style.width = "100vw", n.style.height = "100vh", n.style.setProperty("--ddw-w", "100vw"), n.style.setProperty("--ddw-h", "100vh"), n.style.zIndex = "9999";
-  const d = o / e, m = c / r, g = i + o / 2 - e / 2, v = s + c / 2 - r / 2;
-  n.animate(
+function ut(e, t) {
+  A(e);
+  const n = window.innerWidth, r = window.innerHeight, i = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), s = t.width, l = t.height;
+  e.style.position = "fixed", e.style.top = "0", e.style.left = "0", e.style.width = "100vw", e.style.height = "100vh", e.style.setProperty("--ddw-w", "100vw"), e.style.setProperty("--ddw-h", "100vh"), e.style.zIndex = "9999";
+  const a = s / n, f = l / r, m = o + s / 2 - n / 2, g = i + l / 2 - r / 2;
+  e.animate(
     [
-      { transform: `translate(${g}px, ${v}px) scale(${d}, ${m})` },
+      { transform: `translate(${m}px, ${g}px) scale(${a}, ${f})` },
       { transform: "none" }
     ],
     { duration: 500, easing: "cubic-bezier(0.2, 0, 0, 1)" }
   );
 }
-function pt(n, t) {
-  P(n);
-  const e = window.innerWidth, r = window.innerHeight, s = t.width, i = t.height, o = t.top - (window.scrollY || 0), c = t.left - (window.scrollX || 0), d = s / e, m = i / r, g = c + s / 2 - e / 2, v = o + i / 2 - r / 2, a = n.animate(
+function ft(e, t) {
+  A(e);
+  const n = window.innerWidth, r = window.innerHeight, i = t.width, o = t.height, s = t.top - (window.scrollY || 0), l = t.left - (window.scrollX || 0), a = i / n, f = o / r, m = l + i / 2 - n / 2, g = s + o / 2 - r / 2, c = e.animate(
     [
       { transform: "none" },
-      { transform: `translate(${g}px, ${v}px) scale(${d}, ${m})` }
+      { transform: `translate(${m}px, ${g}px) scale(${a}, ${f})` }
     ],
     { duration: 300, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }
-  ), l = () => {
-    n.style.position = t.position || "absolute", n.style.top = `${Math.round(t.top)}px`, n.style.left = `${Math.round(t.left)}px`, n.style.width = "", n.style.height = "", n.style.setProperty("--ddw-w", `${Math.round(s)}px`), n.style.setProperty("--ddw-h", `${Math.round(i)}px`), t.zIndex ? n.style.zIndex = t.zIndex : n.style.removeProperty("z-index");
+  ), u = () => {
+    e.style.position = t.position || "absolute", e.style.top = `${Math.round(t.top)}px`, e.style.left = `${Math.round(t.left)}px`, e.style.width = "", e.style.height = "", e.style.setProperty("--ddw-w", `${Math.round(i)}px`), e.style.setProperty("--ddw-h", `${Math.round(o)}px`), t.zIndex ? e.style.zIndex = t.zIndex : e.style.removeProperty("z-index");
   };
-  a.onfinish = () => {
-    l(), n.getAnimations().forEach((u) => u.cancel());
-  }, a.oncancel = l;
+  c.onfinish = () => {
+    u(), e.getAnimations().forEach((v) => v.cancel());
+  }, c.oncancel = u;
 }
-function ht(n, t) {
-  n.animate(
+function mt(e, t) {
+  e.animate(
     [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
     { duration: 300, easing: "ease", fill: "forwards" }
   ).onfinish = () => t == null ? void 0 : t();
 }
-function gt({ handle: n, host: t, signal: e, disabled: r, exclude: s, getBounds: i, onStart: o }) {
-  let c = !1, d = 0, m = 0, g = 0, v = 0, a = null;
-  const l = (x) => {
-    if (!c) return;
-    const b = x.clientX - d, _ = x.clientY - m;
-    a && cancelAnimationFrame(a), a = requestAnimationFrame(() => {
-      t.style.left = `${Math.max(0, Math.min(b, g))}px`, t.style.top = `${Math.max(0, Math.min(_, v))}px`;
-    });
-  }, u = () => {
-    c = !1, document.removeEventListener("pointermove", l, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 }), a && (cancelAnimationFrame(a), a = null);
-  }, p = (x) => {
-    if (r != null && r() || x.target.closest(s)) return;
-    P(t);
-    const b = t.getBoundingClientRect();
-    d = x.clientX - b.left, m = x.clientY - b.top;
-    const _ = (i == null ? void 0 : i()) ?? {
-      maxLeft: Math.max(0, window.innerWidth - b.width),
-      maxTop: Math.max(0, window.innerHeight - b.height)
-    };
-    g = _.maxLeft, v = _.maxTop, o == null || o(b), c = !0, document.addEventListener("pointermove", l, { capture: !0 }), document.addEventListener("pointerup", u, { capture: !0 });
-  }, w = e ? { signal: e } : {};
-  return n.addEventListener("pointerdown", p, w), () => {
-    n.removeEventListener("pointerdown", p), document.removeEventListener("pointermove", l, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 }), a && cancelAnimationFrame(a);
-  };
-}
-function yt({ handle: n, host: t, signal: e, disabled: r, minWidth: s = 180, minHeight: i = 120, explicitAttr: o = "data-explicit" }) {
-  let c = !1, d = 0, m = 0, g = 0, v = 0;
-  const a = (w) => {
-    c && (t.style.setProperty("--ddw-w", `${Math.max(s, g + w.clientX - d)}px`), t.style.setProperty("--ddw-h", `${Math.max(i, v + w.clientY - m)}px`), t.setAttribute(o, ""));
-  }, l = () => {
-    c = !1, document.removeEventListener("pointermove", a, { capture: !0 }), document.removeEventListener("pointerup", l, { capture: !0 });
-  }, u = (w) => {
-    if (r != null && r()) return;
-    c = !0, d = w.clientX, m = w.clientY;
+function pt({ handle: e, host: t, signal: n, disabled: r, exclude: i, getBounds: o, onStart: s }) {
+  let l = !1, a = 0, f = 0, m = 0, g = 0, c = null, u = 0, v = 0;
+  const _ = () => {
+    t.style.left = `${Math.max(0, Math.min(u, m))}px`, t.style.top = `${Math.max(0, Math.min(v, g))}px`;
+  }, b = (w) => {
+    l && (u = w.clientX - a, v = w.clientY - f, c && cancelAnimationFrame(c), c = requestAnimationFrame(() => {
+      _(), c = null;
+    }));
+  }, p = () => {
+    l = !1, document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", p, { capture: !0 }), c && (cancelAnimationFrame(c), c = null, _());
+  }, L = (w) => {
+    if (r != null && r() || w.target.closest(i)) return;
+    A(t);
     const x = t.getBoundingClientRect();
-    g = x.width, v = x.height, document.addEventListener("pointermove", a, { capture: !0 }), document.addEventListener("pointerup", l, { capture: !0 });
-  }, p = e ? { signal: e } : {};
-  return n.addEventListener("pointerdown", u, p), () => {
-    n.removeEventListener("pointerdown", u), document.removeEventListener("pointermove", a, { capture: !0 }), document.removeEventListener("pointerup", l, { capture: !0 });
+    a = w.clientX - x.left, f = w.clientY - x.top;
+    const N = (o == null ? void 0 : o()) ?? {
+      maxLeft: Math.max(0, window.innerWidth - x.width),
+      maxTop: Math.max(0, window.innerHeight - x.height)
+    };
+    m = N.maxLeft, g = N.maxTop, s == null || s(x), l = !0, document.addEventListener("pointermove", b, { capture: !0 }), document.addEventListener("pointerup", p, { capture: !0 });
+  }, k = n ? { signal: n } : {};
+  return e.addEventListener("pointerdown", L, k), () => {
+    e.removeEventListener("pointerdown", L), document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", p, { capture: !0 }), c && cancelAnimationFrame(c);
   };
 }
-const vt = 1e3;
-class wt {
+function ht({ handle: e, host: t, signal: n, disabled: r, minWidth: i = 180, minHeight: o = 120, explicitAttr: s = "data-explicit" }) {
+  let l = !1, a = 0, f = 0, m = 0, g = 0;
+  const c = (b) => {
+    l && (t.style.setProperty("--ddw-w", `${Math.max(i, m + b.clientX - a)}px`), t.style.setProperty("--ddw-h", `${Math.max(o, g + b.clientY - f)}px`), t.setAttribute(s, ""));
+  }, u = () => {
+    l = !1, document.removeEventListener("pointermove", c, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 });
+  }, v = (b) => {
+    if (r != null && r()) return;
+    l = !0, a = b.clientX, f = b.clientY;
+    const p = t.getBoundingClientRect();
+    m = p.width, g = p.height, document.addEventListener("pointermove", c, { capture: !0 }), document.addEventListener("pointerup", u, { capture: !0 });
+  }, _ = n ? { signal: n } : {};
+  return e.addEventListener("pointerdown", v, _), () => {
+    e.removeEventListener("pointerdown", v), document.removeEventListener("pointermove", c, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 });
+  };
+}
+const gt = 1e3;
+class yt {
   constructor() {
     this._registry = /* @__PURE__ */ new Map(), this._zStack = [], this._listeners = /* @__PURE__ */ new Set();
   }
@@ -120,30 +120,30 @@ class wt {
     this._listeners.forEach((t) => t());
   }
   _reassignZ() {
-    this._zStack.forEach((t, e) => {
+    this._zStack.forEach((t, n) => {
       const r = this._registry.get(t);
-      r && (r.el.style.zIndex = String(vt + e));
+      r && (r.el.style.zIndex = String(gt + n));
     });
   }
-  register(t, e, r) {
-    this._registry.set(t, { id: t, title: r, el: e, isMinimized: !1 }), this._zStack.includes(t) || this._zStack.push(t), this._reassignZ(), this._notify();
+  register(t, n, r) {
+    this._registry.set(t, { id: t, title: r, el: n, isMinimized: !1 }), this._zStack.includes(t) || this._zStack.push(t), this._reassignZ(), this._notify();
   }
   unregister(t) {
     this._registry.delete(t);
-    const e = this._zStack.indexOf(t);
-    e !== -1 && this._zStack.splice(e, 1), this._reassignZ(), this._notify();
+    const n = this._zStack.indexOf(t);
+    n !== -1 && this._zStack.splice(n, 1), this._reassignZ(), this._notify();
   }
   raise(t) {
-    const e = this._zStack.indexOf(t);
-    e !== -1 && this._zStack.splice(e, 1), this._zStack.push(t), this._reassignZ();
+    const n = this._zStack.indexOf(t);
+    n !== -1 && this._zStack.splice(n, 1), this._zStack.push(t), this._reassignZ();
   }
   minimize(t) {
-    const e = this._registry.get(t);
-    e && (e.isMinimized = !0, this._notify());
+    const n = this._registry.get(t);
+    n && (n.isMinimized = !0, this._notify());
   }
   restore(t) {
-    const e = this._registry.get(t);
-    e && (e.isMinimized = !1, this.raise(t), this._notify());
+    const n = this._registry.get(t);
+    n && (n.isMinimized = !1, this.raise(t), this._notify());
   }
   getWindows() {
     return Array.from(this._registry.values());
@@ -152,194 +152,233 @@ class wt {
     return this._listeners.add(t), () => this._listeners.delete(t);
   }
 }
-const X = new wt();
-function xt(n) {
-  const t = n.getBoundingClientRect(), e = getComputedStyle(n);
+const C = new yt();
+function vt({ track: e, getValue: t, isBlocky: n, isGradient: r }) {
+  let i = [], o = null, s = null, l = null;
+  const a = 1, f = 10, m = f + a;
+  function g() {
+    const p = r(), L = getComputedStyle(e), k = e.getBoundingClientRect().width - (parseFloat(L.borderLeftWidth) || 0) - (parseFloat(L.borderRightWidth) || 0), w = Math.max(1, Math.round((k + a) / m)), x = (k - (w - 1) * a) / w, N = k;
+    e.innerHTML = "", i = [];
+    for (let M = 0; M < w; M++) {
+      const E = document.createElement("div");
+      E.className = "progress-segment", E.style.cssText = `width:${x}px;margin-right:${M < w - 1 ? a : 0}px`, p && (E.style.backgroundSize = `${N}px 100%`, E.style.backgroundPosition = `-${M * (x + a)}px 0`), e.appendChild(E), i.push(E);
+    }
+    c(t());
+  }
+  function c(p) {
+    const L = Math.min(Math.max(p, 0), 100), k = Math.floor(L / 100 * i.length);
+    i.forEach((w, x) => w.classList.toggle("progress-segment--active", x < k));
+  }
+  function u(p) {
+    if (!o) return;
+    const L = Math.min(Math.max(p, 0), 100), k = r();
+    if (o.style.width = `${L}%`, !k) {
+      const w = getComputedStyle(o).getPropertyValue("--dd-progress-enable-hue-rotate").trim();
+      o.style.filter = w === "0" ? "none" : `hue-rotate(${L * 3.6}deg)`;
+    }
+    o.classList.toggle("progress-bar--complete", p >= 100);
+  }
+  function v() {
+    const p = n(), L = r();
+    e.classList.toggle("progress-track--gradient", p && L), p ? (s == null || s.disconnect(), g(), s = new ResizeObserver(() => {
+      l && clearTimeout(l), l = setTimeout(g, 50);
+    }), s.observe(e)) : (o = e.querySelector(".progress-bar"), u(t()));
+  }
+  function _(p) {
+    n() ? c(p) : u(p);
+  }
+  function b() {
+    s == null || s.disconnect(), l && clearTimeout(l);
+  }
+  return { update: _, rebuild: v, destroy: b };
+}
+function xt(e) {
+  const t = e.getBoundingClientRect(), n = getComputedStyle(e);
   return {
     top: t.top + (window.scrollY || 0),
     left: t.left + (window.scrollX || 0),
     width: t.width,
     height: t.height,
-    position: e.position || "relative",
-    zIndex: e.zIndex === "auto" ? "" : e.zIndex
+    position: n.position || "relative",
+    zIndex: n.zIndex === "auto" ? "" : n.zIndex
   };
 }
-function bt(n) {
+function wt(e) {
   try {
-    const e = new DOMParser().parseFromString(n, "image/svg+xml");
-    if (e.querySelector("parsererror")) return "";
-    const r = (s) => {
-      var i;
-      if (s.tagName.toLowerCase() === "script") {
-        (i = s.parentNode) == null || i.removeChild(s);
+    const n = new DOMParser().parseFromString(e, "image/svg+xml");
+    if (n.querySelector("parsererror")) return "";
+    const r = (i) => {
+      var o;
+      if (i.tagName.toLowerCase() === "script") {
+        (o = i.parentNode) == null || o.removeChild(i);
         return;
       }
-      for (const o of Array.from(s.attributes))
-        (o.name.startsWith("on") || o.value.toLowerCase().includes("javascript:")) && s.removeAttribute(o.name);
-      Array.from(s.children).forEach(r);
+      for (const s of Array.from(i.attributes))
+        (s.name.startsWith("on") || s.value.toLowerCase().includes("javascript:")) && i.removeAttribute(s.name);
+      Array.from(i.children).forEach(r);
     };
-    return r(e.documentElement), new XMLSerializer().serializeToString(e.documentElement);
+    return r(n.documentElement), new XMLSerializer().serializeToString(n.documentElement);
   } catch {
     return "";
   }
 }
-function j(n) {
-  if (!n) return null;
-  const t = n.trim();
-  return t.startsWith("<svg") && bt(t) || null;
+function X(e) {
+  if (!e) return null;
+  const t = e.trim();
+  return t.startsWith("<svg") && wt(t) || null;
 }
-function Y({
-  className: n,
+function j({
+  className: e,
   icon: t,
-  disabled: e,
+  disabled: n,
   tooltip: r,
-  onClick: s,
-  ariaLabel: i
+  onClick: i,
+  ariaLabel: o
 }) {
-  const o = e !== void 0 && e !== !1 && e !== "false" && e !== "0", c = typeof e == "string" && e !== "true" && e !== "1" ? e : r;
-  return /* @__PURE__ */ f(
+  const s = n !== void 0 && n !== !1 && n !== "false" && n !== "0", l = typeof n == "string" && n !== "true" && n !== "1" ? n : r;
+  return /* @__PURE__ */ d(
     "button",
     {
-      className: n,
-      "aria-label": i,
-      "aria-disabled": o ? "true" : void 0,
-      tabIndex: o ? -1 : void 0,
-      "data-tooltip": o && c ? c : void 0,
-      onClick: (m) => {
-        if (o) {
-          m.preventDefault();
+      className: e,
+      "aria-label": o,
+      "aria-disabled": s ? "true" : void 0,
+      tabIndex: s ? -1 : void 0,
+      "data-tooltip": s && l ? l : void 0,
+      onClick: (f) => {
+        if (s) {
+          f.preventDefault();
           return;
         }
-        s();
+        i();
       },
       dangerouslySetInnerHTML: t ? { __html: t } : void 0
     }
   );
 }
-function kt({
-  title: n = "Window",
+function bt({
+  title: e = "Window",
   size: t,
-  resizable: e = !0,
+  resizable: n = !0,
   movable: r = !0,
-  width: s,
-  height: i,
-  minimizeIcon: o,
-  fullscreenIcon: c,
-  closeIcon: d,
-  disableMinimize: m,
-  disableFullscreen: g,
-  disableClose: v,
-  fullscreenMode: a,
-  bodyOverflow: l,
-  scrollContent: u,
-  onMinimize: p,
-  onFullscreen: w,
-  onClose: x,
-  children: b,
-  style: _,
-  className: B
+  width: i,
+  height: o,
+  minimizeIcon: s,
+  fullscreenIcon: l,
+  closeIcon: a,
+  disableMinimize: f,
+  disableFullscreen: m,
+  disableClose: g,
+  fullscreenMode: c,
+  bodyOverflow: u,
+  scrollContent: v,
+  onMinimize: _,
+  onFullscreen: b,
+  onClose: p,
+  children: L,
+  style: k,
+  className: w
 }) {
-  const k = $(null), N = $(null), A = $(null), S = Z(), [F, G] = I(!1), [T, U] = I(!1), R = $(null), J = !!(s || i), K = {
-    ...s ? { "--ddw-w": s } : {},
-    ...i ? { "--ddw-h": i } : {},
-    ..._
+  const x = $(null), N = $(null), M = $(null), E = V(), [Y, Z] = W(!1), [S, U] = W(!1), B = $(null), G = !!(i || o), O = {
+    ...i ? { "--ddw-w": i } : {},
+    ...o ? { "--ddw-h": o } : {},
+    ...k
   };
-  M(() => {
-    const y = k.current;
+  P(() => {
+    const y = x.current;
     if (y)
-      return X.register(S, y, n ?? "Window"), () => X.unregister(S);
-  }, [S, n]);
-  const C = W(() => {
-    X.raise(S);
-  }, [S]), Q = W(() => {
+      return C.register(E, y, e ?? "Window"), () => C.unregister(E);
+  }, [E, e]);
+  const R = I(() => {
+    C.raise(E);
+  }, [E]), J = I(() => {
     var z;
-    const y = (z = k.current) == null ? void 0 : z.querySelector(".dd-win");
+    const y = (z = x.current) == null ? void 0 : z.querySelector(".dd-win");
     if (!y) return;
-    const h = !F;
-    h ? ut(y) : ft(y), G(h), p == null || p(h);
-  }, [F, p]), tt = W(() => {
-    const y = k.current;
+    const h = !Y;
+    h ? lt(y) : dt(y), Z(h), _ == null || _(h);
+  }, [Y, _]), K = I(() => {
+    const y = x.current;
     if (!y) return;
-    const h = !T;
-    h ? (R.current = xt(y), y.setAttribute("data-explicit", ""), mt(y, R.current)) : R.current && pt(y, R.current);
+    const h = !S;
+    h ? (B.current = xt(y), y.setAttribute("data-explicit", ""), ut(y, B.current)) : B.current && ft(y, B.current);
     const z = h;
-    U(z), w == null || w(z);
-  }, [T, w]), et = W(() => {
+    U(z), b == null || b(z);
+  }, [S, b]), Q = I(() => {
     var h;
-    const y = (h = k.current) == null ? void 0 : h.querySelector(".dd-win");
-    y && ht(y, () => {
-      k.current && (k.current.style.display = "none"), x == null || x();
+    const y = (h = x.current) == null ? void 0 : h.querySelector(".dd-win");
+    y && mt(y, () => {
+      x.current && (x.current.style.display = "none"), p == null || p();
     });
-  }, [x]);
-  M(() => {
-    const y = N.current, h = k.current;
+  }, [p]);
+  P(() => {
+    const y = N.current, h = x.current;
     if (!(!y || !h || !r))
-      return gt({
+      return pt({
         handle: y,
         host: h,
         exclude: ".dd-win-controls",
-        disabled: () => T && a !== "expand",
+        disabled: () => S && c !== "expand",
         onStart: (z) => {
           h.hasAttribute("data-explicit") || (h.style.setProperty("--ddw-w", `${z.width}px`), h.style.setProperty("--ddw-h", `${z.height}px`), h.setAttribute("data-explicit", ""));
           const H = getComputedStyle(h).position;
-          (H === "static" || H === "relative") && (h.style.position = "absolute", h.style.left = `${z.left + (window.scrollX || 0)}px`, h.style.top = `${z.top + (window.scrollY || 0)}px`), C();
+          (H === "static" || H === "relative") && (h.style.position = "absolute", h.style.left = `${z.left + (window.scrollX || 0)}px`, h.style.top = `${z.top + (window.scrollY || 0)}px`), R();
         }
       });
-  }, [r, T, a, C]), M(() => {
-    const y = A.current, h = k.current;
-    if (!(!y || !h || !e))
-      return yt({
+  }, [r, S, c, R]), P(() => {
+    const y = M.current, h = x.current;
+    if (!(!y || !h || !n))
+      return ht({
         handle: y,
         host: h,
-        disabled: () => T
+        disabled: () => S
       });
-  }, [e, T]);
-  const nt = j(o), rt = j(c), st = j(d);
-  return /* @__PURE__ */ f(
+  }, [n, S]);
+  const tt = X(s), et = X(l), nt = X(a);
+  return /* @__PURE__ */ d(
     "div",
     {
-      ref: k,
-      className: ["dd-window", B].filter(Boolean).join(" "),
+      ref: x,
+      className: ["dd-window", w].filter(Boolean).join(" "),
       "data-size": t,
-      "data-explicit": J ? "" : void 0,
-      style: K,
-      onPointerDown: C,
-      children: /* @__PURE__ */ L("div", { className: "dd-win", children: [
-        /* @__PURE__ */ L(
+      "data-explicit": G ? "" : void 0,
+      style: O,
+      onPointerDown: R,
+      children: /* @__PURE__ */ T("div", { className: "dd-win", children: [
+        /* @__PURE__ */ T(
           "div",
           {
             ref: N,
             className: ["dd-win-header", r ? "" : "dd-win-header--no-move"].filter(Boolean).join(" "),
             children: [
-              /* @__PURE__ */ f("span", { className: "dd-win-title", children: n }),
-              /* @__PURE__ */ L("div", { className: "dd-win-controls", children: [
-                /* @__PURE__ */ f(
-                  Y,
+              /* @__PURE__ */ d("span", { className: "dd-win-title", children: e }),
+              /* @__PURE__ */ T("div", { className: "dd-win-controls", children: [
+                /* @__PURE__ */ d(
+                  j,
                   {
                     className: "dd-btn--minimize",
-                    icon: nt,
-                    disabled: m,
-                    onClick: Q,
+                    icon: tt,
+                    disabled: f,
+                    onClick: J,
                     ariaLabel: "minimize"
                   }
                 ),
-                /* @__PURE__ */ f(
-                  Y,
+                /* @__PURE__ */ d(
+                  j,
                   {
                     className: "dd-btn--fullscreen",
-                    icon: rt,
-                    disabled: g,
-                    onClick: tt,
+                    icon: et,
+                    disabled: m,
+                    onClick: K,
                     ariaLabel: "fullscreen"
                   }
                 ),
-                /* @__PURE__ */ f(
-                  Y,
+                /* @__PURE__ */ d(
+                  j,
                   {
                     className: "dd-btn--close",
-                    icon: st,
-                    disabled: v,
-                    onClick: et,
+                    icon: nt,
+                    disabled: g,
+                    onClick: Q,
                     ariaLabel: "close"
                   }
                 )
@@ -347,258 +386,231 @@ function kt({
             ]
           }
         ),
-        /* @__PURE__ */ f(
+        /* @__PURE__ */ d(
           "div",
           {
             className: "dd-win-body",
             style: {
-              ...l ? { "--dd-body-overflow": l } : {},
-              ...u ? { "--dd-body-overflow": "hidden", padding: 0, display: "flex", flexDirection: "column", flex: "1 1 0", minHeight: 0 } : {}
+              ...u ? { "--dd-body-overflow": u } : {},
+              ...v ? { "--dd-body-overflow": "hidden", padding: 0, display: "flex", flexDirection: "column", flex: "1 1 0", minHeight: 0 } : {}
             },
-            children: u ? /* @__PURE__ */ f("div", { className: "dd-win-scroll-content", children: b }) : b
+            children: v ? /* @__PURE__ */ d("div", { className: "dd-win-scroll-content", children: L }) : L
           }
         ),
-        e && /* @__PURE__ */ f("div", { ref: A, className: "dd-win-resize-handle" })
+        n && /* @__PURE__ */ d("div", { ref: M, className: "dd-win-resize-handle" })
       ] })
     }
   );
 }
-function Nt({
-  variant: n = "primary",
+function kt({
+  variant: e = "primary",
   size: t,
-  disabled: e = !1,
+  disabled: n = !1,
   action: r,
-  minWidth: s,
-  width: i,
-  height: o,
-  fontSize: c,
-  px: d,
-  py: m,
-  onClick: g,
-  children: v,
-  className: a,
-  style: l
+  minWidth: i,
+  width: o,
+  height: s,
+  fontSize: l,
+  px: a,
+  py: f,
+  onClick: m,
+  children: g,
+  className: c,
+  style: u
 }) {
-  const u = {
-    ...s ? { "--dd-btn-min-w": s } : {},
-    ...i ? { "--dd-btn-w": i } : {},
-    ...o ? { "--dd-btn-h": o } : {},
-    ...c ? { "--dd-btn-fs": c } : {},
-    ...d ? { "--dd-btn-px": d } : {},
-    ...m ? { "--dd-btn-py": m } : {},
-    ...l
-  }, p = [
+  const v = {
+    ...i ? { "--dd-btn-min-w": i } : {},
+    ...o ? { "--dd-btn-w": o } : {},
+    ...s ? { "--dd-btn-h": s } : {},
+    ...l ? { "--dd-btn-fs": l } : {},
+    ...a ? { "--dd-btn-px": a } : {},
+    ...f ? { "--dd-btn-py": f } : {},
+    ...u
+  }, _ = [
     "btn",
-    `btn--${n}`,
-    e ? "btn--disable" : "",
+    `btn--${e}`,
+    n ? "btn--disable" : "",
     t ? `btn--size-${t}` : "",
-    a
+    c
   ].filter(Boolean).join(" ");
-  return /* @__PURE__ */ f(
+  return /* @__PURE__ */ d(
     "button",
     {
-      className: p,
-      style: u,
-      disabled: e,
-      "aria-disabled": e ? "true" : void 0,
-      tabIndex: e ? -1 : void 0,
+      className: _,
+      style: v,
+      disabled: n,
+      "aria-disabled": n ? "true" : void 0,
+      tabIndex: n ? -1 : void 0,
       "data-action": r,
       "aria-label": r,
-      onClick: e ? void 0 : g,
-      children: v
+      onClick: n ? void 0 : m,
+      children: g
     }
   );
 }
-function Tt({ type: n = "notification", message: t, onClose: e }) {
-  const [r, s] = I(!0), i = $(t);
-  if (M(() => {
-    t !== i.current && (i.current = t, s(!0));
+function zt({ type: e = "notification", message: t, onClose: n }) {
+  const [r, i] = W(!0), o = $(t);
+  if (P(() => {
+    t !== o.current && (o.current = t, i(!0));
   }, [t]), !r) return null;
-  const o = () => {
-    s(!1), e == null || e();
+  const s = () => {
+    i(!1), n == null || n();
   };
-  return /* @__PURE__ */ L("div", { className: `toast toast-${n}`, children: [
-    /* @__PURE__ */ f("button", { className: "toast-btn--close", onClick: o, "aria-label": "close", children: "×" }),
+  return /* @__PURE__ */ T("div", { className: `toast toast-${e}`, children: [
+    /* @__PURE__ */ d("button", { className: "toast-btn--close", onClick: s, "aria-label": "close", children: "×" }),
     t
   ] });
 }
-function $t({
-  type: n = "text",
+function Nt({
+  type: e = "text",
   label: t,
-  layout: e = "block",
+  layout: n = "block",
   id: r,
-  value: s,
-  defaultValue: i,
-  placeholder: o,
-  disabled: c,
-  onChange: d,
-  className: m,
-  style: g
+  value: i,
+  defaultValue: o,
+  placeholder: s,
+  disabled: l,
+  onChange: a,
+  className: f,
+  style: m
 }) {
-  const v = Z(), a = r ?? v, l = e === "inline" ? { display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", gap: "0.5rem" } : {};
-  return /* @__PURE__ */ L("div", { className: ["input-grid", m].filter(Boolean).join(" "), style: { ...l, ...g }, children: [
-    t && /* @__PURE__ */ f("label", { className: "input-label", htmlFor: a, children: t }),
-    /* @__PURE__ */ f(
+  const g = V(), c = r ?? g, u = n === "inline" ? { display: "flex", alignItems: "center", gap: "0.5rem" } : {};
+  return /* @__PURE__ */ T("div", { className: ["input-grid", f].filter(Boolean).join(" "), style: { ...u, ...m }, children: [
+    t && /* @__PURE__ */ d("label", { className: "input-label", htmlFor: c, children: t }),
+    /* @__PURE__ */ d(
       "input",
       {
-        type: n,
-        id: a,
+        type: e,
+        id: c,
         className: "dreamdesk-input",
-        ...s !== void 0 ? { value: s, onChange: d ? (u) => d(u.target.value, u) : void 0 } : { defaultValue: i, onChange: d ? (u) => d(u.target.value, u) : void 0 },
-        placeholder: o,
-        disabled: c
+        ...i !== void 0 ? { value: i, onChange: a ? (v) => a(v.target.value, v) : void 0 } : { defaultValue: o, onChange: a ? (v) => a(v.target.value, v) : void 0 },
+        placeholder: s,
+        disabled: l
       }
     )
   ] });
 }
-const D = 10, E = 1;
-function zt(n, t, e, r) {
-  const [s, i] = I({ count: 0, segW: D });
-  M(() => {
-    if (!r) return;
-    const a = n.current;
-    if (!a) return;
-    const l = () => {
-      const w = getComputedStyle(a), x = parseFloat(w.paddingLeft) || 0, b = parseFloat(w.paddingRight) || 0, _ = parseFloat(w.borderLeftWidth) || 0, B = parseFloat(w.borderRightWidth) || 0, k = a.getBoundingClientRect().width - x - b - _ - B, N = Math.max(1, Math.round((k + E) / (D + E))), A = (k - (N - 1) * E) / N;
-      i({ count: N, segW: A });
-    };
-    let u = null;
-    const p = new ResizeObserver(() => {
-      u && clearTimeout(u), u = setTimeout(l, 50);
-    });
-    return p.observe(a), l(), () => {
-      p.disconnect(), u && clearTimeout(u);
-    };
-  }, [r, n]);
-  const { count: o, segW: c } = s, d = Math.min(Math.max(t, 0), 100), m = Math.floor(d / 100 * o), g = o * (c + E) - E;
-  return Array.from({ length: o }, (a, l) => {
-    const u = l < m, p = {
-      width: `${c}px`,
-      height: "100%",
-      marginRight: l < o - 1 ? `${E}px` : "0",
-      opacity: u ? 1 : 0.2,
-      flexShrink: 0,
-      boxSizing: "border-box",
-      transition: "opacity 0.3s ease, background 0.3s ease",
-      border: "var(--color-window-border, var(--border))",
-      boxShadow: "var(--progress-segment-shadow, none)"
-    };
-    return e ? (p.backgroundImage = "var(--color-progress-gradient, none)", p.backgroundSize = `${g}px 100%`, p.backgroundPosition = `-${l * (c + E)}px 0`, p.backgroundRepeat = "no-repeat", p.backgroundColor = "transparent") : (p.backgroundImage = "none", p.backgroundColor = u ? "var(--color-progress-segment, #a8edea)" : "transparent"), /* @__PURE__ */ f("div", { style: p }, l);
-  });
-}
 function Mt({
-  value: n = 0,
+  value: e = 0,
   blocky: t = !1,
-  gradient: e = !1,
+  gradient: n = !1,
   className: r,
-  style: s
+  style: i
 }) {
-  const i = $(null), o = zt(i, n, e, t), c = Math.min(Math.max(n, 0), 100), d = [
+  const o = $(null), s = $(null);
+  P(() => {
+    var f;
+    const a = o.current;
+    if (a)
+      return (f = s.current) == null || f.destroy(), s.current = vt({
+        track: a,
+        getValue: () => e,
+        isBlocky: () => t,
+        isGradient: () => n
+      }), s.current.rebuild(), () => {
+        var m;
+        (m = s.current) == null || m.destroy(), s.current = null;
+      };
+  }, [t, n]), P(() => {
+    var a;
+    (a = s.current) == null || a.update(e);
+  }, [e]);
+  const l = [
     "progress-track",
     t ? "progress-track--blocky" : "",
     r
-  ].filter(Boolean).join(" "), m = {
-    width: `${c}%`,
-    ...n >= 100 ? { borderRight: "none" } : {},
-    ...e ? {} : { filter: `hue-rotate(${c * 3.6}deg)` }
-  };
-  return /* @__PURE__ */ f("div", { ref: i, className: d, style: s, children: t ? o : /* @__PURE__ */ f(
-    "div",
-    {
-      className: ["progress-bar", e ? "progress-bar--gradient" : ""].filter(Boolean).join(" "),
-      style: m
-    }
-  ) });
+  ].filter(Boolean).join(" ");
+  return /* @__PURE__ */ d("div", { ref: o, className: l, style: i, children: !t && /* @__PURE__ */ d("div", { className: ["progress-bar", n ? "progress-bar--gradient" : ""].filter(Boolean).join(" ") }) });
 }
-function V({ children: n, index: t = 0, active: e = !1, onClick: r }) {
-  return /* @__PURE__ */ f(
+function D({ children: e, index: t = 0, active: n = !1, onClick: r }) {
+  return /* @__PURE__ */ d(
     "dreamdesk-tab",
     {
-      class: e ? "active" : void 0,
+      class: n ? "active" : void 0,
       "data-tab": "",
       "data-tab-index": String(t),
       onClick: () => r == null ? void 0 : r(t),
-      children: n
+      children: e
     }
   );
 }
-function O({ children: n, active: t = !1, style: e }) {
-  return /* @__PURE__ */ f(
+function F({ children: e, active: t = !1, style: n }) {
+  return /* @__PURE__ */ d(
     "dreamdesk-tab-panel",
     {
       class: t ? "active" : void 0,
       "data-panel": "",
-      style: { display: t ? "block" : "none", ...e },
-      children: n
+      style: { display: t ? "block" : "none", ...n },
+      children: e
     }
   );
 }
-function It({
-  defaultIndex: n = 0,
+function $t({
+  defaultIndex: e = 0,
   activeIndex: t,
-  onChange: e,
+  onChange: n,
   children: r,
-  className: s,
-  style: i
+  className: i,
+  style: o
 }) {
-  const [o, c] = I(n), d = t ?? o, m = (a) => {
-    t === void 0 && c(a), e == null || e(a);
-  }, g = [], v = [];
-  return at.forEach(r, (a) => {
-    if (ct(a)) {
-      if (a.type === V) {
-        const l = g.length;
-        g.push(
-          /* @__PURE__ */ f(V, { index: l, active: l === d, onClick: m, children: a.props.children }, l)
+  const [s, l] = W(e), a = t ?? s, f = (c) => {
+    t === void 0 && l(c), n == null || n(c);
+  }, m = [], g = [];
+  return it.forEach(r, (c) => {
+    if (ot(c)) {
+      if (c.type === D) {
+        const u = m.length;
+        m.push(
+          /* @__PURE__ */ d(D, { index: u, active: u === a, onClick: f, children: c.props.children }, u)
         );
-      } else if (a.type === O) {
-        const l = v.length;
-        v.push(
-          /* @__PURE__ */ f(O, { active: l === d, style: a.props.style, children: a.props.children }, l)
+      } else if (c.type === F) {
+        const u = g.length;
+        g.push(
+          /* @__PURE__ */ d(F, { active: u === a, style: c.props.style, children: c.props.children }, u)
         );
       }
     }
-  }), /* @__PURE__ */ L("div", { className: ["tabs", s].filter(Boolean).join(" "), style: i, children: [
-    /* @__PURE__ */ f("div", { className: "tab-list", children: g }),
-    /* @__PURE__ */ f("div", { className: "tab-panels", children: v })
+  }), /* @__PURE__ */ T("div", { className: ["tabs", i].filter(Boolean).join(" "), style: o, children: [
+    /* @__PURE__ */ d("div", { className: "tab-list", children: m }),
+    /* @__PURE__ */ d("div", { className: "tab-panels", children: g })
   ] });
 }
-function St({ checked: n, defaultChecked: t, onChange: e, style: r, className: s }) {
-  const { theme: i } = dt(), o = n !== void 0, c = t ?? i === "dark";
-  return /* @__PURE__ */ L("label", { className: ["toggle", s].filter(Boolean).join(" "), style: r, children: [
-    /* @__PURE__ */ f(
+function Tt({ checked: e, defaultChecked: t, onChange: n, style: r, className: i }) {
+  const { theme: o } = ct(), s = e !== void 0, l = t ?? o === "dark";
+  return /* @__PURE__ */ T("label", { className: ["toggle", i].filter(Boolean).join(" "), style: r, children: [
+    /* @__PURE__ */ d(
       "input",
       {
         type: "checkbox",
-        checked: o ? n : void 0,
-        defaultChecked: o ? void 0 : c,
-        onChange: (d) => e == null ? void 0 : e(d.target.checked)
+        checked: s ? e : void 0,
+        defaultChecked: s ? void 0 : l,
+        onChange: (a) => n == null ? void 0 : n(a.target.checked)
       }
     ),
-    /* @__PURE__ */ f("span", { className: "slider", children: /* @__PURE__ */ f("span", { className: "knob" }) })
+    /* @__PURE__ */ d("span", { className: "slider", children: /* @__PURE__ */ d("span", { className: "knob" }) })
   ] });
 }
-function Wt({ children: n, className: t, ...e }) {
-  return /* @__PURE__ */ f(
-    kt,
+function Pt({ children: e, className: t, ...n }) {
+  return /* @__PURE__ */ d(
+    bt,
     {
-      ...e,
+      ...n,
       className: ["terminal-window", t].filter(Boolean).join(" "),
-      children: /* @__PURE__ */ f("div", { className: "terminal-win-body", children: n })
+      children: /* @__PURE__ */ d("div", { className: "terminal-win-body", children: e })
     }
   );
 }
 export {
-  Nt as Button,
-  $t as Input,
+  kt as Button,
+  Nt as Input,
   Mt as ProgressBar,
-  V as Tab,
-  O as TabPanel,
-  It as Tabs,
-  Wt as TerminalWindow,
-  Lt as ThemeProvider,
-  Tt as Toast,
-  St as Toggle,
-  kt as Window,
-  dt as useTheme
+  D as Tab,
+  F as TabPanel,
+  $t as Tabs,
+  Pt as TerminalWindow,
+  Et as ThemeProvider,
+  zt as Toast,
+  Tt as Toggle,
+  bt as Window,
+  ct as useTheme
 };

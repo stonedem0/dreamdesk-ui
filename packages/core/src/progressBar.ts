@@ -69,7 +69,7 @@ export function setupProgressBar({ track, getValue, isBlocky, isGradient }: Prog
 
     if (blocky) {
       resizeObserver?.disconnect();
-      requestAnimationFrame(buildSegments);
+      buildSegments();
       resizeObserver = new ResizeObserver(() => {
         if (rebuildTimer) clearTimeout(rebuildTimer);
         rebuildTimer = setTimeout(buildSegments, 50);
