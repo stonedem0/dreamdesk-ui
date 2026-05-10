@@ -645,7 +645,7 @@ dreamdesk-tab-panel.active {
 .dreamdesk-input {
   font-family: var(--font-ui);
   height: 1.4rem;
-  width: 60%;
+  width: 66%;
   border-radius: 0px;
   border: var(--color-window-border, var(--border));
   background: var(--color-input-background, #fff);

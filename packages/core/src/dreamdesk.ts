@@ -661,9 +661,12 @@ class DreamDeskInput extends DreamDeskComponent {
   }
 
   template(): string {
-    return `${this._label ? `<label class="input-label" for="${escapeHtml(this._inputId)}">${escapeHtml(this._label)}</label>` : ''}
+    const wrap = this._label ? 'display:flex;align-items:center;gap:0.5rem' : '';
+    return `<div style="${wrap}">
+      ${this._label ? `<label class="input-label" for="${escapeHtml(this._inputId)}">${escapeHtml(this._label)}</label>` : ''}
       <input type="${escapeHtml(this._type)}" id="${escapeHtml(this._inputId)}" class="dreamdesk-input"
-        value="${escapeHtml(this._value)}" placeholder="${escapeHtml(this._placeholder)}" />`;
+        value="${escapeHtml(this._value)}" placeholder="${escapeHtml(this._placeholder)}" />
+    </div>`;
   }
 
   connectedCallback(): void {

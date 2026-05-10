@@ -646,9 +646,11 @@ class Q extends w {
     super(), this._type = this.getAttribute("type") || "text", this._label = this.getAttribute("label") || "", this._inputId = this.getAttribute("id") || "", this._value = this.getAttribute("value") || "", this._placeholder = this.getAttribute("placeholder") || "";
   }
   template() {
-    return `${this._label ? `<label class="input-label" for="${g(this._inputId)}">${g(this._label)}</label>` : ""}
+    return `<div style="${this._label ? "display:flex;align-items:center;gap:0.5rem" : ""}">
+      ${this._label ? `<label class="input-label" for="${g(this._inputId)}">${g(this._label)}</label>` : ""}
       <input type="${g(this._type)}" id="${g(this._inputId)}" class="dreamdesk-input"
-        value="${g(this._value)}" placeholder="${g(this._placeholder)}" />`;
+        value="${g(this._value)}" placeholder="${g(this._placeholder)}" />
+    </div>`;
   }
   connectedCallback() {
     var t;
