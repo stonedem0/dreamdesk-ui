@@ -1,9 +1,9 @@
 import { jsx as c, jsxs as I } from "react/jsx-runtime";
-import { createContext as bt, useState as P, useEffect as B, useCallback as D, useContext as wt, useRef as A, useId as it, Children as xt, isValidElement as yt } from "react";
+import { createContext as bt, useState as A, useEffect as P, useCallback as D, useContext as wt, useRef as B, useId as it, Children as xt, isValidElement as yt } from "react";
 const at = bt(null);
 function jt({ children: t, defaultTheme: e = "pastelcore" }) {
-  const [n, r] = P(e);
-  B(() => {
+  const [n, r] = A(e);
+  P(() => {
     document.documentElement.setAttribute("data-theme", n);
   }, [n]);
   const o = D((i) => {
@@ -66,12 +66,9 @@ function Tt(t, e) {
 }
 function zt(t, e) {
   t.animate(
-    [
-      { opacity: 1, transform: "scale(1)" },
-      { opacity: 0, transform: "scale(0.95)" }
-    ],
+    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
     { duration: 300, easing: "ease", fill: "forwards" }
-  ).onfinish = e;
+  ).onfinish = () => e == null ? void 0 : e();
 }
 const It = 1e3, tt = /* @__PURE__ */ new Map(), N = [];
 function et() {
@@ -103,7 +100,7 @@ function St(t) {
     zIndex: n.zIndex === "auto" ? "" : n.zIndex
   };
 }
-function At(t) {
+function Bt(t) {
   try {
     const n = new DOMParser().parseFromString(t, "image/svg+xml");
     if (n.querySelector("parsererror")) return "";
@@ -125,7 +122,7 @@ function At(t) {
 function K(t) {
   if (!t) return null;
   const e = t.trim();
-  return e.startsWith("<svg") && At(e) || null;
+  return e.startsWith("<svg") && Bt(e) || null;
 }
 function Q({
   className: t,
@@ -155,7 +152,7 @@ function Q({
     }
   );
 }
-function Bt({
+function Pt({
   title: t = "Window",
   size: e,
   resizable: n = !0,
@@ -178,12 +175,12 @@ function Bt({
   style: U,
   className: Z
 }) {
-  const y = A(null), R = A(null), O = A(null), C = it(), [nt, ct] = P(!1), [W, lt] = P(!1), q = A(null), dt = !!(o || i), ut = {
+  const y = B(null), R = B(null), O = B(null), C = it(), [nt, ct] = A(!1), [W, lt] = A(!1), q = B(null), dt = !!(o || i), ut = {
     ...o ? { "--ddw-w": o } : {},
     ...i ? { "--ddw-h": i } : {},
     ...U
   };
-  B(() => {
+  P(() => {
     const m = y.current;
     if (m)
       return Mt(C, m), () => Rt(C);
@@ -210,7 +207,7 @@ function Bt({
       y.current && (y.current.style.display = "none"), M == null || M();
     });
   }, [M]);
-  B(() => {
+  P(() => {
     const m = R.current, a = y.current;
     if (!m || !a || !r) return;
     let x = !1, X = 0, j = 0, H = 0, Y = 0, $ = null;
@@ -233,7 +230,7 @@ function Bt({
     return m.addEventListener("pointerdown", S), () => {
       m.removeEventListener("pointerdown", S), document.removeEventListener("pointermove", F, { capture: !0 }), document.removeEventListener("pointerup", T, { capture: !0 }), $ && cancelAnimationFrame($);
     };
-  }, [r, W, l, J]), B(() => {
+  }, [r, W, l, J]), P(() => {
     const m = O.current, a = y.current;
     if (!m || !a || !n) return;
     let x = !1, X = 0, j = 0, H = 0, Y = 0;
@@ -369,8 +366,8 @@ function Ht({
   );
 }
 function Yt({ type: t = "notification", message: e, onClose: n }) {
-  const [r, o] = P(!0), i = A(e);
-  if (B(() => {
+  const [r, o] = A(!0), i = B(e);
+  if (P(() => {
     e !== i.current && (i.current = e, o(!0));
   }, [e]), !r) return null;
   const s = () => {
@@ -411,9 +408,9 @@ function Ft({
   ] });
 }
 const rt = 10, z = 1;
-function Pt(t, e, n, r) {
-  const [o, i] = P({ count: 0, segW: rt });
-  B(() => {
+function At(t, e, n, r) {
+  const [o, i] = A({ count: 0, segW: rt });
+  P(() => {
     if (!r) return;
     const l = t.current;
     if (!l) return;
@@ -452,7 +449,7 @@ function Dt({
   className: r,
   style: o
 }) {
-  const i = A(null), s = Pt(i, t, n, e), d = Math.min(Math.max(t, 0), 100), f = [
+  const i = B(null), s = At(i, t, n, e), d = Math.min(Math.max(t, 0), 100), f = [
     "progress-track",
     e ? "progress-track--blocky" : "",
     r
@@ -500,7 +497,7 @@ function _t({
   className: o,
   style: i
 }) {
-  const [s, d] = P(t), f = e ?? s, h = (l) => {
+  const [s, d] = A(t), f = e ?? s, h = (l) => {
     e === void 0 && d(l), n == null || n(l);
   }, v = [], w = [];
   return xt.forEach(r, (l) => {
@@ -539,7 +536,7 @@ function Vt({ checked: t, defaultChecked: e, onChange: n, style: r, className: o
 }
 function Ot({ children: t, className: e, ...n }) {
   return /* @__PURE__ */ c(
-    Bt,
+    Pt,
     {
       ...n,
       className: ["terminal-window", e].filter(Boolean).join(" "),
@@ -558,6 +555,6 @@ export {
   jt as ThemeProvider,
   Yt as Toast,
   Vt as Toggle,
-  Bt as Window,
+  Pt as Window,
   Et as useTheme
 };

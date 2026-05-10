@@ -12,10 +12,10 @@ import {
   unminimize as animUnminimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
-  closeAnimation,
+  close as closeAnimation,
   cancelRunningAnimations,
   type PreviousState,
-} from "../animations";
+} from "@dreamdesk/core";
 import "./Window.css";
 
 export interface WindowProps {
