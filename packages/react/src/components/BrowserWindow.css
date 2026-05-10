@@ -1,5 +1,5 @@
 .dd-browser-window .dd-win-body {
-  padding: 0;
+  padding: 6px 8px 0 8px;
   display: flex;
   flex-direction: column;
 }
@@ -131,8 +131,103 @@
 
 /* ── Content ── */
 .dd-browser-content {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: auto;
-  background: #fff;
+  position: relative;
+}
+
+/* ── Status bar ── */
+.dd-browser-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  margin-top: 4px;
+  border-top: var(--dd-border, 2px solid #000);
+  background: var(--color-surface, #d4d0c8);
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  height: 22px;
+  box-sizing: border-box;
+}
+
+.dd-browser-status-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd-browser-status-zone {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-left: var(--dd-border, 2px solid #000);
+  padding-left: 8px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.dd-browser-status-zone-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* ── Error page ── */
+.dd-browser-error {
+  padding: 1.5rem 2rem;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 0.85rem;
+  max-width: 600px;
+}
+
+.dd-browser-error-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #000;
+}
+
+.dd-browser-error-icon {
+  font-size: 1.4rem;
+}
+
+.dd-browser-error-hr {
+  border: none;
+  border-top: 1px solid #999;
+  margin: 0.75rem 0;
+}
+
+.dd-browser-error ul {
+  padding-left: 1.5rem;
+  line-height: 1.8;
+}
+
+.dd-browser-error-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: #00f;
+  text-decoration: underline;
+}
+
+.dd-browser-error-detail {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.dd-browser-error-detail code {
+  font-size: 0.8rem;
+}
+
+.dd-browser-error-code {
+  color: #555;
+  font-size: 0.78rem;
 }

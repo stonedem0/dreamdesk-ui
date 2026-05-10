@@ -5,13 +5,96 @@ import { ProgressBar } from "../components/ProgressBar";
 import { Tabs, Tab, TabPanel } from "../components/Tabs";
 import { Toggle } from "../components/Toggle";
 import { TerminalWindow } from "../components/TerminalWindow";
-import { BrowserWindow } from "../components/BrowserWindow";
+import { BrowserWindow, BrowserErrorPage } from "../components/BrowserWindow";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { Desktop, useWindowManager } from "../components/Desktop";
 import { Taskbar } from "../components/Taskbar";
 import { DesktopIcon } from "../components/DesktopIcon";
+
+// ── Browser demo ─────────────────────────────────────────────────────────────
+
+const HOME = "https://en.m.wikipedia.org/wiki/Main_Page";
+
+function BrowserWindowDemo() {
+  const [src, setSrc] = useState(HOME);
+  const [navHistory, setNavHistory] = useState<string[]>([HOME]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = (url: string) => {
+    const trimmed = url.startsWith("http") ? url : `https://${url}`;
+    const next = navHistory.slice(0, historyIndex + 1);
+    next.push(trimmed);
+    setNavHistory(next);
+    setHistoryIndex(next.length - 1);
+    setError(false);
+    setLoading(true);
+    setSrc(trimmed);
+  };
+
+  const goBack = () => {
+    if (historyIndex <= 0) return;
+    const idx = historyIndex - 1;
+    setHistoryIndex(idx);
+    setError(false);
+    setLoading(true);
+    setSrc(navHistory[idx]);
+  };
+
+  const goForward = () => {
+    if (historyIndex >= navHistory.length - 1) return;
+    const idx = historyIndex + 1;
+    setHistoryIndex(idx);
+    setError(false);
+    setLoading(true);
+    setSrc(navHistory[idx]);
+  };
+
+  const refresh = () => { setError(false); setLoading(true); setSrc((s) => s + ""); };
+
+  return (
+    <BrowserWindow
+      windowId="browser"
+      title="Internet Explorer"
+      url={src}
+      width="640px"
+      height="480px"
+      style={{ top: "80px", left: "calc(50vw - 320px)" }}
+      canGoBack={historyIndex > 0}
+      canGoForward={historyIndex < navHistory.length - 1}
+      onNavigate={navigate}
+      onBack={goBack}
+      onForward={goForward}
+      onRefresh={refresh}
+      onHome={() => navigate(HOME)}
+      status={loading ? `Opening page: ${src}…` : error ? "Page cannot be displayed" : "Done"}
+    >
+      {error ? (
+        <BrowserErrorPage url={src} onRefresh={refresh} />
+      ) : (
+        <>
+          {loading && (
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#fff", zIndex: 1, fontSize: "0.85rem", color: "#555" }}>
+              Opening page…
+            </div>
+          )}
+          <iframe
+            key={src}
+            src={src}
+            style={{ width: "100%", height: "2000px", border: "none", display: "block" }}
+            scrolling="no"
+            title="browser-content"
+            onLoad={() => setLoading(false)}
+            onError={() => { setLoading(false); setError(true); }}
+          />
+        </>
+      )}
+    </BrowserWindow>
+  );
+}
 
 // ── Theme toggle ──────────────────────────────────────────────────────────────
 
@@ -129,21 +212,7 @@ export default function App() {
         </TerminalWindow>
 
         {/* Browser — center */}
-        <BrowserWindow
-          windowId="browser"
-          title="Internet Explorer"
-          url="https://www.google.com"
-          width="640px"
-          height="480px"
-          style={{ top: "80px", left: "calc(50vw - 320px)" }}
-          canGoBack={false}
-          canGoForward={false}
-        >
-          <div style={{ padding: "1rem", fontFamily: "serif" }}>
-            <h2>Welcome to DreamDesk Browser</h2>
-            <p>Type a URL above and click Go.</p>
-          </div>
-        </BrowserWindow>
+        <BrowserWindowDemo />
 
         <Taskbar />
       </Desktop>

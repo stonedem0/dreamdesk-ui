@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useRef, type ReactNode } from "react";
 import { Window, type WindowProps } from "./Window";
 import "./BrowserWindow.css";
 
@@ -6,6 +6,7 @@ export interface BrowserWindowProps extends Omit<WindowProps, "children" | "scro
   url?: string;
   canGoBack?: boolean;
   canGoForward?: boolean;
+  status?: string;
   onNavigate?: (url: string) => void;
   onBack?: () => void;
   onForward?: () => void;
@@ -28,6 +29,7 @@ export function BrowserWindow({
   url = "",
   canGoBack = false,
   canGoForward = false,
+  status = "Done",
   onNavigate,
   onBack,
   onForward,
@@ -110,8 +112,49 @@ export function BrowserWindow({
         </div>
 
         {/* Content area */}
-        <div className="dd-browser-content">{children}</div>
+        <div className="dd-browser-content dd-scrollable dd-scrollable--fill">{children}</div>
+
+        {/* Status bar */}
+        <div className="dd-browser-statusbar">
+          <span className="dd-browser-status-text">{status}</span>
+          <div className="dd-browser-status-zone">
+            <span className="dd-browser-status-zone-icon">🌐</span>
+            <span>Internet</span>
+          </div>
+        </div>
       </div>
     </Window>
+  );
+}
+
+export interface BrowserErrorPageProps {
+  url?: string;
+  onRefresh?: () => void;
+}
+
+export function BrowserErrorPage({ url, onRefresh }: BrowserErrorPageProps) {
+  return (
+    <div className="dd-browser-error">
+      <div className="dd-browser-error-title">
+        <span className="dd-browser-error-icon">🚫</span>
+        <span>The page cannot be displayed</span>
+      </div>
+      <hr className="dd-browser-error-hr" />
+      <p>The page you are looking for is currently unavailable. The Web site might be experiencing technical difficulties, or you may need to adjust your browser settings.</p>
+      <hr className="dd-browser-error-hr" />
+      <p><strong>Please try the following:</strong></p>
+      <ul>
+        <li>Click the <button className="dd-browser-error-link" onClick={onRefresh}><strong>Refresh</strong></button> button, or try again later.</li>
+        <li>If you typed the page address in the Address bar, make sure that it is spelled correctly.</li>
+        <li>To check your connection settings, click the <strong>Tools</strong> menu, and then click <strong>Internet Options</strong>. On the <strong>Connections</strong> tab, click <strong>Settings</strong>.</li>
+      </ul>
+      {url && (
+        <p className="dd-browser-error-detail">
+          Cannot display the webpage: <code>{url}</code>
+        </p>
+      )}
+      <hr className="dd-browser-error-hr" />
+      <p className="dd-browser-error-code">HTTP 403 — Forbidden: This page has refused to connect.</p>
+    </div>
   );
 }
