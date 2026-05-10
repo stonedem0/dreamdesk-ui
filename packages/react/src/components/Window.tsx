@@ -164,6 +164,11 @@ export function Window({
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
+      const inner = el.querySelector<HTMLElement>(".dd-win");
+      if (inner) {
+        inner.getAnimations().forEach((a) => a.cancel());
+        animUnminimize(inner);
+      }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
       wm.raise(windowId);
     });
