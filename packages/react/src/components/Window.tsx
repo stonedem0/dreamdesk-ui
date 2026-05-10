@@ -15,9 +15,9 @@ import {
   close as closeAnimation,
   setupDrag,
   setupResize,
-  defaultWindowManager,
   type PreviousState,
 } from "@dreamdesk/core";
+import { useWindowManager, useDesktopContainer } from "./Desktop";
 import "./Window.css";
 
 export interface WindowProps {
@@ -154,6 +154,8 @@ export function Window({
   const headerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const windowId = useId();
+  const wm = useWindowManager();
+  const desktopRef = useDesktopContainer();
 
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -171,12 +173,12 @@ export function Window({
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    defaultWindowManager.register(windowId, el, title ?? "Window");
-    return () => defaultWindowManager.unregister(windowId);
+    wm.register(windowId, el, title ?? "Window");
+    return () => wm.unregister(windowId);
   }, [windowId, title]);
 
   const raise = useCallback(() => {
-    defaultWindowManager.raise(windowId);
+    wm.raise(windowId);
   }, [windowId]);
 
   const handleMinimize = useCallback(() => {
@@ -185,10 +187,10 @@ export function Window({
     const next = !isMinimized;
     if (next) {
       animMinimize(win);
-      defaultWindowManager.minimize(windowId);
+      wm.minimize(windowId);
     } else {
       animUnminimize(win);
-      defaultWindowManager.restore(windowId);
+      wm.restore(windowId);
     }
     setIsMinimized(next);
     onMinimize?.(next);
@@ -227,6 +229,7 @@ export function Window({
     return setupDrag({
       handle: header,
       host,
+      container: desktopRef?.current,
       exclude: ".dd-win-controls",
       disabled: () => isFullscreen && fullscreenMode !== "expand",
       onStart: (hostRect) => {
@@ -237,14 +240,15 @@ export function Window({
         }
         const pos = getComputedStyle(host).position;
         if (pos === "static" || pos === "relative") {
+          const containerRect = desktopRef?.current?.getBoundingClientRect();
           host.style.position = "absolute";
-          host.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
-          host.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
+          host.style.left = `${hostRect.left + (window.scrollX || 0) - (containerRect?.left ?? 0)}px`;
+          host.style.top = `${hostRect.top + (window.scrollY || 0) - (containerRect?.top ?? 0)}px`;
         }
         raise();
       },
     });
-  }, [movable, isFullscreen, fullscreenMode, raise]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef]);
 
   // Resize
   useEffect(() => {

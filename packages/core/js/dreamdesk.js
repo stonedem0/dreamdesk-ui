@@ -1,47 +1,47 @@
-function E(i) {
+function L(i) {
   var e;
   const t = ((e = i == null ? void 0 : i.getAnimations) == null ? void 0 : e.call(i)) ?? [];
   for (const s of t) s.cancel();
 }
-function M(i) {
-  E(i), i.style.transformOrigin = "50% 100%", i.animate(
+function T(i) {
+  L(i), i.style.transformOrigin = "50% 100%", i.animate(
     [{ transform: "scale(1)" }, { transform: "scale(0)" }],
     { duration: 300, easing: "ease-in", fill: "forwards" }
   );
 }
-function D(i) {
-  E(i), i.style.transformOrigin = "50% 100%", i.animate(
+function P(i) {
+  L(i), i.style.transformOrigin = "50% 100%", i.animate(
     [{ transform: "scale(0)" }, { transform: "scale(1)" }],
     { duration: 300, easing: "ease-out" }
   );
 }
-function T(i, t) {
-  E(i);
+function I(i, t) {
+  L(i);
   const e = window.innerWidth, s = window.innerHeight, n = t.top - (window.scrollY || 0), r = t.left - (window.scrollX || 0), a = t.width, o = t.height;
   i.style.position = "fixed", i.style.top = "0", i.style.left = "0", i.style.width = "100vw", i.style.height = "100vh", i.style.setProperty("--ddw-w", "100vw"), i.style.setProperty("--ddw-h", "100vh"), i.style.zIndex = "9999";
-  const l = a / e, u = o / s, m = r + a / 2 - e / 2, p = n + o / 2 - s / 2;
+  const l = a / e, h = o / s, u = r + a / 2 - e / 2, m = n + o / 2 - s / 2;
   i.animate(
     [
-      { transform: `translate(${m}px, ${p}px) scale(${l}, ${u})` },
+      { transform: `translate(${u}px, ${m}px) scale(${l}, ${h})` },
       { transform: "none" }
     ],
     { duration: 500, easing: "cubic-bezier(0.2, 0, 0, 1)" }
   );
 }
-function P(i, t) {
-  E(i);
-  const e = window.innerWidth, s = window.innerHeight, n = t.width, r = t.height, a = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), l = n / e, u = r / s, m = o + n / 2 - e / 2, p = a + r / 2 - s / 2, c = i.animate(
+function F(i, t) {
+  L(i);
+  const e = window.innerWidth, s = window.innerHeight, n = t.width, r = t.height, a = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), l = n / e, h = r / s, u = o + n / 2 - e / 2, m = a + r / 2 - s / 2, p = i.animate(
     [
       { transform: "none" },
-      { transform: `translate(${m}px, ${p}px) scale(${l}, ${u})` }
+      { transform: `translate(${u}px, ${m}px) scale(${l}, ${h})` }
     ],
     { duration: 300, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }
-  ), h = () => {
+  ), c = () => {
     i.style.position = t.position || "absolute", i.style.top = `${Math.round(t.top)}px`, i.style.left = `${Math.round(t.left)}px`, i.style.width = "", i.style.height = "", i.style.setProperty("--ddw-w", `${Math.round(n)}px`), i.style.setProperty("--ddw-h", `${Math.round(r)}px`), t.zIndex ? i.style.zIndex = t.zIndex : i.style.removeProperty("z-index");
   };
-  c.onfinish = () => {
-    h(), i.getAnimations().forEach((g) => g.cancel());
-  }, c.oncancel = h;
+  p.onfinish = () => {
+    c(), i.getAnimations().forEach((v) => v.cancel());
+  }, p.oncancel = c;
 }
 function R(i, t) {
   i.animate(
@@ -49,7 +49,7 @@ function R(i, t) {
     { duration: 300, easing: "ease", fill: "forwards" }
   ).onfinish = () => t == null ? void 0 : t();
 }
-const et = {
+const it = {
   current: "default",
   setTheme(i) {
     this.current = i, document.documentElement.setAttribute("data-theme", i), document.dispatchEvent(new CustomEvent("dreamdesk-theme-changed", { detail: { theme: i } }));
@@ -58,49 +58,49 @@ const et = {
     return this.current;
   }
 };
-function W({ handle: i, host: t, signal: e, disabled: s, exclude: n, getBounds: r, onStart: a }) {
-  let o = !1, l = 0, u = 0, m = 0, p = 0, c = null, h = 0, g = 0;
-  const z = () => {
-    t.style.left = `${Math.max(0, Math.min(h, m))}px`, t.style.top = `${Math.max(0, Math.min(g, p))}px`;
-  }, _ = (b) => {
-    o && (h = b.clientX - l, g = b.clientY - u, c && cancelAnimationFrame(c), c = requestAnimationFrame(() => {
-      z(), c = null;
+function B({ handle: i, host: t, container: e, signal: s, disabled: n, exclude: r, getBounds: a, onStart: o }) {
+  let l = !1, h = 0, u = 0, m = 0, p = 0, c = 0, v = 0, f = null, z = 0, d = 0;
+  const _ = () => {
+    t.style.left = `${Math.max(0, Math.min(z - c, m))}px`, t.style.top = `${Math.max(0, Math.min(d - v, p))}px`;
+  }, w = (A) => {
+    l && (z = A.clientX - h, d = A.clientY - u, f && cancelAnimationFrame(f), f = requestAnimationFrame(() => {
+      _(), f = null;
     }));
-  }, d = () => {
-    o = !1, document.removeEventListener("pointermove", _, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 }), c && (cancelAnimationFrame(c), c = null, z());
-  }, v = (b) => {
-    if (s != null && s() || n && b.target.closest(n)) return;
-    E(t);
-    const y = t.getBoundingClientRect();
-    l = b.clientX - y.left, u = b.clientY - y.top;
-    const S = (r == null ? void 0 : r()) ?? {
-      maxLeft: Math.max(0, window.innerWidth - y.width),
-      maxTop: Math.max(0, window.innerHeight - y.height)
+  }, y = () => {
+    l = !1, document.removeEventListener("pointermove", w, { capture: !0 }), document.removeEventListener("pointerup", y, { capture: !0 }), f && (cancelAnimationFrame(f), f = null, _());
+  }, C = (A) => {
+    if (n != null && n() || r && A.target.closest(r)) return;
+    L(t);
+    const b = t.getBoundingClientRect(), x = e == null ? void 0 : e.getBoundingClientRect();
+    c = (x == null ? void 0 : x.left) ?? 0, v = (x == null ? void 0 : x.top) ?? 0, h = A.clientX - b.left, u = A.clientY - b.top;
+    const D = (a == null ? void 0 : a()) ?? {
+      maxLeft: x ? x.width - b.width : Math.max(0, window.innerWidth - b.width),
+      maxTop: x ? x.height - b.height : Math.max(0, window.innerHeight - b.height)
     };
-    m = S.maxLeft, p = S.maxTop, a == null || a(y), o = !0, document.addEventListener("pointermove", _, { capture: !0 }), document.addEventListener("pointerup", d, { capture: !0 });
-  }, w = e ? { signal: e } : {};
-  return i.addEventListener("pointerdown", v, w), () => {
-    i.removeEventListener("pointerdown", v), document.removeEventListener("pointermove", _, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 }), c && cancelAnimationFrame(c);
+    m = D.maxLeft, p = D.maxTop, o == null || o(b), l = !0, document.addEventListener("pointermove", w, { capture: !0 }), document.addEventListener("pointerup", y, { capture: !0 });
+  }, $ = s ? { signal: s } : {};
+  return i.addEventListener("pointerdown", C, $), () => {
+    i.removeEventListener("pointerdown", C), document.removeEventListener("pointermove", w, { capture: !0 }), document.removeEventListener("pointerup", y, { capture: !0 }), f && cancelAnimationFrame(f);
   };
 }
-function H({ handle: i, host: t, signal: e, disabled: s, minWidth: n = 180, minHeight: r = 120, explicitAttr: a = "data-explicit" }) {
-  let o = !1, l = 0, u = 0, m = 0, p = 0;
-  const c = (_) => {
-    o && (t.style.setProperty("--ddw-w", `${Math.max(n, m + _.clientX - l)}px`), t.style.setProperty("--ddw-h", `${Math.max(r, p + _.clientY - u)}px`), t.setAttribute(a, ""));
-  }, h = () => {
-    o = !1, document.removeEventListener("pointermove", c, { capture: !0 }), document.removeEventListener("pointerup", h, { capture: !0 });
-  }, g = (_) => {
+function O({ handle: i, host: t, signal: e, disabled: s, minWidth: n = 180, minHeight: r = 120, explicitAttr: a = "data-explicit" }) {
+  let o = !1, l = 0, h = 0, u = 0, m = 0;
+  const p = (z) => {
+    o && (t.style.setProperty("--ddw-w", `${Math.max(n, u + z.clientX - l)}px`), t.style.setProperty("--ddw-h", `${Math.max(r, m + z.clientY - h)}px`), t.setAttribute(a, ""));
+  }, c = () => {
+    o = !1, document.removeEventListener("pointermove", p, { capture: !0 }), document.removeEventListener("pointerup", c, { capture: !0 });
+  }, v = (z) => {
     if (s != null && s()) return;
-    o = !0, l = _.clientX, u = _.clientY;
+    o = !0, l = z.clientX, h = z.clientY;
     const d = t.getBoundingClientRect();
-    m = d.width, p = d.height, document.addEventListener("pointermove", c, { capture: !0 }), document.addEventListener("pointerup", h, { capture: !0 });
-  }, z = e ? { signal: e } : {};
-  return i.addEventListener("pointerdown", g, z), () => {
-    i.removeEventListener("pointerdown", g), document.removeEventListener("pointermove", c, { capture: !0 }), document.removeEventListener("pointerup", h, { capture: !0 });
+    u = d.width, m = d.height, document.addEventListener("pointermove", p, { capture: !0 }), document.addEventListener("pointerup", c, { capture: !0 });
+  }, f = e ? { signal: e } : {};
+  return i.addEventListener("pointerdown", v, f), () => {
+    i.removeEventListener("pointerdown", v), document.removeEventListener("pointermove", p, { capture: !0 }), document.removeEventListener("pointerup", c, { capture: !0 });
   };
 }
-const B = 1e3;
-class O {
+const X = 1e3;
+class Y {
   constructor() {
     this._registry = /* @__PURE__ */ new Map(), this._zStack = [], this._listeners = /* @__PURE__ */ new Set();
   }
@@ -110,7 +110,7 @@ class O {
   _reassignZ() {
     this._zStack.forEach((t, e) => {
       const s = this._registry.get(t);
-      s && (s.el.style.zIndex = String(B + e));
+      s && (s.el.style.zIndex = String(X + e));
     });
   }
   register(t, e, s) {
@@ -140,49 +140,49 @@ class O {
     return this._listeners.add(t), () => this._listeners.delete(t);
   }
 }
-const k = new O();
-function X({ track: i, getValue: t, isBlocky: e, isGradient: s }) {
+const E = new Y();
+function j({ track: i, getValue: t, isBlocky: e, isGradient: s }) {
   let n = [], r = null, a = null, o = null;
-  const l = 1, u = 10, m = u + l;
-  function p() {
-    const d = s(), v = getComputedStyle(i), w = i.getBoundingClientRect().width - (parseFloat(v.borderLeftWidth) || 0) - (parseFloat(v.borderRightWidth) || 0), b = Math.max(1, Math.round((w + l) / m)), y = (w - (b - 1) * l) / b, S = w;
+  const l = 1, h = 10, u = h + l;
+  function m() {
+    const d = s(), _ = getComputedStyle(i), w = i.getBoundingClientRect().width - (parseFloat(_.borderLeftWidth) || 0) - (parseFloat(_.borderRightWidth) || 0), y = Math.max(1, Math.round((w + l) / u)), C = (w - (y - 1) * l) / y, $ = w;
     i.innerHTML = "", n = [];
-    for (let L = 0; L < b; L++) {
-      const x = document.createElement("div");
-      x.className = "progress-segment", x.style.cssText = `width:${y}px;margin-right:${L < b - 1 ? l : 0}px`, d && (x.style.backgroundSize = `${S}px 100%`, x.style.backgroundPosition = `-${L * (y + l)}px 0`), i.appendChild(x), n.push(x);
+    for (let A = 0; A < y; A++) {
+      const b = document.createElement("div");
+      b.className = "progress-segment", b.style.cssText = `width:${C}px;margin-right:${A < y - 1 ? l : 0}px`, d && (b.style.backgroundSize = `${$}px 100%`, b.style.backgroundPosition = `-${A * (C + l)}px 0`), i.appendChild(b), n.push(b);
     }
-    c(t());
+    p(t());
+  }
+  function p(d) {
+    const _ = Math.min(Math.max(d, 0), 100), w = Math.floor(_ / 100 * n.length);
+    n.forEach((y, C) => y.classList.toggle("progress-segment--active", C < w));
   }
   function c(d) {
-    const v = Math.min(Math.max(d, 0), 100), w = Math.floor(v / 100 * n.length);
-    n.forEach((b, y) => b.classList.toggle("progress-segment--active", y < w));
-  }
-  function h(d) {
     if (!r) return;
-    const v = Math.min(Math.max(d, 0), 100), w = s();
-    if (r.style.width = `${v}%`, !w) {
-      const b = getComputedStyle(r).getPropertyValue("--dd-progress-enable-hue-rotate").trim();
-      r.style.filter = b === "0" ? "none" : `hue-rotate(${v * 3.6}deg)`;
+    const _ = Math.min(Math.max(d, 0), 100), w = s();
+    if (r.style.width = `${_}%`, !w) {
+      const y = getComputedStyle(r).getPropertyValue("--dd-progress-enable-hue-rotate").trim();
+      r.style.filter = y === "0" ? "none" : `hue-rotate(${_ * 3.6}deg)`;
     }
     r.classList.toggle("progress-bar--complete", d >= 100);
   }
-  function g() {
-    const d = e(), v = s();
-    i.classList.toggle("progress-track--gradient", d && v), d ? (a == null || a.disconnect(), p(), a = new ResizeObserver(() => {
-      o && clearTimeout(o), o = setTimeout(p, 50);
-    }), a.observe(i)) : (r = i.querySelector(".progress-bar"), h(t()));
+  function v() {
+    const d = e(), _ = s();
+    i.classList.toggle("progress-track--gradient", d && _), d ? (a == null || a.disconnect(), m(), a = new ResizeObserver(() => {
+      o && clearTimeout(o), o = setTimeout(m, 50);
+    }), a.observe(i)) : (r = i.querySelector(".progress-bar"), c(t()));
   }
-  function z(d) {
-    e() ? c(d) : h(d);
+  function f(d) {
+    e() ? p(d) : c(d);
   }
-  function _() {
+  function z() {
     a == null || a.disconnect(), o && clearTimeout(o);
   }
-  return { update: z, rebuild: g, destroy: _ };
+  return { update: f, rebuild: v, destroy: z };
 }
-const I = import.meta.url, Y = I.slice(0, I.lastIndexOf("/") + 1), j = `${Y}../css/`;
-let Z = 0;
-function F(i) {
+const q = import.meta.url, Z = q.slice(0, q.lastIndexOf("/") + 1), N = `${Z}../css/`;
+let U = 0;
+function W(i) {
   try {
     const e = new DOMParser().parseFromString(i, "image/svg+xml");
     if (e.querySelector("parsererror")) return "";
@@ -201,10 +201,10 @@ function F(i) {
     return "";
   }
 }
-function f(i) {
+function g(i) {
   return String(i).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
-class A extends HTMLElement {
+class k extends HTMLElement {
   constructor() {
     super(), this._initialized = !1, this._resizeObserver = null, this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), this.attachShadow({ mode: "open" }), this._container = document.createElement("div"), this._container.classList.add("component-root"), this._eventController = new AbortController(), this._injectBaseStyles(), this.shadowRoot.appendChild(this._container), this._onThemeChange = () => {
       this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), this._updateThemeStyles(() => {
@@ -234,7 +234,7 @@ class A extends HTMLElement {
   }
   _injectBaseStyles() {
     const t = document.createElement("link");
-    t.rel = "stylesheet", t.href = `${j}base.css`, this.shadowRoot.appendChild(t);
+    t.rel = "stylesheet", t.href = `${N}base.css`, this.shadowRoot.appendChild(t);
   }
   _updateThemeStyles(t) {
     t == null || t();
@@ -259,9 +259,9 @@ class A extends HTMLElement {
     return this._prefix;
   }
 }
-class q extends A {
+class H extends k {
   constructor() {
-    super(), this._resizeHandleBound = !1, this._dragController = null, this._observedScrollables = [], this.setAttribute("data-dd-role", "window"), this._winId = `dd-win-${++Z}`, this.widthAttr = this.getAttribute("width"), this.heightAttr = this.getAttribute("height");
+    super(), this._resizeHandleBound = !1, this._dragController = null, this._observedScrollables = [], this.setAttribute("data-dd-role", "window"), this._winId = `dd-win-${++U}`, this.widthAttr = this.getAttribute("width"), this.heightAttr = this.getAttribute("height");
     const t = this.getAttribute("resizable");
     this._resizable = t === null || t === "" || t === "true" || t === "1";
     const e = this.getAttribute("movable");
@@ -286,7 +286,7 @@ class q extends A {
     return `
       <div class="win">
         <div class="win-header">
-          <span class="win-title">${f(this.getAttribute("title") || "Window")}</span>
+          <span class="win-title">${g(this.getAttribute("title") || "Window")}</span>
           <div class="win-controls">
             <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
             <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
@@ -297,10 +297,10 @@ class q extends A {
       </div>`;
   }
   setup() {
-    k.register(this._winId, this, this.getAttribute("title") ?? "Window"), this._syncSizeFromAttributes(), this._setupResizeObserver(), this._bindButtons(), this._setupResizeHandle(), this._setupDragging(), this._applyControlIcons(), this._applyControlsDisabled(), this._bindFocusRaise();
+    E.register(this._winId, this, this.getAttribute("title") ?? "Window"), this._syncSizeFromAttributes(), this._setupResizeObserver(), this._bindButtons(), this._setupResizeHandle(), this._setupDragging(), this._applyControlIcons(), this._applyControlsDisabled(), this._bindFocusRaise();
   }
   disconnectedCallback() {
-    super.disconnectedCallback(), k.unregister(this._winId), this._dragController && (this._dragController.abort(), this._dragController = null);
+    super.disconnectedCallback(), E.unregister(this._winId), this._dragController && (this._dragController.abort(), this._dragController = null);
   }
   _syncSizeFromAttributes() {
     const t = this.widthAttr, e = this.heightAttr;
@@ -321,9 +321,9 @@ class q extends A {
   minimize() {
     var r;
     const t = this.shadowRoot.querySelector(".win"), e = this.getAttribute("minimize-animation"), s = e ? (r = window.DreamDeskAnimations) == null ? void 0 : r[e] : void 0, n = () => {
-      this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.state.isMinimized ? k.minimize(this._winId) : k.restore(this._winId), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
+      this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.state.isMinimized ? E.minimize(this._winId) : E.restore(this._winId), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
     };
-    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: M, unminimize: D }, previousState: this.state.previousState })).then(n) : (!this.state.isMinimized ? M(t) : D(t), n());
+    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: T, unminimize: P }, previousState: this.state.previousState })).then(n) : (!this.state.isMinimized ? T(t) : P(t), n());
   }
   fullscreen() {
     var a, o;
@@ -338,7 +338,7 @@ class q extends A {
     const r = () => {
       this.state.isFullscreen = !this.state.isFullscreen, this.dispatchEvent(new CustomEvent("fullscreen", { detail: { isFullscreen: this.state.isFullscreen } }));
     };
-    typeof n == "function" ? Promise.resolve(n(t, { previousState: this.state.previousState, isFullscreen: this.state.isFullscreen, defaultFns: { fullscreen: T, unfullscreen: P } })).then(r) : (e ? T(t, this.state.previousState) : P(t, this.state.previousState), r());
+    typeof n == "function" ? Promise.resolve(n(t, { previousState: this.state.previousState, isFullscreen: this.state.isFullscreen, defaultFns: { fullscreen: I, unfullscreen: F } })).then(r) : (e ? I(t, this.state.previousState) : F(t, this.state.previousState), r());
   }
   close() {
     var r;
@@ -365,12 +365,12 @@ class q extends A {
     }), e = this.shadowRoot.querySelector("slot"), s = (e == null ? void 0 : e.assignedElements({ flatten: !0 })) ?? [], n = () => {
       const o = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
       this._observedScrollables.forEach((l) => t.unobserve(l)), this._observedScrollables = [], s.forEach((l) => {
-        var p, c;
-        const u = (p = l.matches) != null && p.call(l, o) ? [l] : [], m = ((c = l.querySelectorAll) == null ? void 0 : c.call(l, o)) ?? [];
-        [...u, ...Array.from(m)].forEach((h) => {
-          h.classList.forEach((g) => {
-            g.endsWith("-scroll") && h.classList.remove(g);
-          }), t.observe(h), this._observedScrollables.push(h), this._checkOverflow(h);
+        var m, p;
+        const h = (m = l.matches) != null && m.call(l, o) ? [l] : [], u = ((p = l.querySelectorAll) == null ? void 0 : p.call(l, o)) ?? [];
+        [...h, ...Array.from(u)].forEach((c) => {
+          c.classList.forEach((v) => {
+            v.endsWith("-scroll") && c.classList.remove(v);
+          }), t.observe(c), this._observedScrollables.push(c), this._checkOverflow(c);
         });
       });
     };
@@ -390,7 +390,7 @@ class q extends A {
       e == null || e.remove(), this._resizeHandleBound = !1;
       return;
     }
-    e || (e = document.createElement("div"), e.className = "win-resize-handle", t.appendChild(e)), !this._resizeHandleBound && (this._resizeHandleBound = !0, H({
+    e || (e = document.createElement("div"), e.className = "win-resize-handle", t.appendChild(e)), !this._resizeHandleBound && (this._resizeHandleBound = !0, O({
       handle: e,
       host: this,
       signal: (s = this._eventController) == null ? void 0 : s.signal,
@@ -409,7 +409,7 @@ class q extends A {
         t.style.cursor = "default", (e = this._dragController) == null || e.abort(), this._dragController = null;
         return;
       }
-      this._dragController || (this._dragController = new AbortController(), t.style.cursor = "move", W({
+      this._dragController || (this._dragController = new AbortController(), t.style.cursor = "move", B({
         handle: t,
         host: this,
         signal: this._dragController.signal,
@@ -421,30 +421,30 @@ class q extends A {
         onStart: (s) => {
           this.setAttribute("data-ddw-explicit", ""), this.style.setProperty("--ddw-w", `${s.width}px`), this.style.setProperty("--ddw-h", `${s.height}px`);
           const n = getComputedStyle(this).position;
-          (n === "static" || n === "relative") && (this.style.position = "absolute", this.style.left = `${s.left + (window.scrollX || 0)}px`, this.style.top = `${s.top + (window.scrollY || 0)}px`), k.raise(this._winId);
+          (n === "static" || n === "relative") && (this.style.position = "absolute", this.style.left = `${s.left + (window.scrollX || 0)}px`, this.style.top = `${s.top + (window.scrollY || 0)}px`), E.raise(this._winId);
         }
       }));
     }
   }
   _bindFocusRaise() {
     var t, e;
-    (e = this.shadowRoot.querySelector(".win")) == null || e.addEventListener("pointerdown", () => k.raise(this._winId), {
+    (e = this.shadowRoot.querySelector(".win")) == null || e.addEventListener("pointerdown", () => E.raise(this._winId), {
       signal: ((t = this._eventController) == null ? void 0 : t.signal) ?? void 0
     });
   }
   _applyControlIcons() {
     const t = this.shadowRoot, e = (s, n) => {
-      var m;
+      var u;
       const r = t.querySelector(s);
       if (!r) return;
       const a = this.getAttribute(n);
       if (!a) return;
       const o = a.trim();
       let l = "";
-      if (o.startsWith("<svg") ? l = F(o) : (m = window.DreamDeskIcons) != null && m[o] && (l = F(window.DreamDeskIcons[o])), !l) return;
+      if (o.startsWith("<svg") ? l = W(o) : (u = window.DreamDeskIcons) != null && u[o] && (l = W(window.DreamDeskIcons[o])), !l) return;
       r.innerHTML = l, r.style.backgroundImage = "none";
-      const u = r.querySelector("svg");
-      u && (u.setAttribute("aria-hidden", "true"), u.setAttribute("focusable", "false"));
+      const h = r.querySelector("svg");
+      h && (h.setAttribute("aria-hidden", "true"), h.setAttribute("focusable", "false"));
     };
     e(".btn--minimize", "minimize-icon"), e(".btn--fullscreen", "fullscreen-icon"), e(".btn--close", "close-icon");
   }
@@ -468,7 +468,7 @@ class q extends A {
     t === "resizable" && (this._resizable = n(s), this._initialized && this._setupResizeHandle()), t === "movable" && (this._movable = n(s), this._initialized && this._setupDragging()), t === "width" && (this.widthAttr = s, this._initialized && this._syncSizeFromAttributes()), t === "height" && (this.heightAttr = s, this._initialized && this._syncSizeFromAttributes()), ["minimize-icon", "fullscreen-icon", "close-icon"].includes(t) && this._applyControlIcons(), ["disable-minimize", "disable-fullscreen", "disable-close"].includes(t) && this._applyControlsDisabled();
   }
 }
-class N extends A {
+class G extends k {
   constructor() {
     super(), this._handle = null, this.setAttribute("data-dd-role", "progressbar"), this._value = parseFloat(this.getAttribute("value") ?? "0") || 0;
   }
@@ -493,7 +493,7 @@ class N extends A {
   _init() {
     var e;
     const t = this.shadowRoot.querySelector(".progress-track");
-    t && ((e = this._handle) == null || e.destroy(), this._handle = X({
+    t && ((e = this._handle) == null || e.destroy(), this._handle = j({
       track: t,
       getValue: () => this._value,
       isBlocky: () => this.hasAttribute("blocky"),
@@ -511,7 +511,7 @@ class N extends A {
     this.setAttribute("value", String(t));
   }
 }
-class U extends A {
+class J extends k {
   constructor() {
     super(...arguments), this.tabs = [], this.panels = [], this.activeIndex = 0, this._tabListenerBound = !1;
   }
@@ -539,12 +539,12 @@ class U extends A {
     this.tabs.forEach((e, s) => e.classList.toggle("active", s === t)), this.panels.forEach((e, s) => e.classList.toggle("active", s === t)), this.activeIndex = t;
   }
 }
-class G extends HTMLElement {
+class K extends HTMLElement {
   connectedCallback() {
     this.setAttribute("slot", "tab"), this.setAttribute("data-tab", ""), this.setAttribute("data-tab-index", this.getAttribute("index") ?? "0");
   }
 }
-class J extends A {
+class Q extends k {
   connectedCallback() {
     var t;
     super.connectedCallback(), this.setAttribute("slot", "panel"), this.setAttribute("data-panel", ""), (t = this.querySelector("p")) == null || t.classList.add("win-content");
@@ -553,7 +553,7 @@ class J extends A {
     return "<style>:host{display:none}:host(.active){display:block}</style><slot></slot>";
   }
 }
-const C = class C extends A {
+const S = class S extends k {
   static get observedAttributes() {
     return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py", "disabled"];
   }
@@ -561,8 +561,8 @@ const C = class C extends A {
     super(), this.variant = this.getAttribute("variant") || "primary", this.action = this.getAttribute("action"), this.setAttribute("data-dd-role", "button");
   }
   template() {
-    const t = this.action ? `data-action="${f(this.action)}"` : "", e = this.action ? `aria-label="${f(this.action)}"` : "", s = this.getAttribute("disabled"), n = s !== null && s !== "false" && s !== "0" ? 'disabled aria-disabled="true"' : "";
-    return `<button class="btn btn--${f(this.variant)}" ${t} ${e} ${n}><slot></slot></button>`;
+    const t = this.action ? `data-action="${g(this.action)}"` : "", e = this.action ? `aria-label="${g(this.action)}"` : "", s = this.getAttribute("disabled"), n = s !== null && s !== "false" && s !== "0" ? 'disabled aria-disabled="true"' : "";
+    return `<button class="btn btn--${g(this.variant)}" ${t} ${e} ${n}><slot></slot></button>`;
   }
   connectedCallback() {
     super.connectedCallback(), this._applyButtonSizeOverrides(), this._syncDisabled();
@@ -586,11 +586,11 @@ const C = class C extends A {
       o && (s ? (o.setAttribute("data-action", s), o.setAttribute("aria-label", s)) : (o.removeAttribute("data-action"), o.removeAttribute("aria-label")));
       return;
     }
-    const n = C.sizeVarMap[t];
+    const n = S.sizeVarMap[t];
     n && (s == null ? this.style.removeProperty(n) : this.style.setProperty(n, s));
   }
   _applyButtonSizeOverrides() {
-    Object.entries(C.sizeVarMap).forEach(([t, e]) => {
+    Object.entries(S.sizeVarMap).forEach(([t, e]) => {
       const s = this.getAttribute(t);
       s != null && this.style.setProperty(e, s);
     });
@@ -603,7 +603,7 @@ const C = class C extends A {
     t.disabled = e, t.setAttribute("aria-disabled", String(e)), t.classList.toggle("btn--disable", e), e ? t.setAttribute("tabindex", "-1") : t.removeAttribute("tabindex");
   }
 };
-C.sizeVarMap = {
+S.sizeVarMap = {
   "min-width": "--dd-btn-min-w",
   width: "--dd-btn-w",
   height: "--dd-btn-h",
@@ -611,8 +611,8 @@ C.sizeVarMap = {
   px: "--dd-btn-px",
   py: "--dd-btn-py"
 };
-let $ = C;
-class K extends A {
+let M = S;
+class V extends k {
   static get observedAttributes() {
     return ["type", "message"];
   }
@@ -620,9 +620,9 @@ class K extends A {
     super(), this._type = this.getAttribute("type") || "notification", this._message = this.getAttribute("message") || "";
   }
   template() {
-    return `<div class="toast toast-${f(this._type)}">
+    return `<div class="toast toast-${g(this._type)}">
       <button class="toast-btn--close" data-action="close" aria-label="close">&times;</button>
-      ${f(this._message)}
+      ${g(this._message)}
     </div>`;
   }
   setup() {
@@ -638,7 +638,7 @@ class K extends A {
     this.style.display = "none";
   }
 }
-class Q extends A {
+class tt extends k {
   static get observedAttributes() {
     return ["type", "label", "id", "value", "placeholder"];
   }
@@ -647,9 +647,9 @@ class Q extends A {
   }
   template() {
     return `<div style="${this._label ? "display:flex;align-items:center;gap:0.5rem" : ""}">
-      ${this._label ? `<label class="input-label" for="${f(this._inputId)}">${f(this._label)}</label>` : ""}
-      <input type="${f(this._type)}" id="${f(this._inputId)}" class="dreamdesk-input"
-        value="${f(this._value)}" placeholder="${f(this._placeholder)}" />
+      ${this._label ? `<label class="input-label" for="${g(this._inputId)}">${g(this._label)}</label>` : ""}
+      <input type="${g(this._type)}" id="${g(this._inputId)}" class="dreamdesk-input"
+        value="${g(this._value)}" placeholder="${g(this._placeholder)}" />
     </div>`;
   }
   connectedCallback() {
@@ -668,7 +668,7 @@ class Q extends A {
     e && (e.value = t);
   }
 }
-class V extends A {
+class et extends k {
   template() {
     return `<label class="toggle">
       <input type="checkbox" ${this.theme === "dark" ? "checked" : ""}>
@@ -684,11 +684,11 @@ class V extends A {
     });
   }
 }
-class tt extends q {
+class st extends H {
   template() {
     return `<div class="win terminal-win">
       <div class="win-header">
-        <span class="win-title">${f(this.getAttribute("title") || "Terminal")}</span>
+        <span class="win-title">${g(this.getAttribute("title") || "Terminal")}</span>
         <div class="win-controls">
           <button class="btn--minimize" data-action="minimize"></button>
           <button class="btn--fullscreen" data-action="fullscreen"></button>
@@ -699,27 +699,27 @@ class tt extends q {
     </div>`;
   }
 }
-customElements.define("dreamdesk-tab", G);
-customElements.define("dreamdesk-tab-panel", J);
-customElements.define("dreamdesk-tabs", U);
-customElements.define("dreamdesk-window", q);
-customElements.define("dreamdesk-progress-bar", N);
-customElements.define("dreamdesk-button", $);
-customElements.define("dreamdesk-toast", K);
-customElements.define("dreamdesk-input", Q);
-customElements.define("dreamdesk-toggle", V);
-customElements.define("dreamdesk-terminal-window", tt);
+customElements.define("dreamdesk-tab", K);
+customElements.define("dreamdesk-tab-panel", Q);
+customElements.define("dreamdesk-tabs", J);
+customElements.define("dreamdesk-window", H);
+customElements.define("dreamdesk-progress-bar", G);
+customElements.define("dreamdesk-button", M);
+customElements.define("dreamdesk-toast", V);
+customElements.define("dreamdesk-input", tt);
+customElements.define("dreamdesk-toggle", et);
+customElements.define("dreamdesk-terminal-window", st);
 export {
-  et as DreamDeskThemeManager,
-  O as WindowManager,
-  E as cancelRunningAnimations,
+  it as DreamDeskThemeManager,
+  Y as WindowManager,
+  L as cancelRunningAnimations,
   R as close,
-  k as defaultWindowManager,
-  T as fullscreen,
-  M as minimize,
-  W as setupDrag,
-  X as setupProgressBar,
-  H as setupResize,
-  P as unfullscreen,
-  D as unminimize
+  E as defaultWindowManager,
+  I as fullscreen,
+  T as minimize,
+  B as setupDrag,
+  j as setupProgressBar,
+  O as setupResize,
+  F as unfullscreen,
+  P as unminimize
 };

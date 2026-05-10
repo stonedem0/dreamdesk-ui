@@ -87,6 +87,42 @@ describe('setupDrag', () => {
     expect(host.style.left).toBe('');
   });
 
+  it('clamps to container bounds and produces container-relative position', () => {
+    const { handle, host } = makeElements();
+    const container = document.createElement('div');
+    // Container at viewport (100, 50), size 400×300
+    container.getBoundingClientRect = () => ({ left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350, x: 100, y: 50, toJSON: () => {} } as DOMRect);
+
+    setupDrag({ handle, host, container });
+
+    // host at viewport (50, 50) — container-relative: (-50, 0) but clamped to 0
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100 }); // offsetX=50, offsetY=50
+    fire(document, 'pointermove', { clientX: 250, clientY: 200 });
+    fire(document, 'pointerup');
+
+    // pendingLeft = 250 - 50 = 200, container-relative = 200 - 100 = 100
+    // pendingTop  = 200 - 50 = 150, container-relative = 150 - 50  = 100
+    expect(host.style.left).toBe('100px');
+    expect(host.style.top).toBe('100px');
+  });
+
+  it('clamps to container maxLeft/maxTop', () => {
+    const { handle, host } = makeElements();
+    const container = document.createElement('div');
+    container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 300, height: 200, right: 300, bottom: 200, x: 0, y: 0, toJSON: () => {} } as DOMRect);
+
+    setupDrag({ handle, host, container });
+
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100 });
+    fire(document, 'pointermove', { clientX: 999, clientY: 999 });
+    fire(document, 'pointerup');
+
+    // maxLeft = containerW - hostW = 300 - 200 = 100
+    // maxTop  = containerH - hostH = 200 - 100 = 100
+    expect(parseInt(host.style.left)).toBeLessThanOrEqual(100);
+    expect(parseInt(host.style.top)).toBeLessThanOrEqual(100);
+  });
+
   it('cleanup removes listeners', () => {
     const { handle, host } = makeElements();
     const cleanup = setupDrag({ handle, host });

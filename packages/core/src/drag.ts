@@ -3,6 +3,7 @@ import { cancelRunningAnimations } from './animations';
 export interface DragOptions {
   handle: HTMLElement;
   host: HTMLElement;
+  container?: HTMLElement | null;
   signal?: AbortSignal;
   disabled?: () => boolean;
   exclude?: string;
@@ -10,16 +11,17 @@ export interface DragOptions {
   onStart?: (hostRect: DOMRect) => void;
 }
 
-export function setupDrag({ handle, host, signal, disabled, exclude, getBounds, onStart }: DragOptions): () => void {
+export function setupDrag({ handle, host, container, signal, disabled, exclude, getBounds, onStart }: DragOptions): () => void {
   let isDragging = false;
   let offsetX = 0, offsetY = 0;
   let maxLeft = 0, maxTop = 0;
+  let containerOffsetLeft = 0, containerOffsetTop = 0;
   let rafId: number | null = null;
   let pendingLeft = 0, pendingTop = 0;
 
   const applyPosition = () => {
-    host.style.left = `${Math.max(0, Math.min(pendingLeft, maxLeft))}px`;
-    host.style.top = `${Math.max(0, Math.min(pendingTop, maxTop))}px`;
+    host.style.left = `${Math.max(0, Math.min(pendingLeft - containerOffsetLeft, maxLeft))}px`;
+    host.style.top = `${Math.max(0, Math.min(pendingTop - containerOffsetTop, maxTop))}px`;
   };
 
   const onPointerMove = (e: PointerEvent) => {
@@ -42,11 +44,18 @@ export function setupDrag({ handle, host, signal, disabled, exclude, getBounds, 
     if (exclude && (e.target as Element).closest(exclude)) return;
     cancelRunningAnimations(host);
     const hostRect = host.getBoundingClientRect();
+    const containerRect = container?.getBoundingClientRect();
+    containerOffsetLeft = containerRect?.left ?? 0;
+    containerOffsetTop = containerRect?.top ?? 0;
     offsetX = e.clientX - hostRect.left;
     offsetY = e.clientY - hostRect.top;
     const b = getBounds?.() ?? {
-      maxLeft: Math.max(0, window.innerWidth - hostRect.width),
-      maxTop: Math.max(0, window.innerHeight - hostRect.height),
+      maxLeft: containerRect
+        ? containerRect.width - hostRect.width
+        : Math.max(0, window.innerWidth - hostRect.width),
+      maxTop: containerRect
+        ? containerRect.height - hostRect.height
+        : Math.max(0, window.innerHeight - hostRect.height),
     };
     maxLeft = b.maxLeft;
     maxTop = b.maxTop;
