@@ -427,13 +427,22 @@ body {
   );
 }
 .win-controls .btn--minimize:hover {
-  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
+  background-color: var(
+    --color-window-control-minimize-bg-hover,
+    var(--color-window-control-minimize-bg, inherit)
+  );
 }
 .win-controls .btn--fullscreen:hover {
-  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
+  background-color: var(
+    --color-window-control-fullscreen-bg-hover,
+    var(--color-window-control-fullscreen-bg, inherit)
+  );
 }
 .win-controls .btn--close:hover {
-  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
+  background-color: var(
+    --color-window-control-close-bg-hover,
+    var(--color-window-control-close-bg, inherit)
+  );
 }
 /* Scrollbars */
 ::-webkit-scrollbar-track {
@@ -675,10 +684,7 @@ dreamdesk-tab-panel.active {
   box-shadow: var(--progress-track-shadow, none);
   border-radius: var(--dd-pb-radius, var(--progress-radius, 0));
 }
-.progress-track--blocky {
-  padding-left: 3.4px;
-  padding-right: 3.4px;
-}
+
 .progress-segment {
   transition:
     opacity 0.3s ease,
@@ -690,6 +696,19 @@ dreamdesk-tab-panel.active {
   flex-shrink: 0;
   box-sizing: border-box;
   box-shadow: var(--progress-segment-shadow, none);
+  background-color: transparent;
+}
+.progress-segment--active {
+  opacity: 1;
+  background-color: var(--color-progress-segment, #a8edea);
+}
+.progress-track--gradient .progress-segment--active {
+  background-color: transparent;
+  background-image: var(--color-progress-gradient, none);
+  background-repeat: no-repeat;
+}
+.progress-bar--complete {
+  border-right: none;
 }
 
 /* ====== utility classes ====== */
