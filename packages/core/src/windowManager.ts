@@ -3,8 +3,10 @@ const BASE_Z = 1000;
 export interface WindowEntry {
   id: string;
   title: string;
+  icon?: string;
   el: HTMLElement;
   isMinimized: boolean;
+  toggle: () => void;
 }
 
 export class WindowManager {
@@ -23,8 +25,8 @@ export class WindowManager {
     });
   }
 
-  register(id: string, el: HTMLElement, title: string): void {
-    this._registry.set(id, { id, title, el, isMinimized: false });
+  register(id: string, el: HTMLElement, title: string, options?: { icon?: string; toggle?: () => void }): void {
+    this._registry.set(id, { id, title, icon: options?.icon, el, isMinimized: false, toggle: options?.toggle ?? (() => {}) });
     if (!this._zStack.includes(id)) this._zStack.push(id);
     this._reassignZ();
     this._notify();
