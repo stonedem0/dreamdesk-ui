@@ -12,7 +12,7 @@
     "outDir": "dist",
     "skipLibCheck": true,
     "paths": {
-      "@dreamdesk/core": ["../core/src/animations.ts"]
+      "@dreamdesk/core": ["../core/src/shared.ts"]
     }
   },
   "include": ["src"]

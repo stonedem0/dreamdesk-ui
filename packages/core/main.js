@@ -1,78 +1,61 @@
 window.addEventListener('load', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  document.dispatchEvent(new CustomEvent('dreamdesk-theme-changed', { 
-    detail: { theme: currentTheme }
-  }));
-  document.body.style.background = 'var(--app-color, #fff5fa)';
-
-  const setupToggle = () => {
-    const toggle = document.querySelector('dreamdesk-toggle');
-    if (!toggle) return; 
-    toggle.addEventListener('toggle-changed', (e) => {
-      const checked = e.detail?.checked;
-      const theme = checked ? 'vista' : 'pastelcore';
-      document.documentElement.setAttribute('data-theme', theme);
-      document.dispatchEvent(new CustomEvent('dreamdesk-theme-changed', { detail: { theme } }));
-      if (theme === 'vista') {
-        document.body.style.background = 'var(--app-color, #eaf4ff)';
-        document.body.style.color = 'var(--color-text, #0f1b2b)';
-      } else {
-        document.body.style.background = 'var(--app-color, #fff5fa)';
-        document.body.style.color = 'var(--black)';
-      }
-    }, { once: false });
+  const applyTheme = (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.dispatchEvent(new CustomEvent('dreamdesk-theme-changed', { detail: { theme } }));
+    document.body.style.background = theme === 'vista'
+      ? 'var(--app-color, #eaf4ff)'
+      : 'var(--app-color, #fff5fa)';
+    document.body.style.color = theme === 'vista'
+      ? 'var(--color-text, #0f1b2b)'
+      : 'var(--black)';
   };
 
-  if (customElements?.whenDefined) {
-    customElements.whenDefined('dreamdesk-toggle').then(setupToggle).catch(setupToggle);
-  } else {
-    setupToggle();
-  }
-  const bars = document.querySelectorAll('dreamdesk-progress-bar');
-  if (bars.length) {
+  // Dispatch initial theme so components initialise correctly
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'pastelcore');
+
+  // Theme toggle (pastelcore ↔ vista)
+  const setupThemeToggle = () => {
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('toggle-changed', (e) => {
+      applyTheme(e.detail?.checked ? 'vista' : 'pastelcore');
+    });
+  };
+
+  // Demo toggle (standalone)
+  const setupDemoToggle = () => {
+    const toggle = document.getElementById('demo-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('toggle-changed', () => {});
+  };
+
+  // Progress bars
+  const setupProgressBars = () => {
+    const bars = document.querySelectorAll('dreamdesk-progress-bar');
+    if (!bars.length) return;
     let progress = 0;
     let rafId = null;
-
     const tick = () => {
       progress = Math.min(100, progress + Math.random() * 0.8);
       bars.forEach((bar) => bar.setAttribute('value', progress.toFixed(1)));
       if (progress < 100 && !document.hidden) rafId = requestAnimationFrame(tick);
     };
-
-    const onVisibility = () => {
-      if (document.hidden) {
-        if (rafId) cancelAnimationFrame(rafId);
-      } else if (progress < 100) {
-        rafId = requestAnimationFrame(tick);
-      }
-    };
-
-    document.addEventListener('visibilitychange', onVisibility);
-    rafId = requestAnimationFrame(tick);
-  }
-});
-
-window.DreamDeskAnimations = {
-  customFullscreen(el, { isFullscreen, previousState }) {
-    const rect = el.getBoundingClientRect();
-    const fromW = rect.width;
-    const fromH = rect.height;
-    const toW = isFullscreen && previousState ? previousState.width : 400;
-    const toH = isFullscreen && previousState ? previousState.height : 200;
-
-    const anim = el.animate(
-      [
-        { width: `${fromW}px`, height: `${fromH}px` },
-        { width: `${toW}px`, height: `${toH}px` }
-      ],
-      { duration: 300, easing: 'ease-in-out', fill: 'forwards' }
-    );
-    return anim.finished.then(() => {
-      el.style.width = `${toW}px`;
-      el.style.height = `${toH}px`;
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { if (rafId) cancelAnimationFrame(rafId); }
+      else if (progress < 100) rafId = requestAnimationFrame(tick);
     });
-  },
-};
+    rafId = requestAnimationFrame(tick);
+  };
 
-window.DreamDeskAnimations.customUnfullscreen = window.DreamDeskAnimations.customFullscreen;
+  if (customElements?.whenDefined) {
+    customElements.whenDefined('dreamdesk-toggle').then(() => {
+      setupThemeToggle();
+      setupDemoToggle();
+    });
+  } else {
+    setupThemeToggle();
+    setupDemoToggle();
+  }
 
+  setupProgressBars();
+});

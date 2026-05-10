@@ -42,8 +42,8 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
   win.style.position = 'fixed';
   win.style.top = '0';
   win.style.left = '0';
-  win.style.width = '';
-  win.style.height = '';
+  win.style.width = '100vw';
+  win.style.height = '100vh';
   win.style.setProperty('--ddw-w', '100vw');
   win.style.setProperty('--ddw-h', '100vh');
   win.style.zIndex = '9999';

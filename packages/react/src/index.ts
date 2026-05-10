@@ -1,4 +1,7 @@
 export { ThemeProvider, useTheme } from "./context/ThemeContext";
+
+export { Desktop, useWindowManager } from "./components/Desktop";
+export type { DesktopProps } from "./components/Desktop";
 export type { DreamDeskTheme } from "./context/ThemeContext";
 
 export { Window } from "./components/Window";

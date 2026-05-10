@@ -31,7 +31,7 @@ export function Input({
   const id = idProp ?? generatedId;
 
   const gridStyle: CSSProperties = layout === "inline"
-    ? { display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", gap: "0.5rem" }
+    ? { display: "flex", alignItems: "center", gap: "0.5rem" }
     : {};
 
   return (

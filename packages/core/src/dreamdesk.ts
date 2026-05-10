@@ -1,41 +1,13 @@
-import { minimize, unminimize, fullscreen, unfullscreen, close, cancelRunningAnimations, type PreviousState } from './animations';
+import { minimize, unminimize, fullscreen, unfullscreen, close, type PreviousState } from './animations';
+import { setupDrag } from './drag';
+import { setupResize } from './resize';
+import { defaultWindowManager } from './windowManager';
+import { setupProgressBar, type ProgressBarHandle } from './progressBar';
 
 // Derive the directory of this script once — plain string op, Vite won't treat it as an asset URL
 const _moduleUrl: string = import.meta.url;
 const _moduleDir: string = _moduleUrl.slice(0, _moduleUrl.lastIndexOf('/') + 1);
 const _cssBase: string = `${_moduleDir}../css/`;
-
-// Z-stack: ordered by z-index (last = topmost), mirrors the React fix
-const BASE_Z = 1000;
-const _zRegistry = new Map<string, HTMLElement>();
-const _zStack: string[] = [];
-
-function _reassignZ(): void {
-  _zStack.forEach((id, i) => {
-    const el = _zRegistry.get(id);
-    if (el) el.style.zIndex = String(BASE_Z + i);
-  });
-}
-
-function zRegister(id: string, el: HTMLElement): void {
-  _zRegistry.set(id, el);
-  if (!_zStack.includes(id)) _zStack.push(id);
-  _reassignZ();
-}
-
-function zUnregister(id: string): void {
-  _zRegistry.delete(id);
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _reassignZ();
-}
-
-function zRaise(id: string): void {
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _zStack.push(id);
-  _reassignZ();
-}
 
 let _winCounter = 0;
 
@@ -88,7 +60,6 @@ class DreamDeskComponent extends HTMLElement {
 
   constructor() {
     super();
-    this.setAttribute('data-dd-role', 'window');
     this._theme = document.documentElement.getAttribute('data-theme') || 'default';
     this._prefix = this._getThemePrefix(this._theme);
     this.attachShadow({ mode: 'open' });
@@ -168,7 +139,6 @@ class DreamDeskWindow extends DreamDeskComponent {
   private _resizeHandleBound = false;
   private _dragController: AbortController | null = null;
   private _observedScrollables: Element[] = [];
-  private _progressResizeObserver?: ResizeObserver;
 
   static get observedAttributes() {
     return ['title', 'width', 'height', 'resizable', 'movable',
@@ -178,6 +148,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'window');
     this._winId = `dd-win-${++_winCounter}`;
     this.widthAttr = this.getAttribute('width');
     this.heightAttr = this.getAttribute('height');
@@ -204,7 +175,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   }
 
   setup(): void {
-    zRegister(this._winId, this);
+    defaultWindowManager.register(this._winId, this, this.getAttribute('title') ?? 'Window');
     this._syncSizeFromAttributes();
     this._setupResizeObserver();
     this._bindButtons();
@@ -217,7 +188,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    zUnregister(this._winId);
+    defaultWindowManager.unregister(this._winId);
     if (this._dragController) { this._dragController.abort(); this._dragController = null; }
   }
 
@@ -247,6 +218,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     const done = () => {
       this.state.isMinimized = !this.state.isMinimized;
       this.state.isMinimized ? this.setAttribute('minimized', '') : this.removeAttribute('minimized');
+      this.state.isMinimized
+        ? defaultWindowManager.minimize(this._winId)
+        : defaultWindowManager.restore(this._winId);
       this.dispatchEvent(new CustomEvent('minimize', { detail: { isMinimized: this.state.isMinimized } }));
     };
     if (typeof customFn === 'function') {
@@ -261,7 +235,10 @@ class DreamDeskWindow extends DreamDeskComponent {
   fullscreen(): void {
     const win = this as unknown as HTMLElement;
     const goingFull = !this.state.isFullscreen;
-    if (goingFull) this._freezeWindowState();
+    if (goingFull) {
+      this._freezeWindowState();
+      this.setAttribute('data-ddw-explicit', '');
+    }
     const customId = this.getAttribute(goingFull ? 'fullscreen-animation' : 'unfullscreen-animation');
     let customFn = customId ? window.DreamDeskAnimations?.[customId] : undefined;
     if (!goingFull && typeof customFn !== 'function') {
@@ -346,27 +323,13 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (!handle) { handle = document.createElement('div'); handle.className = 'win-resize-handle'; win.appendChild(handle); }
     if (this._resizeHandleBound) return;
     this._resizeHandleBound = true;
-    let isResizing = false, startX = 0, startY = 0, startWidth = 0, startHeight = 0;
-    const minWidth = 180, minHeight = 120;
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isResizing) return;
-      this.style.setProperty('--ddw-w', `${Math.max(minWidth, startWidth + e.clientX - startX)}px`);
-      this.style.setProperty('--ddw-h', `${Math.max(minHeight, startHeight + e.clientY - startY)}px`);
-      this.setAttribute('data-ddw-explicit', '');
-    };
-    const stop = () => {
-      isResizing = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', stop, { capture: true });
-    };
-    handle.addEventListener('pointerdown', (e: PointerEvent) => {
-      if (this.state?.isFullscreen) return;
-      isResizing = true; startX = e.clientX; startY = e.clientY;
-      const rect = win!.getBoundingClientRect();
-      startWidth = rect.width; startHeight = rect.height;
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal ?? undefined });
-      document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal ?? undefined });
-    }, { signal: this._eventController?.signal ?? undefined });
+    setupResize({
+      handle,
+      host: this,
+      signal: this._eventController?.signal,
+      disabled: () => !!this.state?.isFullscreen,
+      explicitAttr: 'data-ddw-explicit',
+    });
   }
 
   private _setupDragging(): void {
@@ -379,48 +342,30 @@ class DreamDeskWindow extends DreamDeskComponent {
     }
     if (this._dragController) return;
     this._dragController = new AbortController();
-    const { signal } = this._dragController;
     header.style.cursor = 'move';
-    let isDragging = false, offsetX = 0, offsetY = 0, rafId: number | null = null;
-    let maxLeft = 0, maxTop = 0;
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging) return;
-      const desiredLeft = e.clientX - offsetX, desiredTop = e.clientY - offsetY;
-      if (rafId) cancelAnimationFrame(rafId);
-      // No getBoundingClientRect or getComputedStyle here — cached at drag start
-      rafId = requestAnimationFrame(() => {
-        this.style.left = `${Math.max(0, Math.min(desiredLeft, maxLeft))}px`;
-        this.style.top = `${Math.max(0, Math.min(desiredTop, maxTop))}px`;
-      });
-    };
-    const onPointerUp = () => {
-      isDragging = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', onPointerUp, { capture: true });
-    };
-    header.addEventListener('pointerdown', (e: PointerEvent) => {
-      if (!this._movable) return;
-      if (this.state?.isFullscreen && this.getAttribute('fullscreen-mode') !== 'expand') return;
-      if ((e.target as Element).closest('.win-controls')) return;
-      cancelRunningAnimations(this);
-      const hostRect = this.getBoundingClientRect();
-      offsetX = e.clientX - hostRect.left; offsetY = e.clientY - hostRect.top;
-      // Cache bounds once at drag start — reuse in every RAF tick
-      maxLeft = Math.max(0, window.innerWidth - hostRect.width);
-      maxTop = Math.max(0, window.innerHeight - hostRect.height);
-      isDragging = true;
-      this.setAttribute('data-ddw-explicit', '');
-      this.style.setProperty('--ddw-w', `${hostRect.width}px`);
-      this.style.setProperty('--ddw-h', `${hostRect.height}px`);
-      if (getComputedStyle(this).position === 'static') this.style.position = 'absolute';
-      zRaise(this._winId);
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal });
-      document.addEventListener('pointerup', onPointerUp, { capture: true, signal });
-    }, { signal });
+    setupDrag({
+      handle: header,
+      host: this,
+      signal: this._dragController.signal,
+      exclude: '.win-controls',
+      disabled: () => !this._movable || (!!this.state?.isFullscreen && this.getAttribute('fullscreen-mode') !== 'expand'),
+      onStart: (hostRect) => {
+        this.setAttribute('data-ddw-explicit', '');
+        this.style.setProperty('--ddw-w', `${hostRect.width}px`);
+        this.style.setProperty('--ddw-h', `${hostRect.height}px`);
+        const pos = getComputedStyle(this).position;
+        if (pos === 'static' || pos === 'relative') {
+          this.style.position = 'absolute';
+          this.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
+          this.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
+        }
+        defaultWindowManager.raise(this._winId);
+      },
+    });
   }
 
   private _bindFocusRaise(): void {
-    this.shadowRoot!.querySelector('.win')?.addEventListener('pointerdown', () => zRaise(this._winId), {
+    this.shadowRoot!.querySelector('.win')?.addEventListener('pointerdown', () => defaultWindowManager.raise(this._winId), {
       signal: this._eventController?.signal ?? undefined,
     });
   }
@@ -485,9 +430,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
 class DreamDeskProgressBar extends DreamDeskComponent {
   private _value: number;
-  private _segments: HTMLElement[] = [];
-  private _bar: HTMLElement | null = null;
-  private _progressResizeObserver: ResizeObserver | null = null;
+  private _handle: ProgressBarHandle | null = null;
 
   static get observedAttributes() { return ['value', 'gradient', 'blocky']; }
 
@@ -503,102 +446,33 @@ class DreamDeskProgressBar extends DreamDeskComponent {
     return `<div class="${trackClass}">${this.hasAttribute('blocky') ? '' : `<div class="${barClass}"></div>`}</div>`;
   }
 
-  connectedCallback(): void { super.connectedCallback(); this._afterRender(); }
+  connectedCallback(): void { super.connectedCallback(); this._init(); }
 
   attributeChangedCallback(name: string, oldVal: string | null, newVal: string | null): void {
     if (oldVal === newVal) return;
-    if (name === 'value') { this._value = parseFloat(newVal ?? '0'); this._updateProgress(); }
-    if (name === 'gradient' || name === 'blocky') { this._container.innerHTML = this.template(); this._afterRender(); }
+    if (name === 'value') { this._value = parseFloat(newVal ?? '0'); this._handle?.update(this._value); }
+    if (name === 'gradient' || name === 'blocky') { this._container.innerHTML = this.template(); this._init(); }
   }
 
-  themeChanged(): void {
-    const track = this.shadowRoot?.querySelector<HTMLElement>('.progress-track');
-    const isBlocky = this.hasAttribute('blocky'), isGradient = this.hasAttribute('gradient');
-    if (isBlocky && track && this._segments.length) {
-      const trackWidth = track.getBoundingClientRect().width;
-      this._segments.forEach((seg, i) => {
-        const { width, marginRight } = getComputedStyle(seg);
-        const fullSeg = parseFloat(width) + (parseFloat(marginRight) || 0);
-        if (isGradient) {
-          seg.style.backgroundImage = 'var(--color-progress-gradient, none)';
-          seg.style.backgroundSize = `${trackWidth}px 100%`;
-          seg.style.backgroundPosition = `-${i * fullSeg}px 0`;
-          seg.style.backgroundRepeat = 'no-repeat';
-          seg.style.backgroundColor = 'transparent';
-        } else {
-          seg.style.backgroundImage = 'none';
-          seg.style.backgroundColor = 'var(--color-progress-segment, #a8edea)';
-        }
-      });
-      this._updateProgress();
-    } else { this._afterRender(); }
-  }
+  themeChanged(): void { this._handle?.rebuild(); }
 
-  private _afterRender(): void {
+  private _init(): void {
     const track = this.shadowRoot!.querySelector<HTMLElement>('.progress-track');
     if (!track) return;
-    const isBlocky = this.hasAttribute('blocky'), isGradient = this.hasAttribute('gradient');
-    if (isBlocky) {
-      const rebuild = () => {
-        const gap = 1, segW = 10, segH = 20, fullSeg = segW + gap;
-        const trackWidth = track.getBoundingClientRect().width;
-        const segments = Math.floor((trackWidth + gap) / fullSeg);
-        const fullVisualWidth = segments * fullSeg - gap;
-        track.innerHTML = ''; this._segments = [];
-        for (let i = 0; i < segments; i++) {
-          const seg = document.createElement('div');
-          seg.className = 'progress-segment';
-          seg.style.cssText = `width:${segW}px;height:${segH}px;margin-right:${i < segments - 1 ? gap : 0}px`;
-          if (isGradient) {
-            seg.style.backgroundImage = 'var(--color-progress-gradient, none)';
-            seg.style.backgroundSize = `${fullVisualWidth}px 100%`;
-            seg.style.backgroundPosition = `-${i * fullSeg}px 0`;
-            seg.style.backgroundRepeat = 'no-repeat';
-          }
-          track.appendChild(seg); this._segments.push(seg);
-        }
-        this._updateProgress();
-      };
-      requestAnimationFrame(rebuild);
-      this._progressResizeObserver?.disconnect();
-      let rebuildTimer: ReturnType<typeof setTimeout> | null = null;
-      this._progressResizeObserver = new ResizeObserver(() => {
-        if (rebuildTimer) clearTimeout(rebuildTimer);
-        rebuildTimer = setTimeout(rebuild, 50);
-      });
-      this._progressResizeObserver.observe(track);
-    } else {
-      this._bar = this.shadowRoot!.querySelector<HTMLElement>('.progress-bar');
-      this._updateProgress();
-    }
-  }
-
-  private _updateProgress(): void {
-    const percent = Math.min(Math.max(this._value, 0), 100);
-    const isGradient = this.hasAttribute('gradient');
-    if (this.hasAttribute('blocky')) {
-      const activeCount = Math.floor((percent / 100) * this._segments.length);
-      this._segments.forEach((seg, i) => {
-        seg.style.opacity = i < activeCount ? '1' : '0.2';
-        if (isGradient) { seg.style.backgroundColor = 'transparent'; seg.style.filter = 'none'; }
-        else { seg.style.backgroundImage = 'none'; seg.style.backgroundColor = i < activeCount ? 'var(--color-progress-segment, #a8edea)' : 'transparent'; seg.style.filter = 'none'; }
-      });
-    } else if (this._bar) {
-      this._bar.style.width = `${percent}%`;
-      if (!isGradient) {
-        try {
-          const enabled = getComputedStyle(this._bar).getPropertyValue('--dd-progress-enable-hue-rotate').trim();
-          this._bar.style.filter = enabled === '0' ? 'none' : `hue-rotate(${percent * 3.6}deg)`;
-        } catch { this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`; }
-      }
-      if (this._value >= 100) this._bar.style.borderRight = 'none';
-    }
+    this._handle?.destroy();
+    this._handle = setupProgressBar({
+      track,
+      getValue: () => this._value,
+      isBlocky: () => this.hasAttribute('blocky'),
+      isGradient: () => this.hasAttribute('gradient'),
+    });
+    this._handle.rebuild();
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    this._progressResizeObserver?.disconnect();
-    this._progressResizeObserver = null;
+    this._handle?.destroy();
+    this._handle = null;
   }
 
   get value(): number { return this._value; }
@@ -790,9 +664,12 @@ class DreamDeskInput extends DreamDeskComponent {
   }
 
   template(): string {
-    return `${this._label ? `<label class="input-label" for="${escapeHtml(this._inputId)}">${escapeHtml(this._label)}</label>` : ''}
+    const wrap = this._label ? 'display:flex;align-items:center;gap:0.5rem' : '';
+    return `<div style="${wrap}">
+      ${this._label ? `<label class="input-label" for="${escapeHtml(this._inputId)}">${escapeHtml(this._label)}</label>` : ''}
       <input type="${escapeHtml(this._type)}" id="${escapeHtml(this._inputId)}" class="dreamdesk-input"
-        value="${escapeHtml(this._value)}" placeholder="${escapeHtml(this._placeholder)}" />`;
+        value="${escapeHtml(this._value)}" placeholder="${escapeHtml(this._placeholder)}" />
+    </div>`;
   }
 
   connectedCallback(): void {
