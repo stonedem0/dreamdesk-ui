@@ -78,21 +78,21 @@ function zt({ handle: e, host: t, container: n, reservedBottom: s = 0, signal: r
     u && (p = k.clientX - m, x = k.clientY - g, y && cancelAnimationFrame(y), y = requestAnimationFrame(() => {
       T(), y = null;
     }));
-  }, E = () => {
-    u = !1, document.removeEventListener("pointermove", N, { capture: !0 }), document.removeEventListener("pointerup", E, { capture: !0 }), y && (cancelAnimationFrame(y), y = null, T());
+  }, M = () => {
+    u = !1, document.removeEventListener("pointermove", N, { capture: !0 }), document.removeEventListener("pointerup", M, { capture: !0 }), y && (cancelAnimationFrame(y), y = null, T());
   }, _ = (k) => {
     if (i != null && i() || k.target.closest(o)) return;
     D(t);
     const L = t.getBoundingClientRect(), b = n == null ? void 0 : n.getBoundingClientRect();
     w = (b == null ? void 0 : b.left) ?? 0, z = (b == null ? void 0 : b.top) ?? 0, m = k.clientX - L.left, g = k.clientY - L.top;
-    const M = (l == null ? void 0 : l()) ?? {
+    const E = (l == null ? void 0 : l()) ?? {
       maxLeft: b ? b.width - L.width : Math.max(0, window.innerWidth - L.width),
       maxTop: b ? b.height - L.height - s : Math.max(0, window.innerHeight - L.height - s)
     };
-    d = M.maxLeft, f = M.maxTop, a == null || a(L), u = !0, document.addEventListener("pointermove", N, { capture: !0 }), document.addEventListener("pointerup", E, { capture: !0 });
+    d = E.maxLeft, f = E.maxTop, a == null || a(L), u = !0, document.addEventListener("pointermove", N, { capture: !0 }), document.addEventListener("pointerup", M, { capture: !0 });
   }, I = r ? { signal: r } : {};
   return e.addEventListener("pointerdown", _, I), () => {
-    e.removeEventListener("pointerdown", _), document.removeEventListener("pointermove", N, { capture: !0 }), document.removeEventListener("pointerup", E, { capture: !0 }), y && cancelAnimationFrame(y);
+    e.removeEventListener("pointerdown", _), document.removeEventListener("pointermove", N, { capture: !0 }), document.removeEventListener("pointerup", M, { capture: !0 }), y && cancelAnimationFrame(y);
   };
 }
 function Et({ handle: e, host: t, signal: n, disabled: s, minWidth: r = 180, minHeight: i = 120, explicitAttr: o = "data-explicit" }) {
@@ -158,17 +158,17 @@ function $t({ track: e, getValue: t, isBlocky: n, isGradient: s }) {
   let r = [], i = null, o = null, l = null;
   const a = 1, u = 10, m = u + a;
   function g() {
-    const p = s(), x = getComputedStyle(e), T = e.getBoundingClientRect().width - (parseFloat(x.borderLeftWidth) || 0) - (parseFloat(x.borderRightWidth) || 0), N = Math.max(1, Math.round((T + a) / m)), E = (T - (N - 1) * a) / N, _ = T;
+    const p = s(), x = getComputedStyle(e), T = e.getBoundingClientRect().width - (parseFloat(x.borderLeftWidth) || 0) - (parseFloat(x.borderRightWidth) || 0), N = Math.max(1, Math.round((T + a) / m)), M = (T - (N - 1) * a) / N, _ = T;
     e.innerHTML = "", r = [];
     for (let I = 0; I < N; I++) {
       const k = document.createElement("div");
-      k.className = "progress-segment", k.style.cssText = `width:${E}px;margin-right:${I < N - 1 ? a : 0}px`, p && (k.style.backgroundSize = `${_}px 100%`, k.style.backgroundPosition = `-${I * (E + a)}px 0`), e.appendChild(k), r.push(k);
+      k.className = "progress-segment", k.style.cssText = `width:${M}px;margin-right:${I < N - 1 ? a : 0}px`, p && (k.style.backgroundSize = `${_}px 100%`, k.style.backgroundPosition = `-${I * (M + a)}px 0`), e.appendChild(k), r.push(k);
     }
     d(t());
   }
   function d(p) {
     const x = Math.min(Math.max(p, 0), 100), T = Math.floor(x / 100 * r.length);
-    r.forEach((N, E) => N.classList.toggle("progress-segment--active", E < T));
+    r.forEach((N, M) => N.classList.toggle("progress-segment--active", M < T));
   }
   function f(p) {
     if (!i) return;
@@ -377,11 +377,12 @@ function Ct({
   onClose: x,
   children: T,
   style: N,
-  className: E
+  className: M
 }) {
-  const _ = W(null), I = W(null), k = W(null), L = nt(), b = it(), M = Wt(), q = Pt(), [Z, ct] = B(!1), [A, lt] = B(!1), H = W(null), dt = !!(i || o), ut = {
+  const _ = W(null), I = W(null), k = W(null), L = nt(), b = it(), E = Wt(), q = Pt(), [Z, ct] = B(!1), [A, lt] = B(!1), H = W(null), dt = !!(i || o), ut = {
     ...i ? { "--ddw-w": i } : {},
     ...o ? { "--ddw-h": o } : {},
+    ...E ? { position: "absolute" } : {},
     ...N
   }, O = W(() => {
   });
@@ -420,7 +421,7 @@ function Ct({
       return zt({
         handle: v,
         host: h,
-        container: M == null ? void 0 : M.current,
+        container: E == null ? void 0 : E.current,
         reservedBottom: q,
         exclude: ".dd-win-controls",
         disabled: () => A && f !== "expand",
@@ -429,13 +430,13 @@ function Ct({
           h.hasAttribute("data-explicit") || (h.style.setProperty("--ddw-w", `${S.width}px`), h.style.setProperty("--ddw-h", `${S.height}px`), h.setAttribute("data-explicit", ""));
           const G = getComputedStyle(h).position;
           if (G === "static" || G === "relative") {
-            const C = (K = M == null ? void 0 : M.current) == null ? void 0 : K.getBoundingClientRect();
+            const C = (K = E == null ? void 0 : E.current) == null ? void 0 : K.getBoundingClientRect();
             h.style.position = "absolute", h.style.left = `${S.left + (window.scrollX || 0) - ((C == null ? void 0 : C.left) ?? 0)}px`, h.style.top = `${S.top + (window.scrollY || 0) - ((C == null ? void 0 : C.top) ?? 0)}px`;
           }
           Y();
         }
       });
-  }, [r, A, f, Y, M, q]), P(() => {
+  }, [r, A, f, Y, E, q]), P(() => {
     const v = k.current, h = _.current;
     if (!(!v || !h || !s))
       return Et({
@@ -449,7 +450,7 @@ function Ct({
     "div",
     {
       ref: _,
-      className: ["dd-window", E].filter(Boolean).join(" "),
+      className: ["dd-window", M].filter(Boolean).join(" "),
       "data-size": n,
       "data-explicit": dt ? "" : void 0,
       style: ut,

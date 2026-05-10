@@ -148,6 +148,7 @@ export function Window({
   const cssVars: CSSProperties = {
     ...(width ? { "--ddw-w": width } as CSSProperties : {}),
     ...(height ? { "--ddw-h": height } as CSSProperties : {}),
+    ...(desktopRef ? { position: "absolute" } : {}),
     ...style,
   };
 

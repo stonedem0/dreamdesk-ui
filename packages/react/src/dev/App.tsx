@@ -41,8 +41,9 @@ export default function App() {
     <ThemeProvider defaultTheme="pastelcore">
       <Desktop style={{ width: "100vw", height: "100vh" }}>
 
-        {/* Notes — tabbed scrollable window */}
-        <Window title="Notes" scrollContent width="520px" height="360px">
+        {/* Notes — tabbed scrollable window, top-left */}
+        <Window title="Notes" scrollContent width="560px" height="430px"
+          style={{ top: "16px", left: "16px" }}>
           <Tabs>
             <Tab>General</Tab>
             <Tab>Appearance</Tab>
@@ -66,8 +67,9 @@ export default function App() {
           </Tabs>
         </Window>
 
-        {/* Login */}
-        <Window title="Login" size="sm" resizable={false} bodyOverflow="hidden">
+        {/* Login — below Notes, left */}
+        <Window title="Login" size="sm" resizable={false} bodyOverflow="hidden"
+          style={{ top: "462px", left: "16px" }}>
           <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <Input type="text" label="Username:" placeholder="" layout="inline" />
             <Input type="password" label="Password:" placeholder="" layout="inline" />
@@ -78,9 +80,9 @@ export default function App() {
           </div>
         </Window>
 
-        {/* Theme + Progress + Toasts — right side */}
-        <Window title="Components" width="36rem" height="480px" scrollContent
-          style={{ position: "absolute", top: "1rem", right: "1rem" }}>
+        {/* Components — top-right */}
+        <Window title="Components" width="620px" height="560px" scrollContent
+          style={{ top: "16px", left: "calc(100vw - 636px)" }}>
           <div className="win-content dd-scrollable dd-scrollable--fill" style={{ display: "flex", flexDirection: "column", gap: "0.75rem", padding: "0.5rem" }}>
             <ThemeToggle />
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
@@ -97,9 +99,9 @@ export default function App() {
           </div>
         </Window>
 
-        {/* Terminal — bottom right */}
-        <TerminalWindow title="Terminal" width="28rem" height="12rem"
-          style={{ position: "absolute", top: "420px", right: "1rem" }}>
+        {/* Terminal — bottom-right */}
+        <TerminalWindow title="Terminal" width="500px" height="220px"
+          style={{ top: "460px", left: "calc(100vw - 516px)" }}>
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>
