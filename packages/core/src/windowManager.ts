@@ -13,6 +13,7 @@ export class WindowManager {
   private _registry = new Map<string, WindowEntry>();
   private _zStack: string[] = [];
   private _listeners = new Set<() => void>();
+  private _openRegistry = new Map<string, () => void>();
 
   private _notify(): void {
     this._listeners.forEach(fn => fn());
@@ -33,6 +34,7 @@ export class WindowManager {
   }
 
   unregister(id: string): void {
+    if (!this._registry.has(id)) return;
     this._registry.delete(id);
     const idx = this._zStack.indexOf(id);
     if (idx !== -1) this._zStack.splice(idx, 1);
@@ -55,6 +57,20 @@ export class WindowManager {
   restore(id: string): void {
     const entry = this._registry.get(id);
     if (entry) { entry.isMinimized = false; this.raise(id); this._notify(); }
+  }
+
+  registerOpen(id: string, fn: () => void): void {
+    this._openRegistry.set(id, fn);
+  }
+
+  open(id: string): void {
+    const entry = this._registry.get(id);
+    if (entry) {
+      if (entry.isMinimized) entry.toggle();
+      else this.raise(id);
+      return;
+    }
+    this._openRegistry.get(id)?.();
   }
 
   getWindows(): WindowEntry[] {

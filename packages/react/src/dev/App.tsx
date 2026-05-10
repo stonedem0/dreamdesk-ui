@@ -8,8 +8,11 @@ import { TerminalWindow } from "../components/TerminalWindow";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
-import { Desktop } from "../components/Desktop";
+import { Desktop, useWindowManager } from "../components/Desktop";
 import { Taskbar } from "../components/Taskbar";
+import { DesktopIcon } from "../components/DesktopIcon";
+
+// ── Theme toggle ──────────────────────────────────────────────────────────────
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -22,6 +25,22 @@ function ThemeToggle() {
     </div>
   );
 }
+
+// ── App registrar + desktop icons ─────────────────────────────────────────────
+
+function WindowShortcuts() {
+  const wm = useWindowManager();
+  const focus = (id: string) => wm.open(id);
+  return (
+    <div style={{ position: "absolute", top: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "1.5rem" }}>
+      <DesktopIcon label="Notes" onClick={() => focus("notes")} />
+      <DesktopIcon label="Login" onClick={() => focus("login")} />
+      <DesktopIcon label="Terminal" onClick={() => focus("terminal")} />
+    </div>
+  );
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
   const [progress, setProgress] = useState(0);
@@ -41,8 +60,10 @@ export default function App() {
     <ThemeProvider defaultTheme="pastelcore">
       <Desktop style={{ width: "100vw", height: "100vh" }}>
 
+        <WindowShortcuts />
+
         {/* Notes — tabbed scrollable window, top-left */}
-        <Window title="Notes" scrollContent width="560px" height="430px"
+        <Window windowId="notes" title="Notes" scrollContent width="560px" height="430px"
           style={{ top: "16px", left: "16px" }}>
           <Tabs>
             <Tab>General</Tab>
@@ -68,7 +89,7 @@ export default function App() {
         </Window>
 
         {/* Login — below Notes, left */}
-        <Window title="Login" size="sm" resizable={false} bodyOverflow="hidden"
+        <Window windowId="login" title="Login" size="sm" resizable={false} bodyOverflow="hidden"
           style={{ top: "462px", left: "16px" }}>
           <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <Input type="text" label="Username:" placeholder="" layout="inline" />
@@ -100,7 +121,7 @@ export default function App() {
         </Window>
 
         {/* Terminal — bottom-right */}
-        <TerminalWindow title="Terminal" width="500px" height="220px"
+        <TerminalWindow windowId="terminal" title="Terminal" width="500px" height="220px"
           style={{ top: "460px", left: "calc(100vw - 516px)" }}>
           <p>$ hello world</p>
           <p>$ _</p>
