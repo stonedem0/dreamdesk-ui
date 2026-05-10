@@ -1,8 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { type WindowEntry } from "@dreamdesk/core";
 import { useWindowManager } from "./Desktop";
 import { Icon } from "./Icon";
 import "./Taskbar.css";
+
+const EXIT_MS = 200;
+
+type DisplayEntry = WindowEntry & { leaving?: boolean };
 
 function Clock() {
   const [time, setTime] = useState(() => formatTime(new Date()));
@@ -24,20 +28,38 @@ export interface TaskbarProps {
 
 export function Taskbar({ clock = true, className }: TaskbarProps) {
   const wm = useWindowManager();
-  const [windows, setWindows] = useState<WindowEntry[]>(() => wm.getWindows());
+  const [displayed, setDisplayed] = useState<DisplayEntry[]>(() => wm.getWindows());
 
   useEffect(() => {
-    setWindows(wm.getWindows());
-    return wm.subscribe(() => setWindows([...wm.getWindows()]));
+    setDisplayed(wm.getWindows());
+    return wm.subscribe(() => {
+      const current = wm.getWindows();
+      const currentIds = new Set(current.map((w) => w.id));
+      setDisplayed((prev) => {
+        const hasRemovals = prev.some((w) => !w.leaving && !currentIds.has(w.id));
+        if (!hasRemovals) return current;
+        return prev.map((w) => (currentIds.has(w.id) ? w : { ...w, leaving: true }));
+      });
+    });
   }, [wm]);
+
+  useEffect(() => {
+    const leaving = displayed.filter((w) => w.leaving);
+    if (leaving.length === 0) return;
+    const id = setTimeout(() => setDisplayed(wm.getWindows()), EXIT_MS);
+    return () => clearTimeout(id);
+  }, [displayed, wm]);
 
   return (
     <div className={["dd-taskbar", className].filter(Boolean).join(" ")}>
       <div className="dd-taskbar-windows">
-        {windows.map((w) => (
+        {displayed.map((w) => (
           <button
             key={w.id}
-            className={["dd-taskbar-btn", w.isMinimized ? "dd-taskbar-btn--minimized" : "dd-taskbar-btn--active"].join(" ")}
+            className={[
+              "dd-taskbar-btn",
+              w.leaving ? "dd-taskbar-btn--leaving" : w.isMinimized ? "dd-taskbar-btn--minimized" : "dd-taskbar-btn--active",
+            ].join(" ")}
             onClick={() => w.toggle()}
             title={w.title}
           >

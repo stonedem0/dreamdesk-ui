@@ -203,9 +203,10 @@ export function Window({
     if (!win) return;
     closeAnimation(win, () => {
       if (hostRef.current) hostRef.current.style.display = "none";
+      wm.unregister(windowId);
       onClose?.();
     });
-  }, [onClose]);
+  }, [onClose, wm, windowId]);
 
   // Dragging
   useEffect(() => {

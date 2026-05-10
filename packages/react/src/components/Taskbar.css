@@ -40,6 +40,15 @@
   text-align: left;
   box-sizing: border-box;
   overflow: hidden;
+  transition: opacity 0.2s ease, max-width 0.2s ease, min-width 0.2s ease, padding 0.2s ease, border-width 0.2s ease;
+}
+
+.dd-taskbar-btn--leaving {
+  opacity: 0;
+  max-width: 0;
+  min-width: 0;
+  padding: 0;
+  border-width: 0;
 }
 
 .dd-taskbar-btn:hover {
