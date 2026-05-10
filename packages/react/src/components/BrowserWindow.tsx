@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Window, type WindowProps } from "./Window";
 import "./BrowserWindow.css";
 
@@ -41,6 +41,10 @@ export function BrowserWindow({
   ...windowProps
 }: BrowserWindowProps) {
   const [addressValue, setAddressValue] = useState(url);
+
+  useEffect(() => {
+    setAddressValue(url);
+  }, [url]);
 
   const handleGo = () => {
     const target = addressValue.trim();

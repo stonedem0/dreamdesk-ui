@@ -41,6 +41,7 @@ export interface WindowProps {
   scrollContent?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
+  fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
   onClose?: () => void;
   children?: ReactNode;
   style?: CSSProperties;
@@ -127,6 +128,7 @@ export function Window({
   scrollContent,
   onMinimize,
   onFullscreen,
+  fullscreenAnimation,
   onClose,
   children,
   style,
@@ -205,17 +207,23 @@ export function Window({
     const host = hostRef.current;
     if (!host) return;
     const goingFull = !isFullscreen;
-    if (goingFull) {
-      previousStateRef.current = freezeState(host);
-      host.setAttribute("data-explicit", "");
-      animFullscreen(host, previousStateRef.current);
+    const defaultFn = () => {
+      if (goingFull) {
+        previousStateRef.current = freezeState(host);
+        host.setAttribute("data-explicit", "");
+        animFullscreen(host, previousStateRef.current);
+      } else {
+        if (previousStateRef.current) animUnfullscreen(host, previousStateRef.current);
+      }
+    };
+    if (fullscreenAnimation) {
+      fullscreenAnimation(host, { isFullscreen: goingFull, defaultFn });
     } else {
-      if (previousStateRef.current) animUnfullscreen(host, previousStateRef.current);
+      defaultFn();
     }
-    const next = goingFull;
-    setIsFullscreen(next);
-    onFullscreen?.(next);
-  }, [isFullscreen, onFullscreen]);
+    setIsFullscreen(goingFull);
+    onFullscreen?.(goingFull);
+  }, [isFullscreen, onFullscreen, fullscreenAnimation]);
 
   const handleClose = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
