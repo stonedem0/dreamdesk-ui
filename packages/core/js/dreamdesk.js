@@ -1,129 +1,144 @@
-import { minimize, fullscreen, unfullscreen, close, cancelRunningAnimations } from "./animations.js";
-
-function sanitizeSvg(raw) {
+function y(i) {
+  var e;
+  const t = ((e = i == null ? void 0 : i.getAnimations) == null ? void 0 : e.call(i)) ?? [];
+  for (const s of t) s.cancel();
+}
+function x(i) {
+  y(i), i.style.transformOrigin = "50% 100%", i.animate(
+    [{ transform: "scale(1)" }, { transform: "scale(0)" }],
+    { duration: 300, easing: "ease-in", fill: "forwards" }
+  );
+}
+function E(i) {
+  y(i), i.style.transformOrigin = "50% 100%", i.animate(
+    [{ transform: "scale(0)" }, { transform: "scale(1)" }],
+    { duration: 300, easing: "ease-out" }
+  );
+}
+function S(i, t) {
+  y(i);
+  const e = window.innerWidth, s = window.innerHeight, n = t.top - (window.scrollY || 0), r = t.left - (window.scrollX || 0), a = t.width, o = t.height;
+  i.style.position = "fixed", i.style.top = "0", i.style.left = "0", i.style.width = "", i.style.height = "", i.style.setProperty("--ddw-w", "100vw"), i.style.setProperty("--ddw-h", "100vh"), i.style.zIndex = "9999";
+  const l = a / e, h = o / s, u = r + a / 2 - e / 2, m = n + o / 2 - s / 2;
+  i.animate(
+    [
+      { transform: `translate(${u}px, ${m}px) scale(${l}, ${h})` },
+      { transform: "none" }
+    ],
+    { duration: 500, easing: "cubic-bezier(0.2, 0, 0, 1)" }
+  );
+}
+function R(i, t) {
+  y(i);
+  const e = window.innerWidth, s = window.innerHeight, n = t.width, r = t.height, a = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), l = n / e, h = r / s, u = o + n / 2 - e / 2, m = a + r / 2 - s / 2, d = i.animate(
+    [
+      { transform: "none" },
+      { transform: `translate(${u}px, ${m}px) scale(${l}, ${h})` }
+    ],
+    { duration: 300, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }
+  ), c = () => {
+    i.style.position = t.position || "absolute", i.style.top = `${Math.round(t.top)}px`, i.style.left = `${Math.round(t.left)}px`, i.style.width = "", i.style.height = "", i.style.setProperty("--ddw-w", `${Math.round(n)}px`), i.style.setProperty("--ddw-h", `${Math.round(r)}px`), t.zIndex ? i.style.zIndex = t.zIndex : i.style.removeProperty("z-index");
+  };
+  d.onfinish = () => {
+    c(), i.getAnimations().forEach((b) => b.cancel());
+  }, d.oncancel = c;
+}
+function $(i, t) {
+  i.animate(
+    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
+    { duration: 300, easing: "ease", fill: "forwards" }
+  ).onfinish = () => t == null ? void 0 : t();
+}
+const Z = {
+  current: "default",
+  setTheme(i) {
+    this.current = i, document.documentElement.setAttribute("data-theme", i), document.dispatchEvent(new CustomEvent("dreamdesk-theme-changed", { detail: { theme: i } }));
+  },
+  getTheme() {
+    return this.current;
+  }
+}, L = import.meta.url, I = L.slice(0, L.lastIndexOf("/") + 1), P = `${I}../css/`, F = 1e3, A = /* @__PURE__ */ new Map(), f = [];
+function z() {
+  f.forEach((i, t) => {
+    const e = A.get(i);
+    e && (e.style.zIndex = String(F + t));
+  });
+}
+function q(i, t) {
+  A.set(i, t), f.includes(i) || f.push(i), z();
+}
+function H(i) {
+  A.delete(i);
+  const t = f.indexOf(i);
+  t !== -1 && f.splice(t, 1), z();
+}
+function D(i) {
+  const t = f.indexOf(i);
+  t !== -1 && f.splice(t, 1), f.push(i), z();
+}
+let O = 0;
+function M(i) {
   try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(raw, "image/svg+xml");
-    if (doc.querySelector("parsererror")) return "";
-    const walk = (node) => {
-      if (node.tagName.toLowerCase() === "script") {
-        node.parentNode?.removeChild(node);
+    const e = new DOMParser().parseFromString(i, "image/svg+xml");
+    if (e.querySelector("parsererror")) return "";
+    const s = (n) => {
+      var r;
+      if (n.tagName.toLowerCase() === "script") {
+        (r = n.parentNode) == null || r.removeChild(n);
         return;
       }
-      for (const attr of Array.from(node.attributes)) {
-        if (attr.name.startsWith("on") || attr.value.toLowerCase().includes("javascript:")) {
-          node.removeAttribute(attr.name);
-        }
-      }
-      Array.from(node.children).forEach(walk);
+      for (const a of Array.from(n.attributes))
+        (a.name.startsWith("on") || a.value.toLowerCase().includes("javascript:")) && n.removeAttribute(a.name);
+      Array.from(n.children).forEach(s);
     };
-    walk(doc.documentElement);
-    return new XMLSerializer().serializeToString(doc.documentElement);
+    return s(e.documentElement), new XMLSerializer().serializeToString(e.documentElement);
   } catch {
     return "";
   }
 }
-
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+function p(i) {
+  return String(i).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
-
-class DreamDeskComponent extends HTMLElement {
+class v extends HTMLElement {
   constructor() {
-    super();
-    this.setAttribute('data-dd-role', 'window');
-    this._theme =
-      document.documentElement.getAttribute("data-theme") || "default";
-    this._prefix = this._getThemePrefix(this._theme);
-    this.attachShadow({ mode: "open" });
-
-    this._container = document.createElement("div");
-    this._container.classList.add("component-root");
-
-    this._styleLinks = [];
-
-    this._eventController = new AbortController();
-
-    this._injectBaseStyles();
-    this.shadowRoot.appendChild(this._container);
-
-    this._onThemeChange = () => {
-      this._theme =
-        document.documentElement.getAttribute("data-theme") || "default";
-
-      this._prefix = this._getThemePrefix(this._theme);
-      this._updateThemeStyles(() => {
-        this.themeChanged?.();
+    super(), this._initialized = !1, this._resizeObserver = null, this.setAttribute("data-dd-role", "window"), this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), this.attachShadow({ mode: "open" }), this._container = document.createElement("div"), this._container.classList.add("component-root"), this._eventController = new AbortController(), this._injectBaseStyles(), this.shadowRoot.appendChild(this._container), this._onThemeChange = () => {
+      this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), this._updateThemeStyles(() => {
+        var t;
+        (t = this.themeChanged) == null || t.call(this);
       });
-    };
-    document.addEventListener(
-      "dreamdesk-theme-changed",
-      this._onThemeChange,
-      { signal: this._eventController.signal }
-    );
-  }
-
-  connectedCallback() {
-    if (!this._eventController) {
-      this._eventController = new AbortController();
-      if (this._onThemeChange) {
-        document.addEventListener(
-          "dreamdesk-theme-changed",
-          this._onThemeChange,
-          { signal: this._eventController.signal }
-        );
-      }
-    }
-    if (this._initialized) return;
-    this._updateThemeStyles(() => {
-      this._container.innerHTML = this.template();
-      this.setup?.();
+    }, document.addEventListener("dreamdesk-theme-changed", this._onThemeChange, {
+      signal: this._eventController.signal
     });
-    this._initialized = true;
   }
-
+  connectedCallback() {
+    this._eventController || (this._eventController = new AbortController(), document.addEventListener("dreamdesk-theme-changed", this._onThemeChange, {
+      signal: this._eventController.signal
+    })), !this._initialized && (this._updateThemeStyles(() => {
+      var t;
+      this._container.innerHTML = this.template(), (t = this.setup) == null || t.call(this);
+    }), this._initialized = !0);
+  }
   disconnectedCallback() {
-    if (this._eventController) {
-      this._eventController.abort();
-      this._eventController = null;
-    }
-    if (this._resizeObserver) {
-      try { this._resizeObserver.disconnect(); } catch (_) {}
+    if (this._eventController && (this._eventController.abort(), this._eventController = null), this._resizeObserver) {
+      try {
+        this._resizeObserver.disconnect();
+      } catch {
+      }
       this._resizeObserver = null;
     }
   }
-
-  _getAssetPath(file, directory = 'css', extension = 'css') {
-    // Resolve asset relative to this module file so it works locally and on CDNs
-    const fullUrl = new URL(`../${directory}/${file}.${extension}`, import.meta.url);
-    return fullUrl.href;
-  }
-
   _injectBaseStyles() {
-    const base = ["base"]; 
-    base.forEach((file) => {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = this._getAssetPath(file, 'css', 'css');
-      this.shadowRoot.appendChild(link);
-    });
+    const t = document.createElement("link");
+    t.rel = "stylesheet", t.href = `${P}base.css`, this.shadowRoot.appendChild(t);
   }
-
-  _updateThemeStyles(callback) {
-    if (callback) callback();
+  _updateThemeStyles(t) {
+    t == null || t();
   }
-
   template() {
     return "";
   }
-
-  _getThemePrefix(theme) {
-    switch (theme) {
+  _getThemePrefix(t) {
+    switch (t) {
       case "pastelcore":
         return "pc";
       case "dark":
@@ -132,17 +147,21 @@ class DreamDeskComponent extends HTMLElement {
         return "";
     }
   }
-
   get theme() {
     return this._theme;
   }
-
   get prefix() {
     return this._prefix;
   }
 }
-
-class DreamDeskWindow extends DreamDeskComponent {
+class T extends v {
+  constructor() {
+    super(), this._resizeHandleBound = !1, this._dragController = null, this._observedScrollables = [], this._winId = `dd-win-${++O}`, this.widthAttr = this.getAttribute("width"), this.heightAttr = this.getAttribute("height");
+    const t = this.getAttribute("resizable");
+    this._resizable = t === null || t === "" || t === "true" || t === "1";
+    const e = this.getAttribute("movable");
+    this._movable = e === null || e === "" || e === "true" || e === "1", this.state = { isMinimized: !1, isFullscreen: !1, previousState: null };
+  }
   static get observedAttributes() {
     return [
       "title",
@@ -150,1066 +169,493 @@ class DreamDeskWindow extends DreamDeskComponent {
       "height",
       "resizable",
       "movable",
-      // optional custom SVG icon hooks
       "minimize-icon",
       "fullscreen-icon",
       "close-icon",
-      // disable specific controls
       "disable-minimize",
       "disable-fullscreen",
-      "disable-close",
+      "disable-close"
     ];
   }
-
-  constructor() {
-    super();
-    this.title = this.getAttribute("title") || "Window";
-    this.widthAttr = this.getAttribute("width");
-    this.heightAttr = this.getAttribute("height");
-    const resizableAttr = this.getAttribute("resizable");
-    this._resizable =
-      resizableAttr === null ||
-      resizableAttr === "" ||
-      resizableAttr === "true" ||
-      resizableAttr === "1";
-    const movableAttr = this.getAttribute("movable");
-    this._movable =
-      movableAttr === null ||
-      movableAttr === "" ||
-      movableAttr === "true" ||
-      movableAttr === "1";
-    this.state = {
-      isMinimized: false,
-      isFullscreen: false,
-      previousState: null,
-    };
-  }
-
   template() {
-    const prefix = this.prefix ? `${this.prefix}-` : "";
     return `
       <div class="win">
         <div class="win-header">
-          <span class="win-title">${this.title}</span>
+          <span class="win-title">${p(this.getAttribute("title") || "Window")}</span>
           <div class="win-controls">
             <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
             <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
             <button class="btn--close" data-action="close" aria-label="close"></button>
           </div>
         </div>
-        <div class="win-body">
-          <slot></slot>
-        </div>
-      </div>
-    `;
+        <div class="win-body"><slot></slot></div>
+      </div>`;
   }
-
   setup() {
-    this._syncSizeFromAttributes();
-    this._setupResizeObserver();
-    this._bindButtons();
-    this._setupResizeHandle();
-    this._setupDragging();
-    this._applyControlIcons();
-    this._applyControlsDisabled();
-    this._bindFocusRaise();
+    q(this._winId, this), this._syncSizeFromAttributes(), this._setupResizeObserver(), this._bindButtons(), this._setupResizeHandle(), this._setupDragging(), this._applyControlIcons(), this._applyControlsDisabled(), this._bindFocusRaise();
   }
-
+  disconnectedCallback() {
+    super.disconnectedCallback(), H(this._winId), this._dragController && (this._dragController.abort(), this._dragController = null);
+  }
   _syncSizeFromAttributes() {
-    const w = this.widthAttr;
-    const h = this.heightAttr;
-    if (w || h) this.setAttribute('data-ddw-explicit', '');
-    if (w) this.style.setProperty('--ddw-w', w);
-    if (h) this.style.setProperty('--ddw-h', h);
+    const t = this.widthAttr, e = this.heightAttr;
+    (t || e) && this.setAttribute("data-ddw-explicit", ""), t && this.style.setProperty("--ddw-w", t), e && this.style.setProperty("--ddw-h", e);
   }
-
   _bindButtons() {
-    const root = this.shadowRoot;
-    const onClick = (actionFn) => (e) => {
-      const target = e.currentTarget;
-      if (target?.getAttribute?.('aria-disabled') === 'true') {
-        e.preventDefault();
-        e.stopPropagation();
+    var s, n, r;
+    const t = this.shadowRoot, e = (a) => (o) => {
+      const l = o.currentTarget;
+      if ((l == null ? void 0 : l.getAttribute("aria-disabled")) === "true") {
+        o.preventDefault(), o.stopPropagation();
         return;
       }
-      actionFn();
+      a();
     };
-    root
-      .querySelector('[data-action="minimize"]')
-      ?.addEventListener("click", onClick(() => this.minimize()));
-    root
-      .querySelector('[data-action="fullscreen"]')
-      ?.addEventListener("click", onClick(() => this.fullscreen()));
-    root
-      .querySelector('[data-action="close"]')
-      ?.addEventListener("click", onClick(() => this.close()));
+    (s = t.querySelector('[data-action="minimize"]')) == null || s.addEventListener("click", e(() => this.minimize())), (n = t.querySelector('[data-action="fullscreen"]')) == null || n.addEventListener("click", e(() => this.fullscreen())), (r = t.querySelector('[data-action="close"]')) == null || r.addEventListener("click", e(() => this.close()));
   }
-
   minimize() {
-    const win = this.shadowRoot.querySelector(".win");
-    const customId = this.getAttribute('minimize-animation');
-    const customFn = window.DreamDeskAnimations?.[customId];
-    const done = () => {
-      this.state.isMinimized = !this.state.isMinimized;
-      if (this.state.isMinimized) {
-        this.setAttribute("minimized", "");
-      } else {
-        this.removeAttribute("minimized");
-      }
-      this.dispatchEvent(
-        new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } })
-      );
+    var r;
+    const t = this.shadowRoot.querySelector(".win"), e = this.getAttribute("minimize-animation"), s = e ? (r = window.DreamDeskAnimations) == null ? void 0 : r[e] : void 0, n = () => {
+      this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
     };
-    if (typeof customFn === 'function') {
-      const res = customFn(win, { defaultFns: { minimize }, previousState: this.state.previousState });
-      Promise.resolve(res).then(done);
-    } else {
-      minimize(win);
-      done();
-    }
+    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: x, unminimize: E }, previousState: this.state.previousState })).then(n) : (!this.state.isMinimized ? x(t) : E(t), n());
   }
-
   fullscreen() {
-    const win = this; // animate the host to avoid inner/outer offset drift
-    const goingFull = !this.state.isFullscreen;
-    if (goingFull) this._freezeWindowState();
-    const customId = this.getAttribute(goingFull ? 'fullscreen-animation' : 'unfullscreen-animation');
-    let customFn = window.DreamDeskAnimations?.[customId];
-    // If no explicit unfullscreen handler, fall back to fullscreen-animation
-    if (!goingFull && typeof customFn !== 'function') {
-      const fallbackId = this.getAttribute('fullscreen-animation');
-      customFn = window.DreamDeskAnimations?.[fallbackId];
+    var a, o;
+    const t = this, e = !this.state.isFullscreen;
+    e && this._freezeWindowState();
+    const s = this.getAttribute(e ? "fullscreen-animation" : "unfullscreen-animation");
+    let n = s ? (a = window.DreamDeskAnimations) == null ? void 0 : a[s] : void 0;
+    if (!e && typeof n != "function") {
+      const l = this.getAttribute("fullscreen-animation");
+      n = l ? (o = window.DreamDeskAnimations) == null ? void 0 : o[l] : void 0;
     }
-    const after = () => {
-      this.state.isFullscreen = !this.state.isFullscreen;
-      this.dispatchEvent(new CustomEvent("fullscreen", { detail: { isFullscreen: this.state.isFullscreen } }));
+    const r = () => {
+      this.state.isFullscreen = !this.state.isFullscreen, this.dispatchEvent(new CustomEvent("fullscreen", { detail: { isFullscreen: this.state.isFullscreen } }));
     };
-    if (typeof customFn === 'function') {
-      const res = customFn(win, { previousState: this.state.previousState, isFullscreen: this.state.isFullscreen, defaultFns: { fullscreen, unfullscreen } });
-      Promise.resolve(res).then(after);
-    } else {
-      if (goingFull) {
-        fullscreen(win, this.state.previousState);
-      } else {
-        unfullscreen(win, this.state.previousState);
-      }
-      after();
-    }
+    typeof n == "function" ? Promise.resolve(n(t, { previousState: this.state.previousState, isFullscreen: this.state.isFullscreen, defaultFns: { fullscreen: S, unfullscreen: R } })).then(r) : (e ? S(t, this.state.previousState) : R(t, this.state.previousState), r());
   }
-
   close() {
-    const win = this.shadowRoot.querySelector(".win");
-    const customId = this.getAttribute('close-animation');
-    const customFn = window.DreamDeskAnimations?.[customId];
-    const finalize = () => {
-      this.style.display = "none";
-      this.dispatchEvent(new CustomEvent("close"));
+    var r;
+    const t = this.shadowRoot.querySelector(".win"), e = this.getAttribute("close-animation"), s = e ? (r = window.DreamDeskAnimations) == null ? void 0 : r[e] : void 0, n = () => {
+      this.style.display = "none", this.dispatchEvent(new CustomEvent("close"));
     };
-    if (typeof customFn === 'function') {
-      const res = customFn(win, { defaultFns: { close } });
-      Promise.resolve(res).then(finalize);
-    } else {
-      close(win, finalize);
-    }
+    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { close: $ } })).then(n) : $(t, n);
   }
-
   _freezeWindowState() {
-    const winEl = this; // capture host rect for fullscreen round-trip
-    const rect = winEl.getBoundingClientRect();
-    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-    const scrollLeft = window.scrollX || document.documentElement.scrollLeft || 0;
-    const cs = getComputedStyle(winEl);
-    const pos = cs.position || 'relative';
-    const z = cs.zIndex === 'auto' ? '' : cs.zIndex;
+    const t = this.getBoundingClientRect(), e = window.scrollY || 0, s = window.scrollX || 0, n = getComputedStyle(this);
     this.state.previousState = {
-      top: rect.top + scrollTop,
-      left: rect.left + scrollLeft,
-      width: rect.width,
-      height: rect.height,
-      position: pos,
-      zIndex: z,
+      top: t.top + e,
+      left: t.left + s,
+      width: t.width,
+      height: t.height,
+      position: n.position || "relative",
+      zIndex: n.zIndex === "auto" ? "" : n.zIndex
     };
   }
-
   _setupResizeObserver() {
-    const observer = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
-        this._checkOverflow(entry.target);
-      });
-    });
-
-    const slot = this.shadowRoot.querySelector("slot");
-    const assignedElements = slot?.assignedElements({ flatten: true }) ?? [];
-
-    const setupScrollableElements = () => {
-      const selector = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
-      if (this._observedScrollables) {
-        this._observedScrollables.forEach((el) => observer.unobserve(el));
-      }
-      this._observedScrollables = [];
-      assignedElements.forEach((node) => {
-        const selfMatches = node.matches?.(selector) ? [node] : [];
-        const descendants = node.querySelectorAll?.(selector) ?? [];
-        const candidates = [...selfMatches, ...descendants];
-
-        candidates.forEach((el) => {
-          el.classList.forEach((className) => {
-            if (className.endsWith("-scroll")) {
-              el.classList.remove(className);
-            }
-          });
-          observer.observe(el);
-          this._observedScrollables.push(el);
-          this._checkOverflow(el);
+    var r, a;
+    const t = new ResizeObserver((o) => {
+      o.forEach((l) => this._checkOverflow(l.target));
+    }), e = this.shadowRoot.querySelector("slot"), s = (e == null ? void 0 : e.assignedElements({ flatten: !0 })) ?? [], n = () => {
+      const o = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
+      this._observedScrollables.forEach((l) => t.unobserve(l)), this._observedScrollables = [], s.forEach((l) => {
+        var m, d;
+        const h = (m = l.matches) != null && m.call(l, o) ? [l] : [], u = ((d = l.querySelectorAll) == null ? void 0 : d.call(l, o)) ?? [];
+        [...h, ...Array.from(u)].forEach((c) => {
+          c.classList.forEach((b) => {
+            b.endsWith("-scroll") && c.classList.remove(b);
+          }), t.observe(c), this._observedScrollables.push(c), this._checkOverflow(c);
         });
       });
     };
-
-    setupScrollableElements();
-    document.addEventListener(
-      "dreamdesk-theme-changed",
-      () => {
-        this._theme =
-          document.documentElement.getAttribute("data-theme") || "default";
-        this._prefix = this._getThemePrefix(this._theme);
-        setupScrollableElements();
-      },
-      { signal: this._eventController?.signal }
-    );
-
-    slot?.addEventListener("slotchange", setupScrollableElements, {
-      signal: this._eventController?.signal,
-    });
-
-    this._resizeObserver = observer;
+    n(), document.addEventListener("dreamdesk-theme-changed", () => {
+      this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), n();
+    }, { signal: ((r = this._eventController) == null ? void 0 : r.signal) ?? void 0 }), e == null || e.addEventListener("slotchange", n, { signal: ((a = this._eventController) == null ? void 0 : a.signal) ?? void 0 }), this._resizeObserver = t;
   }
-  _checkOverflow(message) {
-    // Force a reflow to ensure measurements are up-to-date, then compute overflow
-    // Use clientHeight/Width vs scrollHeight/Width for both axes
-    const isOverflowing = (message.scrollHeight > message.clientHeight) || (message.scrollWidth > message.clientWidth);
-    message.classList.toggle("overflowing", isOverflowing);
+  _checkOverflow(t) {
+    t.classList.toggle("overflowing", t.scrollHeight > t.clientHeight || t.scrollWidth > t.clientWidth);
   }
-
   _setupResizeHandle() {
-    const win = this.shadowRoot.querySelector('.win');
-    if (!win) return;
-
-    let handle = win.querySelector('.win-resize-handle');
+    var d;
+    const t = this.shadowRoot.querySelector(".win");
+    if (!t) return;
+    let e = t.querySelector(".win-resize-handle");
     if (!this._resizable) {
-      if (handle) handle.remove();
-      this._resizeHandleBound = false;
+      e == null || e.remove(), this._resizeHandleBound = !1;
       return;
     }
-    if (!handle) {
-      handle = document.createElement('div');
-      handle.className = 'win-resize-handle';
-      win.appendChild(handle);
-    }
-    if (this._resizeHandleBound) return;
-    this._resizeHandleBound = true;
-
-    let isResizing = false;
-    let startX = 0;
-    let startY = 0;
-    let startWidth = 0;
-    let startHeight = 0;
-
-    const minWidth = 180;
-    const minHeight = 120;
-
-    const onPointerMove = (e) => {
-      if (!isResizing) return;
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-      const newWidth = Math.max(minWidth, startWidth + deltaX);
-      const newHeight = Math.max(minHeight, startHeight + deltaY);
-      this.style.setProperty('--ddw-w', `${newWidth}px`);
-      this.style.setProperty('--ddw-h', `${newHeight}px`);
-      this.setAttribute('data-ddw-explicit', '');
+    if (e || (e = document.createElement("div"), e.className = "win-resize-handle", t.appendChild(e)), this._resizeHandleBound) return;
+    this._resizeHandleBound = !0;
+    let s = !1, n = 0, r = 0, a = 0, o = 0;
+    const l = 180, h = 120, u = (c) => {
+      s && (this.style.setProperty("--ddw-w", `${Math.max(l, a + c.clientX - n)}px`), this.style.setProperty("--ddw-h", `${Math.max(h, o + c.clientY - r)}px`), this.setAttribute("data-ddw-explicit", ""));
+    }, m = () => {
+      s = !1, document.removeEventListener("pointermove", u, { capture: !0 }), document.removeEventListener("pointerup", m, { capture: !0 });
     };
-
-    const stop = () => {
-      if (!isResizing) return;
-      isResizing = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', stop, { capture: true });
-    };
-
-    handle.addEventListener('pointerdown', (e) => {
-      if (this.state?.isFullscreen) return;
-      isResizing = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = win.getBoundingClientRect();
-      startWidth = rect.width;
-      startHeight = rect.height;
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal });
-      document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal });
-    }, { signal: this._eventController?.signal });
+    e.addEventListener("pointerdown", (c) => {
+      var g, k, C;
+      if ((g = this.state) != null && g.isFullscreen) return;
+      s = !0, n = c.clientX, r = c.clientY;
+      const b = t.getBoundingClientRect();
+      a = b.width, o = b.height, document.addEventListener("pointermove", u, { capture: !0, signal: ((k = this._eventController) == null ? void 0 : k.signal) ?? void 0 }), document.addEventListener("pointerup", m, { capture: !0, signal: ((C = this._eventController) == null ? void 0 : C.signal) ?? void 0 });
+    }, { signal: ((d = this._eventController) == null ? void 0 : d.signal) ?? void 0 });
   }
-
   _setupDragging() {
-    const header = this.shadowRoot.querySelector('.win-header');
-    if (!header) return;
-
+    var m;
+    const t = this.shadowRoot.querySelector(".win-header");
+    if (!t) return;
     if (!this._movable) {
-      header.style.cursor = 'default';
-      if (this._dragController) {
-        this._dragController.abort();
-        this._dragController = null;
-      }
+      t.style.cursor = "default", (m = this._dragController) == null || m.abort(), this._dragController = null;
       return;
     }
     if (this._dragController) return;
-
     this._dragController = new AbortController();
-    const { signal } = this._dragController;
-    header.style.cursor = 'move';
-
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
-    let rafId = null;
-
-    const onPointerMove = (e) => {
-      if (!isDragging) return;
-      const desiredLeft = e.clientX - offsetX;
-      const desiredTop = e.clientY - offsetY;
-
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const rect = this.getBoundingClientRect();
-        const maxLeft = Math.max(0, window.innerWidth - rect.width);
-        const maxTop = Math.max(0, window.innerHeight - rect.height);
-
-        const computed = getComputedStyle(this);
-        if (computed.position === 'static') {
-          this.style.position = 'absolute';
-        }
-
-        const clampedLeft = Math.max(0, Math.min(desiredLeft, maxLeft));
-        const clampedTop = Math.max(0, Math.min(desiredTop, maxTop));
-        this.style.left = `${clampedLeft}px`;
-        this.style.top = `${clampedTop}px`;
+    const { signal: e } = this._dragController;
+    t.style.cursor = "move";
+    let s = !1, n = 0, r = 0, a = null, o = 0, l = 0;
+    const h = (d) => {
+      if (!s) return;
+      const c = d.clientX - n, b = d.clientY - r;
+      a && cancelAnimationFrame(a), a = requestAnimationFrame(() => {
+        this.style.left = `${Math.max(0, Math.min(c, o))}px`, this.style.top = `${Math.max(0, Math.min(b, l))}px`;
       });
+    }, u = () => {
+      s = !1, document.removeEventListener("pointermove", h, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 });
     };
-
-    const onPointerUp = () => {
-      isDragging = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', onPointerUp, { capture: true });
-    };
-
-    header.addEventListener('pointerdown', (e) => {
-      if (!this._movable) return;
-      const allowFSDrag = this.getAttribute('fullscreen-mode') === 'expand';
-      if (this.state?.isFullscreen && !allowFSDrag) return;
-      if (e.target.closest('.win-controls')) return;
-
-      cancelRunningAnimations(this);
-
-      const hostRect = this.getBoundingClientRect();
-      offsetX = e.clientX - hostRect.left;
-      offsetY = e.clientY - hostRect.top;
-      isDragging = true;
-
-      const computed = getComputedStyle(this);
-      const currentW = computed.width;
-      const currentH = computed.height;
-      this.setAttribute('data-ddw-explicit', '');
-      this.style.setProperty('--ddw-w', currentW);
-      this.style.setProperty('--ddw-h', currentH);
-
-      DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
-      this.style.zIndex = String(DreamDeskWindow._z);
-
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal });
-      document.addEventListener('pointerup', onPointerUp, { capture: true, signal });
-    }, { signal });
+    t.addEventListener("pointerdown", (d) => {
+      var b;
+      if (!this._movable || (b = this.state) != null && b.isFullscreen && this.getAttribute("fullscreen-mode") !== "expand" || d.target.closest(".win-controls")) return;
+      y(this);
+      const c = this.getBoundingClientRect();
+      n = d.clientX - c.left, r = d.clientY - c.top, o = Math.max(0, window.innerWidth - c.width), l = Math.max(0, window.innerHeight - c.height), s = !0, this.setAttribute("data-ddw-explicit", ""), this.style.setProperty("--ddw-w", `${c.width}px`), this.style.setProperty("--ddw-h", `${c.height}px`), getComputedStyle(this).position === "static" && (this.style.position = "absolute"), D(this._winId), document.addEventListener("pointermove", h, { capture: !0, signal: e }), document.addEventListener("pointerup", u, { capture: !0, signal: e });
+    }, { signal: e });
   }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    if (this._dragController) {
-      this._dragController.abort();
-      this._dragController = null;
-    }
-  }
-
   _bindFocusRaise() {
-    const winRoot = this.shadowRoot.querySelector('.win');
-    if (!winRoot) return;
-    const raise = () => {
-      DreamDeskWindow._z = (DreamDeskWindow._z || 1000) + 1;
-      this.style.zIndex = String(DreamDeskWindow._z);
-    };
-    winRoot.addEventListener('pointerdown', raise, { signal: this._eventController?.signal });
+    var t, e;
+    (e = this.shadowRoot.querySelector(".win")) == null || e.addEventListener("pointerdown", () => D(this._winId), {
+      signal: ((t = this._eventController) == null ? void 0 : t.signal) ?? void 0
+    });
   }
-
   _applyControlIcons() {
-    const root = this.shadowRoot;
-    const apply = (selector, attrName) => {
-      const btn = root.querySelector(selector);
-      if (!btn) return;
-
-      const iconIdOrSvg = this.getAttribute(attrName);
-      // If nothing specified, do nothing (CSS background-image may apply)
-      if (!iconIdOrSvg) return;
-
-      let svgMarkup = "";
-      const trimmed = iconIdOrSvg.trim();
-      if (trimmed.startsWith("<svg")) {
-        svgMarkup = sanitizeSvg(trimmed);
-      } else if (window.DreamDeskIcons && typeof window.DreamDeskIcons[trimmed] === "string") {
-        svgMarkup = sanitizeSvg(window.DreamDeskIcons[trimmed]);
-      } else {
-        // Not a known key or inline SVG; ignore gracefully
-        return;
-      }
-
-      if (!svgMarkup) return;
-
-      // Clear existing content and inject sanitized SVG
-      btn.innerHTML = svgMarkup;
-      // Ensure background-image (CSS var) doesn't clash visually
-      btn.style.backgroundImage = "none";
-      // Make SVG non-interactive inside the button
-      const svgEl = btn.querySelector("svg");
-      if (svgEl) {
-        svgEl.setAttribute("aria-hidden", "true");
-        svgEl.setAttribute("focusable", "false");
-      }
+    const t = this.shadowRoot, e = (s, n) => {
+      var u;
+      const r = t.querySelector(s);
+      if (!r) return;
+      const a = this.getAttribute(n);
+      if (!a) return;
+      const o = a.trim();
+      let l = "";
+      if (o.startsWith("<svg") ? l = M(o) : (u = window.DreamDeskIcons) != null && u[o] && (l = M(window.DreamDeskIcons[o])), !l) return;
+      r.innerHTML = l, r.style.backgroundImage = "none";
+      const h = r.querySelector("svg");
+      h && (h.setAttribute("aria-hidden", "true"), h.setAttribute("focusable", "false"));
     };
-
-    apply('.btn--minimize', 'minimize-icon');
-    apply('.btn--fullscreen', 'fullscreen-icon');
-    apply('.btn--close', 'close-icon');
+    e(".btn--minimize", "minimize-icon"), e(".btn--fullscreen", "fullscreen-icon"), e(".btn--close", "close-icon");
   }
-
   _applyControlsDisabled() {
-    const root = this.shadowRoot;
-    const setDisabled = (selector, attrName) => {
-      const btn = root.querySelector(selector);
-      if (!btn) return;
-      const v = this.getAttribute(attrName);
-      const isDisabled = v !== null && v !== 'false' && v !== '0';
-      btn.setAttribute('aria-disabled', String(isDisabled));
-      if (isDisabled) {
-        // keep focus out for disabled controls
-        btn.setAttribute('tabindex', '-1');
-        // Tooltip: if the disable-* attribute has a non-boolean string value, use it.
-        // Otherwise, look for a dedicated tooltip attribute like disable-minimize-tooltip.
-        let tooltip = null;
-        if (v && v !== 'true' && v !== '1') {
-          tooltip = v;
-        } else {
-          const tipAttr = `${attrName}-tooltip`;
-          const tipVal = this.getAttribute(tipAttr);
-          if (tipVal) tooltip = tipVal;
-        }
-        if (tooltip) {
-          btn.setAttribute('data-tooltip', tooltip);
-          btn.removeAttribute('title');
-        } else {
-          btn.removeAttribute('data-tooltip');
-          btn.removeAttribute('title');
-        }
-      } else {
-        btn.removeAttribute('tabindex');
-        btn.removeAttribute('title');
-        btn.removeAttribute('data-tooltip');
-      }
+    const t = this.shadowRoot, e = (s, n) => {
+      const r = t.querySelector(s);
+      if (!r) return;
+      const a = this.getAttribute(n), o = a !== null && a !== "false" && a !== "0";
+      if (r.setAttribute("aria-disabled", String(o)), o) {
+        r.setAttribute("tabindex", "-1");
+        const l = a && a !== "true" && a !== "1" ? a : this.getAttribute(`${n}-tooltip`);
+        l ? r.setAttribute("data-tooltip", l) : r.removeAttribute("data-tooltip");
+      } else
+        r.removeAttribute("tabindex"), r.removeAttribute("data-tooltip");
     };
-    setDisabled('.btn--minimize', 'disable-minimize');
-    setDisabled('.btn--fullscreen', 'disable-fullscreen');
-    setDisabled('.btn--close', 'disable-close');
+    e(".btn--minimize", "disable-minimize"), e(".btn--fullscreen", "disable-fullscreen"), e(".btn--close", "disable-close");
   }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    if (oldVal === newVal) return;
-    if (name === 'resizable') {
-      const isTrue =
-        newVal === null || newVal === '' || newVal === 'true' || newVal === '1';
-      this._resizable = isTrue;
-      if (this._initialized) {
-        this._setupResizeHandle();
-      }
-    }
-    if (name === 'movable') {
-      const isTrue =
-        newVal === null || newVal === '' || newVal === 'true' || newVal === '1';
-      this._movable = isTrue;
-      if (this._initialized) {
-        this._setupDragging();
-      }
-    }
-    if (name === 'width') {
-      this.widthAttr = newVal;
-      if (this._initialized) this._syncSizeFromAttributes();
-    }
-    if (name === 'height') {
-      this.heightAttr = newVal;
-      if (this._initialized) this._syncSizeFromAttributes();
-    }
-    if (name === 'minimize-icon' || name === 'fullscreen-icon' || name === 'close-icon') {
-      // Re-apply icons when attributes change
-      this._applyControlIcons();
-    }
-    if (name === 'disable-minimize' || name === 'disable-fullscreen' || name === 'disable-close') {
-      this._applyControlsDisabled();
-    }
+  attributeChangedCallback(t, e, s) {
+    if (e === s) return;
+    const n = (r) => r === null || r === "" || r === "true" || r === "1";
+    t === "resizable" && (this._resizable = n(s), this._initialized && this._setupResizeHandle()), t === "movable" && (this._movable = n(s), this._initialized && this._setupDragging()), t === "width" && (this.widthAttr = s, this._initialized && this._syncSizeFromAttributes()), t === "height" && (this.heightAttr = s, this._initialized && this._syncSizeFromAttributes()), ["minimize-icon", "fullscreen-icon", "close-icon"].includes(t) && this._applyControlIcons(), ["disable-minimize", "disable-fullscreen", "disable-close"].includes(t) && this._applyControlsDisabled();
   }
 }
-
-class DreamDeskProgressBar extends DreamDeskComponent {
+class W extends v {
+  constructor() {
+    super(), this._segments = [], this._bar = null, this._progressResizeObserver = null, this.setAttribute("data-dd-role", "progressbar"), this._value = parseFloat(this.getAttribute("value") ?? "0") || 0;
+  }
   static get observedAttributes() {
     return ["value", "gradient", "blocky"];
   }
-
-  constructor() {
-    super();
-    this.setAttribute('data-dd-role', 'progressbar');
-    this._value = parseFloat(this.getAttribute("value")) || 0;
-    this._segments = [];
-  }
-
   template() {
-    const trackClass = [
-      "progress-track",
-      this.hasAttribute("blocky") ? "progress-track--blocky" : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    const barClass = [
-      "progress-bar",
-      this.hasAttribute("gradient") ? "progress-bar--gradient" : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    return `
-      <div class="${trackClass}">
-        ${this.hasAttribute("blocky") ? "" : `<div class="${barClass}"></div>`}
-      </div>
-    `;
+    const t = ["progress-track", this.hasAttribute("blocky") ? "progress-track--blocky" : ""].filter(Boolean).join(" "), e = ["progress-bar", this.hasAttribute("gradient") ? "progress-bar--gradient" : ""].filter(Boolean).join(" ");
+    return `<div class="${t}">${this.hasAttribute("blocky") ? "" : `<div class="${e}"></div>`}</div>`;
   }
-
   connectedCallback() {
-    super.connectedCallback();
-    this._afterRender();
+    super.connectedCallback(), this._afterRender();
   }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    if (oldVal === newVal) return;
-    if (name === "value") {
-      this._value = parseFloat(newVal);
-      this._updateProgress();
-    }
-    if (name === "gradient" || name === "blocky") {
-      this._container.innerHTML = this.template();
-      this._afterRender();
-    }
+  attributeChangedCallback(t, e, s) {
+    e !== s && (t === "value" && (this._value = parseFloat(s ?? "0"), this._updateProgress()), (t === "gradient" || t === "blocky") && (this._container.innerHTML = this.template(), this._afterRender()));
   }
-
   themeChanged() {
-    // Do not rebuild markup on theme change; just restyle existing nodes
-    const track = this.shadowRoot?.querySelector?.('.progress-track');
-    const isBlocky = this.hasAttribute('blocky');
-    const isGradient = this.hasAttribute('gradient');
-
-    if (isBlocky && track && this._segments?.length) {
-      // Update gradient related styles for existing segments
-      const trackWidth = track.getBoundingClientRect().width;
-      this._segments.forEach((seg, i) => {
-        const segRect = seg.getBoundingClientRect();
-        const segStyles = getComputedStyle(seg);
-        const mr = parseFloat(segStyles.marginRight || '0') || 0;
-        const fullSegment = segRect.width + mr;
-        if (isGradient) {
-          seg.style.backgroundImage = 'var(--color-progress-gradient, none)';
-          seg.style.backgroundSize = `${trackWidth}px 100%`;
-          seg.style.backgroundPosition = `-${i * fullSegment}px 0`;
-          seg.style.backgroundRepeat = 'no-repeat';
-          seg.style.backgroundColor = 'transparent';
-        } else {
-          seg.style.backgroundImage = 'none';
-          seg.style.backgroundColor = 'var(--color-progress-segment, #a8edea)';
-        }
-      });
-      // Keep current value styling
-      this._updateProgress();
-    } else if (!isBlocky && this._bar) {
-      // Non-blocky bar only needs filter/gradient updated
-      if (isGradient) {
-        this._bar.classList.add('progress-bar--gradient');
-      } else {
-        this._bar.classList.remove('progress-bar--gradient');
-      }
-      this._updateProgress();
-    } else {
-      // If segments/bar are not ready yet (first paint), fall back to current render flow
+    var n;
+    const t = (n = this.shadowRoot) == null ? void 0 : n.querySelector(".progress-track"), e = this.hasAttribute("blocky"), s = this.hasAttribute("gradient");
+    if (e && t && this._segments.length) {
+      const r = t.getBoundingClientRect().width;
+      this._segments.forEach((a, o) => {
+        const { width: l, marginRight: h } = getComputedStyle(a), u = parseFloat(l) + (parseFloat(h) || 0);
+        s ? (a.style.backgroundImage = "var(--color-progress-gradient, none)", a.style.backgroundSize = `${r}px 100%`, a.style.backgroundPosition = `-${o * u}px 0`, a.style.backgroundRepeat = "no-repeat", a.style.backgroundColor = "transparent") : (a.style.backgroundImage = "none", a.style.backgroundColor = "var(--color-progress-segment, #a8edea)");
+      }), this._updateProgress();
+    } else
       this._afterRender();
-    }
   }
-
   _afterRender() {
-    const track = this.shadowRoot.querySelector(".progress-track");
-    const isBlocky = this.hasAttribute("blocky");
-    const isGradient = this.hasAttribute("gradient");
-
-    if (isBlocky) {
-      const rebuild = () => {
-        const gap = 1;
-        const segmentWidth = 10;
-        const segmentHeight = 20;
-        const fullSegment = segmentWidth + gap;
-        const trackWidth = track.getBoundingClientRect().width;
-        const segments = Math.floor((trackWidth + gap) / fullSegment);
-        const fullVisualWidth = segments * fullSegment - gap;
-
-        track.innerHTML = "";
-        this._segments = [];
-
-        for (let i = 0; i < segments; i++) {
-          const seg = document.createElement("div");
-          seg.className = "progress-segment";
-          seg.style.width = `${segmentWidth}px`;
-          seg.style.height = `${segmentHeight}px`;
-          seg.style.marginRight = i < segments - 1 ? `${gap}px` : "0";
-
-          if (isGradient) {
-            seg.style.backgroundImage = "var(--color-progress-gradient, none)";
-            seg.style.backgroundSize = `${fullVisualWidth}px 100%`;
-            seg.style.backgroundPosition = `-${i * fullSegment}px 0`;
-            seg.style.backgroundRepeat = "no-repeat";
-          }
-
-          track.appendChild(seg);
-          this._segments.push(seg);
+    var n;
+    const t = this.shadowRoot.querySelector(".progress-track");
+    if (!t) return;
+    const e = this.hasAttribute("blocky"), s = this.hasAttribute("gradient");
+    if (e) {
+      const r = () => {
+        const m = t.getBoundingClientRect().width, d = Math.floor((m + 1) / 11), c = d * 11 - 1;
+        t.innerHTML = "", this._segments = [];
+        for (let b = 0; b < d; b++) {
+          const g = document.createElement("div");
+          g.className = "progress-segment", g.style.cssText = `width:10px;height:20px;margin-right:${b < d - 1 ? 1 : 0}px`, s && (g.style.backgroundImage = "var(--color-progress-gradient, none)", g.style.backgroundSize = `${c}px 100%`, g.style.backgroundPosition = `-${b * 11}px 0`, g.style.backgroundRepeat = "no-repeat"), t.appendChild(g), this._segments.push(g);
         }
-
         this._updateProgress();
       };
-
-      // Build now and observe for container resizes to keep it responsive
-      requestAnimationFrame(rebuild);
-      if (this._progressResizeObserver) {
-        try { this._progressResizeObserver.disconnect(); } catch(_) {}
-      }
-      let _rebuildTimer = null;
+      requestAnimationFrame(r), (n = this._progressResizeObserver) == null || n.disconnect();
+      let a = null;
       this._progressResizeObserver = new ResizeObserver(() => {
-        if (_rebuildTimer) clearTimeout(_rebuildTimer);
-        _rebuildTimer = setTimeout(rebuild, 50);
-      });
-      this._progressResizeObserver.observe(track);
-    } else {
-      this._bar = this.shadowRoot.querySelector(".progress-bar");
-      this._updateProgress();
-    }
+        a && clearTimeout(a), a = setTimeout(r, 50);
+      }), this._progressResizeObserver.observe(t);
+    } else
+      this._bar = this.shadowRoot.querySelector(".progress-bar"), this._updateProgress();
   }
-
   _updateProgress() {
-    const percent = Math.min(Math.max(this._value, 0), 100);
-    const isGradient = this.hasAttribute("gradient");
-
+    const t = Math.min(Math.max(this._value, 0), 100), e = this.hasAttribute("gradient");
     if (this.hasAttribute("blocky")) {
-      const activeCount = Math.floor((percent / 100) * this._segments.length);
-      this._segments.forEach((seg, i) => {
-        const active = i < activeCount;
-        seg.style.opacity = active ? "1" : "0.2";
-        if (isGradient) {
-          // keep gradient image and no solid color
-          seg.style.backgroundColor = "transparent";
-          seg.style.filter = "none";
-        } else {
-          seg.style.backgroundImage = "none";
-          seg.style.backgroundColor = active ? "var(--color-progress-segment, #a8edea)" : "transparent";
-          seg.style.filter = "none";
-        }
+      const s = Math.floor(t / 100 * this._segments.length);
+      this._segments.forEach((n, r) => {
+        n.style.opacity = r < s ? "1" : "0.2", e ? (n.style.backgroundColor = "transparent", n.style.filter = "none") : (n.style.backgroundImage = "none", n.style.backgroundColor = r < s ? "var(--color-progress-segment, #a8edea)" : "transparent", n.style.filter = "none");
       });
     } else if (this._bar) {
-      this._bar.style.width = `${percent}%`;
-      if (!isGradient) {
-        // Allow themes to opt-out of hue-rotate color sweep
+      if (this._bar.style.width = `${t}%`, !e)
         try {
-          const cs = getComputedStyle(this._bar);
-          const enabled = (cs.getPropertyValue('--dd-progress-enable-hue-rotate') || '').trim();
-          if (enabled && enabled === '0') {
-            this._bar.style.filter = 'none';
-          } else {
-            this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
-          }
-        } catch (_) {
-          this._bar.style.filter = `hue-rotate(${percent * 3.6}deg)`;
+          const s = getComputedStyle(this._bar).getPropertyValue("--dd-progress-enable-hue-rotate").trim();
+          this._bar.style.filter = s === "0" ? "none" : `hue-rotate(${t * 3.6}deg)`;
+        } catch {
+          this._bar.style.filter = `hue-rotate(${t * 3.6}deg)`;
         }
-      }
-      if (this._value >= 100) {
-        this._bar.style.borderRight = "none";
-      }
+      this._value >= 100 && (this._bar.style.borderRight = "none");
     }
   }
-
   disconnectedCallback() {
-    super.disconnectedCallback();
-    if (this._progressResizeObserver) {
-      try { this._progressResizeObserver.disconnect(); } catch (_) {}
-      this._progressResizeObserver = null;
-    }
+    var t;
+    super.disconnectedCallback(), (t = this._progressResizeObserver) == null || t.disconnect(), this._progressResizeObserver = null;
   }
-
   get value() {
     return this._value;
   }
-
-  set value(val) {
-    this.setAttribute("value", val);
+  set value(t) {
+    this.setAttribute("value", String(t));
   }
 }
-
-class DreamDeskTabs extends DreamDeskComponent {
+class B extends v {
   constructor() {
-    super();
-    this.tabs = [];
-    this.panels = [];
-    this.activeIndex = 0;
+    super(...arguments), this.tabs = [], this.panels = [], this.activeIndex = 0, this._tabListenerBound = !1;
   }
-
   connectedCallback() {
-    super.connectedCallback();
-    this._initializeSlots();
+    super.connectedCallback(), this._initializeSlots();
   }
-
   _initializeSlots() {
-    const slotTabs = this.shadowRoot.querySelector('slot[name="tab"]');
-    const slotPanels = this.shadowRoot.querySelector('slot[name="panel"]');
-
-    if (slotTabs && slotPanels) {
-      this.tabs = slotTabs.assignedElements() ?? [];
-      this.panels = slotPanels.assignedElements() ?? [];
-      this._activateTab(this.activeIndex);
-      this.setupEventListeners();
-    } else {
-      setTimeout(() => this._initializeSlots(), 0);
-    }
+    const t = this.shadowRoot.querySelector('slot[name="tab"]'), e = this.shadowRoot.querySelector('slot[name="panel"]');
+    t && e ? (this.tabs = t.assignedElements() ?? [], this.panels = e.assignedElements() ?? [], this._activateTab(this.activeIndex), this._setupEventListeners()) : setTimeout(() => this._initializeSlots(), 0);
   }
-
   template() {
-    return `
-      <div class="tabs">
-        <div class="tab-list">
-          <slot name="tab"></slot>
-        </div>
-        <div class="tab-panels">
-          <slot name="panel"></slot>
-        </div>
-      </div>
-    `;
+    return '<div class="tabs"><div class="tab-list"><slot name="tab"></slot></div><div class="tab-panels"><slot name="panel"></slot></div></div>';
   }
-
-  setupEventListeners() {
-    if (this._tabListenerBound) return;
-    this._tabListenerBound = true;
-    this.addEventListener("click", (e) => {
-      const tab = e.target.closest("[data-tab-index]");
-      if (tab) {
-        const index = parseInt(tab.getAttribute("data-tab-index"), 10);
-        this._activateTab(index);
-      }
-    }, { signal: this._eventController?.signal });
+  _setupEventListeners() {
+    var t;
+    this._tabListenerBound || (this._tabListenerBound = !0, this.addEventListener("click", (e) => {
+      const s = e.target.closest("[data-tab-index]");
+      s && this._activateTab(parseInt(s.getAttribute("data-tab-index") ?? "0", 10));
+    }, { signal: ((t = this._eventController) == null ? void 0 : t.signal) ?? void 0 }));
   }
-
   disconnectedCallback() {
-    super.disconnectedCallback();
-    this._tabListenerBound = false;
+    super.disconnectedCallback(), this._tabListenerBound = !1;
   }
-
-  _activateTab(index) {
-    this.tabs.forEach((tab, i) => {
-      tab.classList.toggle("active", i === index);
-    });
-    this.panels.forEach((panel, i) => {
-      panel.classList.toggle("active", i === index);
-    });
-    this.activeIndex = index;
+  _activateTab(t) {
+    this.tabs.forEach((e, s) => e.classList.toggle("active", s === t)), this.panels.forEach((e, s) => e.classList.toggle("active", s === t)), this.activeIndex = t;
   }
 }
-
-class DreamDeskTab extends HTMLElement {
+class X extends HTMLElement {
   connectedCallback() {
-    this.setAttribute("slot", "tab");
-    this.setAttribute("data-tab", "");
-    this.setAttribute("data-tab-index", this.getAttribute("index") || "0");
+    this.setAttribute("slot", "tab"), this.setAttribute("data-tab", ""), this.setAttribute("data-tab-index", this.getAttribute("index") ?? "0");
   }
 }
-
-class DreamDeskTabPanel extends DreamDeskComponent {
+class Y extends v {
   connectedCallback() {
-    super.connectedCallback();
-    this.setAttribute("slot", "panel");
-    this.setAttribute("data-panel", "");
-    this.querySelector("p")?.classList.add("win-content");
+    var t;
+    super.connectedCallback(), this.setAttribute("slot", "panel"), this.setAttribute("data-panel", ""), (t = this.querySelector("p")) == null || t.classList.add("win-content");
   }
-
   template() {
-    return `
-      <style>
-        :host { display: none; }
-        :host(.active) { display: block; }
-      </style>
-      <slot></slot>
-    `;
+    return "<style>:host{display:none}:host(.active){display:block}</style><slot></slot>";
   }
 }
-
-class DreamDeskButton extends DreamDeskComponent {
+const _ = class _ extends v {
   static get observedAttributes() {
     return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py", "disabled"];
   }
-
-  static sizeVarMap = {
-    'min-width': '--dd-btn-min-w',
-    'width': '--dd-btn-w',
-    'height': '--dd-btn-h',
-    'font-size': '--dd-btn-fs',
-    'px': '--dd-btn-px',
-    'py': '--dd-btn-py',
-  };
-
   constructor() {
-    super();
-    this.variant = this.getAttribute("variant") || "primary";
-    this.action = this.getAttribute("action");
-    this.setAttribute('data-dd-role', 'button');
+    super(), this.variant = this.getAttribute("variant") || "primary", this.action = this.getAttribute("action"), this.setAttribute("data-dd-role", "button");
   }
-
   template() {
-    const actionAttr = this.action ? `data-action="${this.action}"` : "";
-    const ariaLabel = this.action ? `aria-label="${this.action}"` : "";
-    const disabledAttr = this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false" && this.getAttribute("disabled") !== "0" ? "disabled aria-disabled=\"true\"" : "";
-    return `
-      <button class="btn btn--${this.variant}" ${actionAttr} ${ariaLabel} ${disabledAttr}>
-        <slot></slot>
-      </button>
-    `;
+    const t = this.action ? `data-action="${p(this.action)}"` : "", e = this.action ? `aria-label="${p(this.action)}"` : "", s = this.getAttribute("disabled"), n = s !== null && s !== "false" && s !== "0" ? 'disabled aria-disabled="true"' : "";
+    return `<button class="btn btn--${p(this.variant)}" ${t} ${e} ${n}><slot></slot></button>`;
   }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    if (oldVal === newVal) return;
-    if (name === 'size') {
-      return;
-    }
-    if (name === 'disabled') {
+  connectedCallback() {
+    super.connectedCallback(), this._applyButtonSizeOverrides(), this._syncDisabled();
+  }
+  attributeChangedCallback(t, e, s) {
+    var r, a;
+    if (e === s || t === "size") return;
+    if (t === "disabled") {
       this._syncDisabled();
       return;
     }
-    if (name === 'variant') {
-      this.variant = newVal || 'primary';
-      const btn = this.shadowRoot?.querySelector('button');
-      if (btn) btn.className = `btn btn--${this.variant}`;
+    if (t === "variant") {
+      this.variant = s ?? "primary";
+      const o = (r = this.shadowRoot) == null ? void 0 : r.querySelector("button");
+      o && (o.className = `btn btn--${this.variant}`);
       return;
     }
-    if (name === 'action') {
-      this.action = newVal;
-      const btn = this.shadowRoot?.querySelector('button');
-      if (btn) {
-        if (newVal) {
-          btn.setAttribute('data-action', newVal);
-          btn.setAttribute('aria-label', newVal);
-        } else {
-          btn.removeAttribute('data-action');
-          btn.removeAttribute('aria-label');
-        }
-      }
+    if (t === "action") {
+      this.action = s;
+      const o = (a = this.shadowRoot) == null ? void 0 : a.querySelector("button");
+      o && (s ? (o.setAttribute("data-action", s), o.setAttribute("aria-label", s)) : (o.removeAttribute("data-action"), o.removeAttribute("aria-label")));
       return;
     }
-    const varName = DreamDeskButton.sizeVarMap[name];
-    if (varName) {
-      if (newVal == null) {
-        this.style.removeProperty(varName);
-      } else {
-        this.style.setProperty(varName, newVal);
-      }
-    }
+    const n = _.sizeVarMap[t];
+    n && (s == null ? this.style.removeProperty(n) : this.style.setProperty(n, s));
   }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._applyButtonSizeOverrides();
-    this._syncDisabled();
-  }
-
   _applyButtonSizeOverrides() {
-    Object.entries(DreamDeskButton.sizeVarMap).forEach(([attr, cssVar]) => {
-      const val = this.getAttribute(attr);
-      if (val != null) this.style.setProperty(cssVar, val);
+    Object.entries(_.sizeVarMap).forEach(([t, e]) => {
+      const s = this.getAttribute(t);
+      s != null && this.style.setProperty(e, s);
     });
   }
-
   _syncDisabled() {
-    const btn = this.shadowRoot?.querySelector('button');
-    if (!btn) return;
-    const isDisabled = this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false' && this.getAttribute('disabled') !== '0';
-    btn.disabled = isDisabled;
-    btn.setAttribute('aria-disabled', String(isDisabled));
-    btn.classList.toggle('btn--disable', isDisabled);
-    if (isDisabled) {
-      btn.setAttribute('tabindex', '-1');
-    } else {
-      btn.removeAttribute('tabindex');
-    }
+    var s;
+    const t = (s = this.shadowRoot) == null ? void 0 : s.querySelector("button");
+    if (!t) return;
+    const e = this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false" && this.getAttribute("disabled") !== "0";
+    t.disabled = e, t.setAttribute("aria-disabled", String(e)), t.classList.toggle("btn--disable", e), e ? t.setAttribute("tabindex", "-1") : t.removeAttribute("tabindex");
   }
-}
-
-class DreamDeskToast extends DreamDeskComponent {
+};
+_.sizeVarMap = {
+  "min-width": "--dd-btn-min-w",
+  width: "--dd-btn-w",
+  height: "--dd-btn-h",
+  "font-size": "--dd-btn-fs",
+  px: "--dd-btn-px",
+  py: "--dd-btn-py"
+};
+let w = _;
+class j extends v {
   static get observedAttributes() {
     return ["type", "message"];
   }
-
   constructor() {
-    super();
-    this._type = this.getAttribute("type") || "notification";
-    this._message = this.getAttribute("message") || "";
+    super(), this._type = this.getAttribute("type") || "notification", this._message = this.getAttribute("message") || "";
   }
-
   template() {
-    return `
-      <div class="toast toast-${escapeHtml(this._type)}">
-        <button class="toast-btn--close" data-action="close" aria-label="close">&times;</button>
-        ${escapeHtml(this._message)}
-      </div>
-    `;
+    return `<div class="toast toast-${p(this._type)}">
+      <button class="toast-btn--close" data-action="close" aria-label="close">&times;</button>
+      ${p(this._message)}
+    </div>`;
   }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   setup() {
-    this._setupEventListeners();
-  }
-
-  _setupEventListeners() {
-    const closeBtn = this.shadowRoot.querySelector('[data-action="close"]');
-    closeBtn?.addEventListener("click", () => {
+    var t;
+    (t = this.shadowRoot.querySelector('[data-action="close"]')) == null || t.addEventListener("click", () => {
       this.style.display = "none";
     });
   }
-
-  show() { this.style.display = "block"; }
-  hide() { this.style.display = "none"; }
+  show() {
+    this.style.display = "block";
+  }
+  hide() {
+    this.style.display = "none";
+  }
 }
-
-class DreamDeskInput extends DreamDeskComponent {
+class N extends v {
   static get observedAttributes() {
     return ["type", "label", "id", "value", "placeholder"];
   }
-
   constructor() {
-    super();
-    this._type = this.getAttribute("type") || "text";
-    this._label = this.getAttribute("label") || "";
-    this._id = this.getAttribute("id") || "";
-    this._value = this.getAttribute("value") || "";
-    this._placeholder = this.getAttribute("placeholder") || "";
+    super(), this._type = this.getAttribute("type") || "text", this._label = this.getAttribute("label") || "", this._inputId = this.getAttribute("id") || "", this._value = this.getAttribute("value") || "", this._placeholder = this.getAttribute("placeholder") || "";
   }
-
   template() {
-    return `
-      ${
-        this._label
-          ? `<label class="input-label" for="${this._id}">${this._label}</label>`
-          : ""
-      }
-      <input 
-        type="${this._type}" 
-        id="${this._id}" 
-        class="dreamdesk-input" 
-        value="${this._value}"
-        placeholder="${this._placeholder}"
-      />
-    `;
+    return `${this._label ? `<label class="input-label" for="${p(this._inputId)}">${p(this._label)}</label>` : ""}
+      <input type="${p(this._type)}" id="${p(this._inputId)}" class="dreamdesk-input"
+        value="${p(this._value)}" placeholder="${p(this._placeholder)}" />`;
   }
-
   connectedCallback() {
-    super.connectedCallback();
-    this._setupEventListeners();
-  }
-
-  _setupEventListeners() {
-    const input = this.shadowRoot.querySelector("input");
-    input?.addEventListener("input", (e) => {
-      this._value = e.target.value;
-      this.dispatchEvent(
-        new CustomEvent("input", {
-          detail: { value: this._value },
-        })
-      );
+    var t;
+    super.connectedCallback(), (t = this.shadowRoot.querySelector("input")) == null || t.addEventListener("input", (e) => {
+      this._value = e.target.value, this.dispatchEvent(new CustomEvent("input", { detail: { value: this._value } }));
     });
   }
-
-  get value() { return this._value; }
-  set value(val) {
-    this._value = val;
-    const input = this.shadowRoot.querySelector("input");
-    if (input) { input.value = val; }
+  get value() {
+    return this._value;
+  }
+  set value(t) {
+    var s;
+    this._value = t;
+    const e = (s = this.shadowRoot) == null ? void 0 : s.querySelector("input");
+    e && (e.value = t);
   }
 }
-
-class DreamDeskToggle extends DreamDeskComponent {
+class G extends v {
   template() {
-    const checked = this.theme === "dark" ? "checked" : "";
-    return `
-      <label class="toggle">
-        <input type="checkbox" ${checked}>
-        <span class="slider">
-          <span class="knob"></span>
-        </span>
-      </label>
-    `;
+    return `<label class="toggle">
+      <input type="checkbox" ${this.theme === "dark" ? "checked" : ""}>
+      <span class="slider"><span class="knob"></span></span>
+    </label>`;
   }
-
   setup() {
-    this.shadowRoot
-      .querySelector('input[type="checkbox"]')
-      .addEventListener("change", (e) => {
-        this.dispatchEvent(
-          new CustomEvent("toggle-changed", {
-            detail: { checked: e.target.checked },
-          })
-        );
-      });
+    var t;
+    (t = this.shadowRoot.querySelector('input[type="checkbox"]')) == null || t.addEventListener("change", (e) => {
+      this.dispatchEvent(new CustomEvent("toggle-changed", {
+        detail: { checked: e.target.checked }
+      }));
+    });
   }
 }
-
-class DreamDeskTerminalWindow extends DreamDeskWindow {
-  constructor() { super(); }
+class U extends T {
   template() {
-    return `
-      <div class="win terminal-win">
-        <div class="win-header">
-          <span class="win-title">${this.title}</span>
-          <div class="win-controls">
-            <button class="btn--minimize" data-action="minimize"></button>
-            <button class="btn--fullscreen" data-action="fullscreen"></button>
-            <button class="btn--close" data-action="close"></button>
-          </div>
-        </div>
-        <div class="win-body terminal-win-body">
-          <slot></slot>
+    return `<div class="win terminal-win">
+      <div class="win-header">
+        <span class="win-title">${p(this.getAttribute("title") || "Terminal")}</span>
+        <div class="win-controls">
+          <button class="btn--minimize" data-action="minimize"></button>
+          <button class="btn--fullscreen" data-action="fullscreen"></button>
+          <button class="btn--close" data-action="close"></button>
         </div>
       </div>
-    `;
+      <div class="win-body terminal-win-body"><slot></slot></div>
+    </div>`;
   }
 }
-
-customElements.define("dreamdesk-tab", DreamDeskTab);
-customElements.define("dreamdesk-tab-panel", DreamDeskTabPanel);
-customElements.define("dreamdesk-tabs", DreamDeskTabs);
-customElements.define("dreamdesk-window", DreamDeskWindow);
-customElements.define("dreamdesk-progress-bar", DreamDeskProgressBar);
-customElements.define("dreamdesk-button", DreamDeskButton);
-customElements.define("dreamdesk-toast", DreamDeskToast);
-customElements.define("dreamdesk-input", DreamDeskInput);
-customElements.define("dreamdesk-toggle", DreamDeskToggle);
-customElements.define("dreamdesk-terminal-window", DreamDeskTerminalWindow);
+customElements.define("dreamdesk-tab", X);
+customElements.define("dreamdesk-tab-panel", Y);
+customElements.define("dreamdesk-tabs", B);
+customElements.define("dreamdesk-window", T);
+customElements.define("dreamdesk-progress-bar", W);
+customElements.define("dreamdesk-button", w);
+customElements.define("dreamdesk-toast", j);
+customElements.define("dreamdesk-input", N);
+customElements.define("dreamdesk-toggle", G);
+customElements.define("dreamdesk-terminal-window", U);
+export {
+  Z as DreamDeskThemeManager,
+  y as cancelRunningAnimations,
+  $ as close,
+  S as fullscreen,
+  x as minimize,
+  R as unfullscreen,
+  E as unminimize
+};

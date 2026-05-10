@@ -3,11 +3,17 @@ import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 
+
 export default defineConfig({
   plugins: [
     react(),
     dts({ include: ["src"] }),
   ],
+  resolve: {
+    alias: {
+      "@dreamdesk/core": resolve(__dirname, "../core/src/animations.ts"),
+    },
+  },
   server: {
     fs: {
       allow: ["../.."],

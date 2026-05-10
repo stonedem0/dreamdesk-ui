@@ -9,12 +9,13 @@ import {
 } from "react";
 import {
   minimize as animMinimize,
+  unminimize as animUnminimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
-  closeAnimation,
+  close as closeAnimation,
   cancelRunningAnimations,
   type PreviousState,
-} from "../animations";
+} from "@dreamdesk/core";
 import "./Window.css";
 
 export interface WindowProps {
@@ -210,7 +211,11 @@ export function Window({
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
     if (!win) return;
     const next = !isMinimized;
-    animMinimize(win);
+    if (next) {
+      animMinimize(win);
+    } else {
+      animUnminimize(win);
+    }
     setIsMinimized(next);
     onMinimize?.(next);
   }, [isMinimized, onMinimize]);
@@ -246,36 +251,19 @@ export function Window({
     if (!header || !host || !movable) return;
 
     let isDragging = false;
-    let explicitSet = false;
-    let startX = 0;
-    let startY = 0;
     let offsetX = 0;
     let offsetY = 0;
+    let maxLeft = 0;
+    let maxTop = 0;
     let rafId: number | null = null;
-    const DRAG_THRESHOLD = 4;
 
     const onPointerMove = (e: PointerEvent) => {
       if (!isDragging) return;
-      if (!explicitSet) {
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        if (dx * dx + dy * dy < DRAG_THRESHOLD * DRAG_THRESHOLD) return;
-        const rect = host.getBoundingClientRect();
-        host.style.setProperty("--ddw-w", `${rect.width}px`);
-        host.style.setProperty("--ddw-h", `${rect.height}px`);
-        host.setAttribute("data-explicit", "");
-        if (getComputedStyle(host).position === "static") host.style.position = "absolute";
-        host.style.left = `${rect.left}px`;
-        host.style.top = `${rect.top}px`;
-        explicitSet = true;
-      }
       const desiredLeft = e.clientX - offsetX;
       const desiredTop = e.clientY - offsetY;
       if (rafId) cancelAnimationFrame(rafId);
+      // No getBoundingClientRect or getComputedStyle here — cached at drag start
       rafId = requestAnimationFrame(() => {
-        const rect = host.getBoundingClientRect();
-        const maxLeft = Math.max(0, window.innerWidth - rect.width);
-        const maxTop = Math.max(0, window.innerHeight - rect.height);
         host.style.left = `${Math.max(0, Math.min(desiredLeft, maxLeft))}px`;
         host.style.top = `${Math.max(0, Math.min(desiredTop, maxTop))}px`;
       });
@@ -283,7 +271,6 @@ export function Window({
 
     const onPointerUp = () => {
       isDragging = false;
-      explicitSet = false;
       document.removeEventListener("pointermove", onPointerMove, { capture: true });
       document.removeEventListener("pointerup", onPointerUp, { capture: true });
     };
@@ -294,10 +281,22 @@ export function Window({
       if (isFullscreen && !allowFSDrag) return;
       cancelRunningAnimations(host);
       const hostRect = host.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
       offsetX = e.clientX - hostRect.left;
       offsetY = e.clientY - hostRect.top;
+      // Cache bounds once — reused in every RAF tick
+      maxLeft = Math.max(0, window.innerWidth - hostRect.width);
+      maxTop = Math.max(0, window.innerHeight - hostRect.height);
+      if (!host.hasAttribute("data-explicit")) {
+        host.style.setProperty("--ddw-w", `${hostRect.width}px`);
+        host.style.setProperty("--ddw-h", `${hostRect.height}px`);
+        host.setAttribute("data-explicit", "");
+      }
+      const pos = getComputedStyle(host).position;
+      if (pos === "static" || pos === "relative") {
+        host.style.position = "absolute";
+        host.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
+        host.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
+      }
       isDragging = true;
       raise();
       document.addEventListener("pointermove", onPointerMove, { capture: true });

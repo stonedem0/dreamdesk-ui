@@ -12,11 +12,8 @@
     "./css/dark.css": "./css/dark.css"
   },
   "files": [
-    "js/*.js",
-    "css/base.css",
-    "css/pastelcore.css",
-    "css/globals.css",
-    "css/dark.css",
+    "js/",
+    "css/",
     "README.md"
   ],
   "keywords": [
@@ -27,7 +24,13 @@
     "vanilla-js"
   ],
   "scripts": {
-    "dev": "npx serve . --listen 3001"
+    "build": "vite build",
+    "dev": "npx concurrently \"vite build --watch\" \"npx serve . --listen 3001\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0"
   },
   "license": "MIT"
 }

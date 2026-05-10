@@ -10,7 +10,10 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@dreamdesk/core": ["../core/src/animations.ts"]
+    }
   },
   "include": ["src"]
 }
