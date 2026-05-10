@@ -1,3 +1,9 @@
+dreamdesk-toggle { display: inline-block; }
+dreamdesk-toast,
+dreamdesk-input,
+dreamdesk-tabs,
+dreamdesk-progress-bar { display: block; }
+
 :root {
   /* Core Colors - Keep for backward compatibility */
   --pink: #ff6fb2;

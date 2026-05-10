@@ -13,7 +13,9 @@ import {
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
   close as closeAnimation,
-  cancelRunningAnimations,
+  setupDrag,
+  setupResize,
+  defaultWindowManager,
   type PreviousState,
 } from "@dreamdesk/core";
 import "./Window.css";
@@ -42,36 +44,6 @@ export interface WindowProps {
   className?: string;
 }
 
-const BASE_Z = 1000;
-const _zRegistry = new Map<string, HTMLElement>();
-const _zStack: string[] = [];
-
-function _reassignZ() {
-  _zStack.forEach((id, i) => {
-    const el = _zRegistry.get(id);
-    if (el) el.style.zIndex = String(BASE_Z + i);
-  });
-}
-
-function zRegister(id: string, el: HTMLElement) {
-  _zRegistry.set(id, el);
-  if (!_zStack.includes(id)) _zStack.push(id);
-  _reassignZ();
-}
-
-function zUnregister(id: string) {
-  _zRegistry.delete(id);
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _reassignZ();
-}
-
-function zRaise(id: string) {
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _zStack.push(id);
-  _reassignZ();
-}
 
 function freezeState(el: HTMLElement): PreviousState {
   const rect = el.getBoundingClientRect();
@@ -199,12 +171,12 @@ export function Window({
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    zRegister(windowId, el);
-    return () => zUnregister(windowId);
-  }, [windowId]);
+    defaultWindowManager.register(windowId, el, title ?? "Window");
+    return () => defaultWindowManager.unregister(windowId);
+  }, [windowId, title]);
 
   const raise = useCallback(() => {
-    zRaise(windowId);
+    defaultWindowManager.raise(windowId);
   }, [windowId]);
 
   const handleMinimize = useCallback(() => {
@@ -226,6 +198,7 @@ export function Window({
     const goingFull = !isFullscreen;
     if (goingFull) {
       previousStateRef.current = freezeState(host);
+      host.setAttribute("data-explicit", "");
       animFullscreen(host, previousStateRef.current);
     } else {
       if (previousStateRef.current) animUnfullscreen(host, previousStateRef.current);
@@ -249,67 +222,26 @@ export function Window({
     const header = headerRef.current;
     const host = hostRef.current;
     if (!header || !host || !movable) return;
-
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
-    let maxLeft = 0;
-    let maxTop = 0;
-    let rafId: number | null = null;
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging) return;
-      const desiredLeft = e.clientX - offsetX;
-      const desiredTop = e.clientY - offsetY;
-      if (rafId) cancelAnimationFrame(rafId);
-      // No getBoundingClientRect or getComputedStyle here — cached at drag start
-      rafId = requestAnimationFrame(() => {
-        host.style.left = `${Math.max(0, Math.min(desiredLeft, maxLeft))}px`;
-        host.style.top = `${Math.max(0, Math.min(desiredTop, maxTop))}px`;
-      });
-    };
-
-    const onPointerUp = () => {
-      isDragging = false;
-      document.removeEventListener("pointermove", onPointerMove, { capture: true });
-      document.removeEventListener("pointerup", onPointerUp, { capture: true });
-    };
-
-    const onPointerDown = (e: PointerEvent) => {
-      if ((e.target as Element).closest(".dd-win-controls")) return;
-      const allowFSDrag = fullscreenMode === "expand";
-      if (isFullscreen && !allowFSDrag) return;
-      cancelRunningAnimations(host);
-      const hostRect = host.getBoundingClientRect();
-      offsetX = e.clientX - hostRect.left;
-      offsetY = e.clientY - hostRect.top;
-      // Cache bounds once — reused in every RAF tick
-      maxLeft = Math.max(0, window.innerWidth - hostRect.width);
-      maxTop = Math.max(0, window.innerHeight - hostRect.height);
-      if (!host.hasAttribute("data-explicit")) {
-        host.style.setProperty("--ddw-w", `${hostRect.width}px`);
-        host.style.setProperty("--ddw-h", `${hostRect.height}px`);
-        host.setAttribute("data-explicit", "");
-      }
-      const pos = getComputedStyle(host).position;
-      if (pos === "static" || pos === "relative") {
-        host.style.position = "absolute";
-        host.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
-        host.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
-      }
-      isDragging = true;
-      raise();
-      document.addEventListener("pointermove", onPointerMove, { capture: true });
-      document.addEventListener("pointerup", onPointerUp, { capture: true });
-    };
-
-    header.addEventListener("pointerdown", onPointerDown);
-    return () => {
-      header.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("pointermove", onPointerMove, { capture: true });
-      document.removeEventListener("pointerup", onPointerUp, { capture: true });
-      if (rafId) cancelAnimationFrame(rafId);
-    };
+    return setupDrag({
+      handle: header,
+      host,
+      exclude: ".dd-win-controls",
+      disabled: () => isFullscreen && fullscreenMode !== "expand",
+      onStart: (hostRect) => {
+        if (!host.hasAttribute("data-explicit")) {
+          host.style.setProperty("--ddw-w", `${hostRect.width}px`);
+          host.style.setProperty("--ddw-h", `${hostRect.height}px`);
+          host.setAttribute("data-explicit", "");
+        }
+        const pos = getComputedStyle(host).position;
+        if (pos === "static" || pos === "relative") {
+          host.style.position = "absolute";
+          host.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
+          host.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
+        }
+        raise();
+      },
+    });
   }, [movable, isFullscreen, fullscreenMode, raise]);
 
   // Resize
@@ -317,44 +249,11 @@ export function Window({
     const handle = handleRef.current;
     const host = hostRef.current;
     if (!handle || !host || !resizable) return;
-
-    let isResizing = false;
-    let startX = 0, startY = 0, startWidth = 0, startHeight = 0;
-    const minWidth = 180, minHeight = 120;
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isResizing) return;
-      const newWidth = Math.max(minWidth, startWidth + (e.clientX - startX));
-      const newHeight = Math.max(minHeight, startHeight + (e.clientY - startY));
-      host.style.setProperty("--ddw-w", `${newWidth}px`);
-      host.style.setProperty("--ddw-h", `${newHeight}px`);
-      host.setAttribute("data-explicit", "");
-    };
-
-    const onPointerUp = () => {
-      isResizing = false;
-      document.removeEventListener("pointermove", onPointerMove, { capture: true });
-      document.removeEventListener("pointerup", onPointerUp, { capture: true });
-    };
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (isFullscreen) return;
-      isResizing = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = host.getBoundingClientRect();
-      startWidth = rect.width;
-      startHeight = rect.height;
-      document.addEventListener("pointermove", onPointerMove, { capture: true });
-      document.addEventListener("pointerup", onPointerUp, { capture: true });
-    };
-
-    handle.addEventListener("pointerdown", onPointerDown);
-    return () => {
-      handle.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("pointermove", onPointerMove, { capture: true });
-      document.removeEventListener("pointerup", onPointerUp, { capture: true });
-    };
+    return setupResize({
+      handle,
+      host,
+      disabled: () => isFullscreen,
+    });
   }, [resizable, isFullscreen]);
 
   const minSvg = resolveIcon(minimizeIcon);

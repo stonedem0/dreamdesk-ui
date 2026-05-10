@@ -6,161 +6,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dreamdesk Styleguide</title>
     <link rel="stylesheet" href="./css/globals.css" />
-
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/pastelcore.css" />
     <link rel="stylesheet" href="./css/dark.css" />
     <link rel="stylesheet" href="./css/vista.css" />
-    <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./js/dreamdesk.js"></script>
 </head>
 
 <body>
-    <div class="toogle-container">
-        <dreamdesk-toggle></dreamdesk-toggle>
-    </div>
-    <div class="container">
-        <div class="col col1">
-            <dreamdesk-window title="Custom scroll">
-                <dreamdesk-tabs>
-                    <dreamdesk-tab index="0">General</dreamdesk-tab>
-                    <dreamdesk-tab index="1">Appearance</dreamdesk-tab>
-                    <dreamdesk-tab index="2">Advanced</dreamdesk-tab>
-                    <dreamdesk-tab index="3">Settings</dreamdesk-tab>
-                    <dreamdesk-tab-panel>
-                        <p class="win-content" scrollable>Contrary to popular belief, Lorem Ipsum is not simply random
-                            text. It has
-                            roots in a piece of
-                            classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
-                            Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
-                            Latin
-                            words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
-                            classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections
-                            1.10.32
-                            and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,
-                            written in 45 BC. This book is a treatise on the theory of ethics, very popular during the
-                            Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a
-                            line in
-                            section 1.10.32</p>
-                    </dreamdesk-tab-panel>
-                    <dreamdesk-tab-panel>
-                        <p>This is the appearance panel. Customize your theme here.</p>
-                    </dreamdesk-tab-panel>
-                    <dreamdesk-tab-panel>
-                        <p>This is the advanced settings panel.</p>
-                    </dreamdesk-tab-panel>
-                    <dreamdesk-tab-panel>
-                        <p>This is the settings panel. Configure your preferences here.</p>
-                    </dreamdesk-tab-panel>
-                </dreamdesk-tabs>
-            </dreamdesk-window>
-            <div class="toast-container">
-                <dreamdesk-toast type="alert" message="This is an alert box."></dreamdesk-toast>
-                <dreamdesk-toast type="notification" message="This is a notification box."></dreamdesk-toast>
-                <dreamdesk-toast type="warning" message="This is a warning box."></dreamdesk-toast>
-            </div>
+    <div style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem; align-items: flex-start;">
+
+        <!-- Theme toggle -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+            <span>pastelcore</span>
+            <dreamdesk-toggle id="theme-toggle"></dreamdesk-toggle>
+            <span>vista</span>
         </div>
-        <div class="col col2">
-            <dreamdesk-window title="Error" size="sm" resizable="false">
-                <p class="win-content">
-                    Something unexpected happened.<br />
-                    Please try again or contact support.
-                </p>
-                <div class="win-actions">
-                    <dreamdesk-button variant="primary">OK</dreamdesk-button>
-                    <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
-                </div>
-            </dreamdesk-window>
-            <dreamdesk-window title="Hello" size="sm">
-                <div class="input-grid pc-input-grid">
-                    <dreamdesk-input type="text" label="Username:" id="dreamdesk-username" placeholder="">
-                    </dreamdesk-input>
-                    <dreamdesk-input type="password" label="Password:" id="dreamdesk-password" placeholder="">
-                    </dreamdesk-input>
-                </div>
-                <div class="win-actions">
-                    <dreamdesk-button variant="primary">Ok</dreamdesk-button>
-                    <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
-                </div>
-            </dreamdesk-window>
-            <div class="progress-bar-container">
-                <dreamdesk-progress-bar value="0"></dreamdesk-progress-bar>
-                <dreamdesk-progress-bar value="0" blocky></dreamdesk-progress-bar>
-                <dreamdesk-progress-bar value="0" gradient></dreamdesk-progress-bar>
-                <dreamdesk-progress-bar value="0" gradient blocky></dreamdesk-progress-bar>
+
+        <!-- Custom scroll window -->
+        <dreamdesk-window title="Custom scroll" style="--ddw-w: 567px; --ddw-h: 400px" data-ddw-explicit>
+            <dreamdesk-tabs>
+                <dreamdesk-tab index="0">General</dreamdesk-tab>
+                <dreamdesk-tab index="1">Appearance</dreamdesk-tab>
+                <dreamdesk-tab index="2">Advanced</dreamdesk-tab>
+                <dreamdesk-tab index="3">Settings</dreamdesk-tab>
+                <dreamdesk-tab-panel>
+                    <p class="win-content" scrollable>Contrary to popular belief, Lorem Ipsum is not simply random
+                        text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000
+                        years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked
+                        up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going
+                        through the cites of the word in classical literature, discovered the undoubtable source. Lorem
+                        Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes
+                        of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics,
+                        very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit
+                        amet..", comes from a line in section 1.10.32.</p>
+                </dreamdesk-tab-panel>
+                <dreamdesk-tab-panel>
+                    <p class="win-content" style="padding: 0.5rem;">Appearance panel.</p>
+                </dreamdesk-tab-panel>
+                <dreamdesk-tab-panel>
+                    <p class="win-content" style="padding: 0.5rem;">Advanced settings panel.</p>
+                </dreamdesk-tab-panel>
+                <dreamdesk-tab-panel>
+                    <p class="win-content" style="padding: 0.5rem;">Configure your preferences here.</p>
+                </dreamdesk-tab-panel>
+            </dreamdesk-tabs>
+        </dreamdesk-window>
+
+        <!-- Hello / login window -->
+        <dreamdesk-window title="Hello" size="sm" resizable="false">
+            <div class="win-content" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <dreamdesk-input type="text" label="Username:" id="dreamdesk-username" placeholder="">
+                </dreamdesk-input>
+                <dreamdesk-input type="password" label="Password:" id="dreamdesk-password" placeholder="">
+                </dreamdesk-input>
             </div>
-            <div class="button-demo" style="display:flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0;">
-                <div style="display:flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <dreamdesk-button size="sm" variant="primary">Small</dreamdesk-button>
-                    <dreamdesk-button size="md" variant="ghost">Medium</dreamdesk-button>
-                    <dreamdesk-button size="lg" variant="help">Large</dreamdesk-button>
-                </div>
-                <div style="display:flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <dreamdesk-button width="2rem" height="2rem" min-width="0" px="0" py="0"
-                        font-size="0.8rem">2×2</dreamdesk-button>
-                    <dreamdesk-button px="1rem" py="0.4rem" font-size="1.05rem">Custom padding</dreamdesk-button>
-                    <dreamdesk-button min-width="3rem">Min 3rem</dreamdesk-button>
-                </div>
-                <div style="display:flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <dreamdesk-button variant="primary" disabled>Disabled</dreamdesk-button>
-                    <dreamdesk-button variant="ghost" disabled>Disabled</dreamdesk-button>
-                    <dreamdesk-button variant="help" disabled>Disabled</dreamdesk-button>
-                </div>
+            <div class="win-actions">
+                <dreamdesk-button variant="primary">Ok</dreamdesk-button>
+                <dreamdesk-button variant="ghost">Cancel</dreamdesk-button>
             </div>
-            <dreamdesk-terminal-window style="--ddw-w: 28rem; --ddw-h: 12rem" data-ddw-explicit>
-                <p>Hello, world!</p>
-            </dreamdesk-terminal-window>
-            <dreamdesk-window title="Custom Header + Icons" disable-minimize="Not available in this mode"
-                disable-fullscreen-tooltip="Fullscreen disabled by design" style="
-    /* Sunset scheme */
-    --dd-window-body: #1b0f24;                /* deep dusk */
-    --dd-window-text: #fff3e6;                /* warm cream */
-    --dd-window-border: 1px solid #ff7a59;    /* sunset orange */
-    --dd-border: 2px solid #ff7a59;
-    --dd-window-shadow: 0 0 20px rgba(255,122,89,0.35), 0 0 2px rgba(255,122,89,0.7);
-    --dd-window-shadow-hover: 0 0 28px rgba(255,122,89,0.5), 0 0 6px rgba(255,122,89,0.9);
+        </dreamdesk-window>
 
-    --dd-header-bg: linear-gradient(90deg, #ff5f6d 0%, #ffc371 100%);
-    --dd-header-color: #2d1b3d;               /* plum on warm bg */
-    --dd-header-border: 2px solid #ff7a59;
-    --dd-header-border-bottom: 2px solid #ff7a59;
-    --dd-header-shadow: 0 2px 10px rgba(255,95,109,0.25) inset;
-    --dd-header-text-shadow: 0 0 6px rgba(255,195,113,0.6);
-    --dd-title-text-shadow: 0 0 6px rgba(255,95,109,0.5);
-
-    --dd-content-bg: #1b0f24;
-    --dd-content-text-shadow: 0 0 4px rgba(255,195,113,0.35);
-    --dd-content-shadow: inset 0 0 8px rgba(255,122,89,0.25);
-
-    /* Controls: black background + pink icons */
-    --dd-controls-bg: #000;
-    --dd-controls-bg-hover: #121212;
-    --dd-controls-bg-active: #1e1e1e;
-    --dd-controls-border: 1px solid #ff2bd1;
-    --dd-controls-fg: #ff2bd1;
-    --dd-controls-shadow: 0 0 6px rgba(255,43,209,0.35);
-    --dd-controls-icon-size: 0.85rem;
-
-    --dd-body-padding: 0;
-    --dd-header-height: 2rem;
-    --dd-header-padding: 0.25rem 0.75rem;
-  " minimize-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="11" width="14" height="2"/></svg>'
-                fullscreen-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h5v2H9v3H7V7zm10 10h-5v-2h3v-3h2v5z"/></svg>'
-                close-icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>'
-                size="sm" fullscreen-animation="customFullscreen" fullscreen-mode="expand">
-                <div class="win-content" scrollable scroll-style="minimal"
-                    style="--dd-content-bg: #000; display:grid; grid-template-columns: repeat(auto-fill, minmax(1.2rem, 1fr)); gap: 0.4rem; font-size: 1.2rem; line-height: 1;">
-                    <span>🔧</span><span>🎧</span><span>💡</span><span>📎</span><span>🖱️</span><span>⌨️</span><span>🗂️</span><span>🧷</span><span>🧲</span><span>📌</span>
-                    <span>🧰</span><span>🧪</span><span>🧯</span><span>🧷</span><span>📁</span><span>📄</span><span>📝</span><span>📐</span><span>📏</span><span>📦</span>
-                    <span>🧭</span><span>🧱</span><span>🧲</span><span>🔩</span><span>⚙️</span><span>🔒</span><span>🔑</span><span>🧯</span><span>🧪</span><span>🧰</span>
-                    <span>🖨️</span><span>🖥️</span><span>🖲️</span><span>💾</span><span>💽</span><span>💿</span><span>📀</span><span>🕹️</span><span>🧮</span><span>🧷</span>
-                    <span>🧲</span><span>🔌</span><span>🔋</span><span>🔧</span><span>🧰</span><span>🧪</span><span>🧯</span><span>📎</span><span>📌</span><span>📍</span>
-                    <span>📎</span><span>📌</span><span>📍</span><span>🧷</span><span>🧲</span><span>🔩</span><span>⚙️</span><span>🔧</span><span>🧰</span><span>🧪</span>
-                    <span>🧯</span><span>📁</span><span>📄</span><span>📝</span><span>📐</span><span>📏</span><span>📦</span><span>🧭</span><span>🧱</span><span>🖨️</span>
-                    <span>🖥️</span><span>🖲️</span><span>💾</span><span>💽</span><span>💿</span><span>📀</span><span>🕹️</span><span>🧮</span><span>🔌</span><span>🔋</span>
-                </div>
-            </dreamdesk-window>
+        <!-- Progress bars -->
+        <div class="progress-bar-container" style="width: 24rem;">
+            <dreamdesk-progress-bar value="0"></dreamdesk-progress-bar>
+            <dreamdesk-progress-bar value="0" blocky></dreamdesk-progress-bar>
+            <dreamdesk-progress-bar value="0" gradient></dreamdesk-progress-bar>
+            <dreamdesk-progress-bar value="0" gradient blocky></dreamdesk-progress-bar>
         </div>
+
+        <!-- Toasts -->
+        <div class="toast-container">
+            <dreamdesk-toast type="alert" message="This is an alert."></dreamdesk-toast>
+            <dreamdesk-toast type="notification" message="This is a notification."></dreamdesk-toast>
+            <dreamdesk-toast type="warning" message="This is a warning."></dreamdesk-toast>
+        </div>
+
+        <!-- Standalone toggle demo -->
+        <dreamdesk-toggle id="demo-toggle"></dreamdesk-toggle>
+
+        <!-- Terminal window -->
+        <dreamdesk-terminal-window title="terminal" style="--ddw-w: 28rem; --ddw-h: 12rem" data-ddw-explicit>
+            <p>$ hello world</p>
+            <p>$ _</p>
+        </dreamdesk-terminal-window>
+
     </div>
     <script src="./main.js"></script>
 </body>

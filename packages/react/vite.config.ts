@@ -11,7 +11,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@dreamdesk/core": resolve(__dirname, "../core/src/animations.ts"),
+      "@dreamdesk/core": resolve(__dirname, "../core/src/shared.ts"),
     },
   },
   server: {

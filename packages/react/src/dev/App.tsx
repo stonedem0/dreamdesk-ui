@@ -25,9 +25,6 @@ function ThemeToggle() {
 }
 
 export default function App() {
-  const [log, setLog] = useState<string[]>([]);
-  const push = (msg: string) => setLog((l) => [...l, msg]);
-
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     let val = 0;
@@ -49,9 +46,6 @@ export default function App() {
         {/* Main demo window: tabs + scrollable content */}
         <Window
           title="Custom scroll"
-          onMinimize={(v) => push(`minimize: ${v}`)}
-          onFullscreen={(v) => push(`fullscreen: ${v}`)}
-          onClose={() => push("close")}
           scrollContent
           width="567px"
           height="400px"
@@ -114,7 +108,7 @@ export default function App() {
         </div>
 
         {/* Toggle */}
-        <Toggle onChange={(v) => push(`toggle: ${v}`)} />
+        <Toggle />
 
         {/* Terminal */}
         <TerminalWindow title="terminal" width="28rem" height="12rem">
@@ -122,12 +116,6 @@ export default function App() {
           <p>$ _</p>
         </TerminalWindow>
 
-        {/* Event log */}
-        {log.length > 0 && (
-          <div style={{ fontFamily: "monospace", fontSize: "0.85rem", opacity: 0.7 }}>
-            {log.map((l, i) => <div key={i}>{l}</div>)}
-          </div>
-        )}
       </div>
     </ThemeProvider>
   );

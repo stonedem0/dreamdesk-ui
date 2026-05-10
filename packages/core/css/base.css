@@ -17,7 +17,10 @@ body {
 
 /* Windows styles */
 .win {
-  border: var(--dd-border, var(--dd-window-border, var(--color-window-border, var(--border))));
+  border: var(
+    --dd-border,
+    var(--dd-window-border, var(--color-window-border, var(--border)))
+  );
   background-color: var(--dd-window-body, var(--color-window-body, #ffffff));
   color: var(--dd-window-text, var(--color-text, var(--black)));
   box-shadow: var(--dd-window-shadow, var(--window-shadow, none));
@@ -26,13 +29,28 @@ body {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
-  border-radius: var(--dd-window-radius, 0); /* only themed when explicitly set */
-  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
+  border-radius: var(
+    --dd-window-radius,
+    0
+  ); /* only themed when explicitly set */
+  backdrop-filter: var(
+    --dd-window-backdrop-filter,
+    var(--window-backdrop-filter, none)
+  );
 }
 
-.win:hover { box-shadow: var(--dd-window-shadow-hover, var(--dd-window-shadow, 0 2px 8px rgba(0, 0, 0, 0.08))); }
+.win:hover {
+  box-shadow: var(
+    --dd-window-shadow-hover,
+    var(--dd-window-shadow, 0 2px 8px rgba(0, 0, 0, 0.08))
+  );
+}
 
-.component-root { inline-size: 100%; block-size: 100%; display: block; }
+.component-root {
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+}
 
 .win-header {
   display: flex;
@@ -46,23 +64,41 @@ body {
   user-select: none;
   touch-action: none;
   border: var(--dd-header-border, none);
-  border-bottom: var(--dd-header-border-bottom, var(--color-window-border, var(--border)));
+  border-bottom: var(
+    --dd-header-border-bottom,
+    var(--color-window-border, var(--border))
+  );
   background: var(--dd-header-bg, var(--color-window-header, #ffffff));
   color: var(--dd-header-color, var(--color-text, var(--black)));
   box-shadow: var(--dd-header-shadow, var(--window-header-shadow, none));
   text-shadow: var(--dd-header-text-shadow, none);
-  backdrop-filter: var(--dd-header-backdrop-filter, var(--header-backdrop-filter, none));
+  backdrop-filter: var(
+    --dd-header-backdrop-filter,
+    var(--header-backdrop-filter, none)
+  );
 }
 
-.win-body { padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem)) var(--dd-body-px, var(--dd-body-padding, 0.5rem)); flex: 1; min-height: 0; overflow: auto; box-sizing: border-box; }
+.win-body {
+  padding: var(--dd-body-py, var(--dd-body-padding, 0.5rem))
+    var(--dd-body-px, var(--dd-body-padding, 0.5rem));
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  box-sizing: border-box;
+}
 /* apply same backdrop filter to body area for strong glass look */
 .win-body {
-  backdrop-filter: var(--dd-window-backdrop-filter, var(--window-backdrop-filter, none));
+  backdrop-filter: var(
+    --dd-window-backdrop-filter,
+    var(--window-backdrop-filter, none)
+  );
 }
 
 /* When an explicit size is set (attrs or size tokens), let body fill */
 :host([data-ddw-explicit]) .win-body,
-:host([size]) .win-body { flex: 1 1 auto; }
+:host([size]) .win-body {
+  flex: 1 1 auto;
+}
 
 /* bottom-right resize handle */
 .win-resize-handle {
@@ -74,24 +110,30 @@ body {
   cursor: nwse-resize;
   touch-action: none;
   background:
-    linear-gradient(135deg,
+    linear-gradient(
+      135deg,
       transparent calc(100% - 3px),
       var(--resize-stripe-color, var(--black)) calc(100% - 3px) calc(100% - 2px),
       transparent calc(100% - 2px)
     ),
-    linear-gradient(135deg,
+    linear-gradient(
+      135deg,
       transparent calc(100% - 7px),
       var(--resize-stripe-color, var(--black)) calc(100% - 7px) calc(100% - 6px),
       transparent calc(100% - 6px)
     ),
-    linear-gradient(135deg,
+    linear-gradient(
+      135deg,
       transparent calc(100% - 11px),
-      var(--resize-stripe-color, var(--black)) calc(100% - 11px) calc(100% - 10px),
+      var(--resize-stripe-color, var(--black)) calc(100% - 11px)
+        calc(100% - 10px),
       transparent calc(100% - 10px)
     );
 }
 
-.win.in-fullscreen .win-resize-handle { display: none; }
+.win.in-fullscreen .win-resize-handle {
+  display: none;
+}
 
 .win-controls {
   display: flex;
@@ -99,7 +141,10 @@ body {
   justify-content: flex-start;
 }
 
-.win-title { user-select: none; text-shadow: var(--dd-title-text-shadow, none); }
+.win-title {
+  user-select: none;
+  text-shadow: var(--dd-title-text-shadow, none);
+}
 
 .win-content {
   margin: auto;
@@ -130,17 +175,33 @@ body {
   display: inline-block;
   text-align: center;
   border-radius: var(--dd-btn-radius, var(--btn-radius, 0));
-  transition: transform 0.1s ease, background-color 0.2s ease;
+  transition:
+    transform 0.1s ease,
+    background-color 0.2s ease;
   box-sizing: border-box;
   line-height: 1;
 }
 
 /* remove legacy background-image icons; inline SVGs are used now */
-.btn--minimize { background-image: var(--btn-minimize-icon, none), var(--controls-minimize-gloss, var(--controls-gloss-image, none)); }
-.btn--fullscreen { background-image: var(--btn-fullscreen-icon, none), var(--controls-fullscreen-gloss, var(--controls-gloss-image, none)); }
-.btn--close { background-image: var(--btn-close-icon, none), var(--controls-close-gloss, var(--controls-gloss-image, none)); }
+.btn--minimize {
+  background-image:
+    var(--btn-minimize-icon, none),
+    var(--controls-minimize-gloss, var(--controls-gloss-image, none));
+}
+.btn--fullscreen {
+  background-image:
+    var(--btn-fullscreen-icon, none),
+    var(--controls-fullscreen-gloss, var(--controls-gloss-image, none));
+}
+.btn--close {
+  background-image:
+    var(--btn-close-icon, none),
+    var(--controls-close-gloss, var(--controls-gloss-image, none));
+}
 
-.btn { background-color: var(--color-surface, #ffffff); }
+.btn {
+  background-color: var(--color-surface, #ffffff);
+}
 
 .btn--primary {
   color: var(--color-text, var(--black));
@@ -160,10 +221,22 @@ body {
   border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
-.btn--disable { filter: grayscale(0.8); cursor: not-allowed; color: var(--grey); border: var(--color-window-border, var(--border)); }
-.btn--basic { color: var(--color-text, var(--black)); border: var(--color-window-border, var(--border)); }
+.btn--disable {
+  filter: grayscale(0.8);
+  cursor: not-allowed;
+  color: var(--grey);
+  border: var(--color-window-border, var(--border));
+}
+.btn--basic {
+  color: var(--color-text, var(--black));
+  border: var(--color-window-border, var(--border));
+}
 /* disabled state specifics */
-.btn:disabled { cursor: not-allowed; opacity: var(--dd-btn-disabled-opacity, 0.6); filter: var(--dd-btn-disabled-filter, grayscale(0.5)); }
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: var(--dd-btn-disabled-opacity, 0.6);
+  filter: var(--dd-btn-disabled-filter, grayscale(0.5));
+}
 
 /* Window controls */
 .win-controls button {
@@ -171,17 +244,32 @@ body {
   height: var(--dd-controls-button-h, var(--controls-button-h, 1.3rem));
   background-repeat: no-repeat;
   background-position: center;
-  box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
+  box-shadow: var(
+    --dd-controls-shadow,
+    var(--window-controls-button-shadow, none)
+  );
   cursor: pointer;
   background-size: contain;
   border: var(--dd-controls-border, var(--color-window-border, var(--border)));
-  background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)));
+  background-color: var(
+    --dd-controls-bg,
+    var(--color-window-control-bg, var(--color-surface, #ffffff))
+  );
   border-radius: var(--dd-controls-radius, var(--controls-radius, 0));
-  transition: box-shadow .08s ease, transform .08s ease, background-color .08s ease;
+  transition:
+    box-shadow 0.08s ease,
+    transform 0.08s ease,
+    background-color 0.08s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* If custom SVGs are injected into buttons, size them nicely */
-.win-controls button svg { width: var(--dd-controls-icon-size, 1rem); height: var(--dd-controls-icon-size, 1rem); display: block; }
+.win-controls button svg {
+  width: var(--dd-controls-icon-size, 1rem);
+  height: var(--dd-controls-icon-size, 1rem);
+  display: block;
+}
 
 /* augment window controls buttons */
 .win-controls button {
@@ -191,8 +279,18 @@ body {
   color: var(--dd-controls-fg, var(--line-color, #3d2d33));
 }
 
-.win-controls button:hover { box-shadow: none;}
-.win-controls button[aria-disabled="true"] { cursor: not-allowed; opacity: var(--dd-controls-disabled-opacity, 0.6); filter: var(--dd-controls-disabled-filter, grayscale(0.5)); }
+.win-controls button:hover {
+  box-shadow: none;
+  background-color: var(
+    --dd-controls-bg,
+    var(--color-window-control-bg, var(--color-surface, #ffffff))
+  );
+}
+.win-controls button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--dd-controls-disabled-opacity, 0.6);
+  filter: var(--dd-controls-disabled-filter, grayscale(0.5));
+}
 
 /* Shadow-friendly tooltip for disabled controls */
 .win-controls button[aria-disabled="true"][data-tooltip] {
@@ -212,7 +310,7 @@ body {
   font-size: 0.75rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .12s ease;
+  transition: opacity 0.12s ease;
   z-index: 10;
 }
 .win-controls button[aria-disabled="true"][data-tooltip]:hover::after,
@@ -220,169 +318,550 @@ body {
   opacity: 1;
 }
 
-.win-controls button:active { box-shadow: none; transform: translateY(1px);}
-
-.win-controls button:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
+.win-controls button:focus {
+  outline: none;
+}
+.win-controls button:active {
+  box-shadow:
+    inset 2px -2px 1px var(--scroll-button-shadow-light, #ffffff),
+    inset -2px 2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+  transform: translateY(1px);
+  outline: none;
+  background-color: var(
+    --dd-controls-bg,
+    var(--color-window-control-bg, var(--color-surface, #ffffff))
+  );
+}
+.win-controls button:focus-visible {
+  outline: 2px solid var(--line-color, #3d2d33);
+  outline-offset: 1px;
+}
 
 /* Per-button themeable backgrounds (with safe fallbacks) */
 .win-controls .btn--minimize {
-  background-color: var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
-  width: var(--controls-minimize-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
-  height: var(--controls-minimize-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
-  border-radius: var(--controls-minimize-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
-  border: var(--controls-minimize-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  background-color: var(
+    --color-window-control-minimize-bg,
+    var(
+      --dd-controls-bg,
+      var(--color-window-control-bg, var(--color-surface, #ffffff))
+    )
+  );
+  width: var(
+    --controls-minimize-w,
+    var(--dd-controls-button-w, var(--controls-button-w, 1.4rem))
+  );
+  height: var(
+    --controls-minimize-h,
+    var(--dd-controls-button-h, var(--controls-button-h, 1.3rem))
+  );
+  border-radius: var(
+    --controls-minimize-radius,
+    var(--dd-controls-radius, var(--controls-radius, 0))
+  );
+  border: var(
+    --controls-minimize-border,
+    var(--dd-controls-border, var(--color-window-border, var(--border)))
+  );
   /* Optional side-specific override: remove seam when adjacent */
-  border-right: var(--controls-minimize-border-right, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  border-right: var(
+    --controls-minimize-border-right,
+    var(--dd-controls-border, var(--color-window-border, var(--border)))
+  );
 }
 .win-controls .btn--fullscreen {
-  background-color: var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
-  width: var(--controls-fullscreen-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
-  height: var(--controls-fullscreen-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
-  border-radius: var(--controls-fullscreen-radius, var(--dd-controls-radius, var(--controls-radius, 0)));
-  border: var(--controls-fullscreen-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  background-color: var(
+    --color-window-control-fullscreen-bg,
+    var(
+      --dd-controls-bg,
+      var(--color-window-control-bg, var(--color-surface, #ffffff))
+    )
+  );
+  width: var(
+    --controls-fullscreen-w,
+    var(--dd-controls-button-w, var(--controls-button-w, 1.4rem))
+  );
+  height: var(
+    --controls-fullscreen-h,
+    var(--dd-controls-button-h, var(--controls-button-h, 1.3rem))
+  );
+  border-radius: var(
+    --controls-fullscreen-radius,
+    var(--dd-controls-radius, var(--controls-radius, 0))
+  );
+  border: var(
+    --controls-fullscreen-border,
+    var(--dd-controls-border, var(--color-window-border, var(--border)))
+  );
 }
 .win-controls .btn--close {
-  background-color: var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff))));
-  width: var(--controls-close-w, var(--dd-controls-button-w, var(--controls-button-w, 1.4rem)));
-  height: var(--controls-close-h, var(--dd-controls-button-h, var(--controls-button-h, 1.3rem)));
-  border-radius: var(--controls-close-radius, var(--dd-controls-close-radius, var(--dd-controls-radius, var(--controls-radius, 0))));
-  border: var(--controls-close-border, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  background-color: var(
+    --color-window-control-close-bg,
+    var(
+      --dd-controls-bg,
+      var(--color-window-control-bg, var(--color-surface, #ffffff))
+    )
+  );
+  width: var(
+    --controls-close-w,
+    var(--dd-controls-button-w, var(--controls-button-w, 1.4rem))
+  );
+  height: var(
+    --controls-close-h,
+    var(--dd-controls-button-h, var(--controls-button-h, 1.3rem))
+  );
+  border-radius: var(
+    --controls-close-radius,
+    var(
+      --dd-controls-close-radius,
+      var(--dd-controls-radius, var(--controls-radius, 0))
+    )
+  );
+  border: var(
+    --controls-close-border,
+    var(--dd-controls-border, var(--color-window-border, var(--border)))
+  );
   /* Optional side-specific override: remove seam when adjacent */
-  border-left: var(--controls-close-border-left, var(--dd-controls-border, var(--color-window-border, var(--border))));
+  border-left: var(
+    --controls-close-border-left,
+    var(--dd-controls-border, var(--color-window-border, var(--border)))
+  );
 }
 .win-controls .btn--minimize:hover {
-  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, inherit));
+  background-color: var(--color-window-control-minimize-bg-hover, var(--color-window-control-minimize-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
 }
 .win-controls .btn--fullscreen:hover {
-  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, inherit));
+  background-color: var(--color-window-control-fullscreen-bg-hover, var(--color-window-control-fullscreen-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
 }
 .win-controls .btn--close:hover {
-  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, inherit));
+  background-color: var(--color-window-control-close-bg-hover, var(--color-window-control-close-bg, var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #ffffff)))));
 }
 /* Scrollbars */
-::-webkit-scrollbar-track { background: var(--scroll-track-bg, #fffefe); border: var(--color-window-border, var(--border)); }
-::-webkit-scrollbar-thumb { background: var(--scroll-thumb-bg, #fffefe); border: var(--color-window-border, var(--border)); background-size: 300% 300%; }
-::-webkit-scrollbar-button {
-  display: block; height: 1rem; width: 1rem; border-right: var(--color-window-border, var(--border)); border-left: var(--color-window-border, var(--border)); background-size: contain; background-repeat: no-repeat;
+::-webkit-scrollbar-track {
+  background: var(--scroll-track-bg, #fffefe);
+  border: var(--color-window-border, var(--border));
 }
-::-webkit-scrollbar-button:vertical:increment { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>'); background-position: center; border-top: none; }
-::-webkit-scrollbar-button:vertical:decrement { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>'); background-position: center; border-bottom: none; }
-::-webkit-scrollbar-button:vertical:increment:start, ::-webkit-scrollbar-button:vertical:decrement:end { display: none; border: none; }
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb-bg, #fffefe);
+  border: var(--color-window-border, var(--border));
+  background-size: 300% 300%;
+}
+::-webkit-scrollbar-button {
+  display: block;
+  height: 1rem;
+  width: 1rem;
+  border-right: var(--color-window-border, var(--border));
+  border-left: var(--color-window-border, var(--border));
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>');
+  background-position: center;
+  border-top: none;
+}
+::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>');
+  background-position: center;
+  border-bottom: none;
+}
+::-webkit-scrollbar-button:vertical:increment:start,
+::-webkit-scrollbar-button:vertical:decrement:end {
+  display: none;
+  border: none;
+}
 
 /* Tab Styles */
-dreamdesk-tab { display: inline-block; padding: 0.25rem 0.75rem; cursor: pointer; font-family: inherit; font-size: 0.9rem; border-bottom: 2px solid transparent; margin-right: 4px; }
-dreamdesk-tab.active { font-weight: bold; }
-dreamdesk-tab::first-letter { text-decoration: underline; }
+dreamdesk-tab {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  border-bottom: 2px solid transparent;
+  margin-right: 4px;
+}
+dreamdesk-tab.active {
+  font-weight: bold;
+}
+dreamdesk-tab::first-letter {
+  text-decoration: underline;
+}
 
-dreamdesk-tab-panel { display: none; }
-dreamdesk-tab-panel.active { display: block; }
+dreamdesk-tab-panel {
+  display: none;
+}
+dreamdesk-tab-panel.active {
+  display: block;
+}
 
 /* Toast styles */
-.toast { padding: 0.6rem; border: var(--color-window-border, var(--border)); width: 22rem; height: 2.2rem; box-shadow: var(--toast-shadow, var(--shadow, none)); background: var(--dd-toast-bg, var(--color-surface, #fff)); color: var(--color-text, var(--black)); border-radius: var(--dd-toast-radius, 0); backdrop-filter: var(--dd-toast-backdrop-filter, none); }
-.toast-alert { background: var(--color-toast-alert, #ffd6d6); }
-.toast-notification { background: var(--color-toast-notification, #d6f0ff); }
-.toast-warning { background: var(--color-toast-warning, #fff4c2); }
-.toast-btn--close { appearance: none; background: none; border: none; padding: 0; margin: 0; color: var(--color-text, var(--black)); font-weight: bold; float: right; font-size: 18px; line-height: 13px; cursor: pointer; transition: 0.3s; width: 11px; }
+.toast {
+  padding: 0.6rem;
+  border: var(--color-window-border, var(--border));
+  width: 22rem;
+  height: 2.2rem;
+  box-shadow: var(--toast-shadow, var(--shadow, none));
+  background: var(--dd-toast-bg, var(--color-surface, #fff));
+  color: var(--color-text, var(--black));
+  border-radius: var(--dd-toast-radius, 0);
+  backdrop-filter: var(--dd-toast-backdrop-filter, none);
+}
+.toast-alert {
+  background: var(--color-toast-alert, #ffd6d6);
+}
+.toast-notification {
+  background: var(--color-toast-notification, #d6f0ff);
+}
+.toast-warning {
+  background: var(--color-toast-warning, #fff4c2);
+}
+.toast-btn--close {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--color-text, var(--black));
+  font-weight: bold;
+  float: right;
+  font-size: 18px;
+  line-height: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 11px;
+}
 
 /* Alerts shadow emphasis */
-.toast-alert, .toast-notification, .toast-warning {
+.toast-alert,
+.toast-notification,
+.toast-warning {
   box-shadow: var(--toast-shadow, var(--shadow, none));
 }
 
 /* Toggle switch */
-.toggle { position: relative; display: inline-block; width: 4.3rem; height: 2rem; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle .slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: var(--color-window-border, var(--border)); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 4rem; background: var(--color-toggle-background, #a7fcfb); box-shadow: var(--toggle-slider-shadow, none); }
-.toggle .slider::before { content: ""; font-size: 1.6rem; padding: 0 0.4rem; }
-.toggle .slider::after { content: ""; padding: 0 0.4rem; font-size: 1.6rem; }
-.toggle .knob { position: absolute; width: 1.8rem; height: 1.8rem; z-index: 1; border: var(--color-window-border, var(--border)); background: var(--toggle-knob-gradient, var(--color-toggle-knob, #fff)); box-shadow: var(--toggle-knob-shadow, none); }
-.toggle input:checked + .slider { background-color: var(--color-toggle-active, var(--pastelcore-cyan)); transition: transform 0.3s ease; }
-.toggle input:checked + .slider .knob { transform: translateX(2.25rem); transition: transform 0.3s ease; }
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 4.3rem;
+  height: 2rem;
+}
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle .slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: var(--color-window-border, var(--border));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 4rem;
+  background: var(--color-toggle-background, #a7fcfb);
+  box-shadow: var(--toggle-slider-shadow, none);
+}
+.toggle .slider::before {
+  content: "";
+  font-size: 1.6rem;
+  padding: 0 0.4rem;
+}
+.toggle .slider::after {
+  content: "";
+  padding: 0 0.4rem;
+  font-size: 1.6rem;
+}
+.toggle .knob {
+  position: absolute;
+  width: 1.8rem;
+  height: 1.8rem;
+  z-index: 1;
+  border: var(--color-window-border, var(--border));
+  background: var(--toggle-knob-gradient, var(--color-toggle-knob, #fff));
+  box-shadow: var(--toggle-knob-shadow, none);
+}
+.toggle input:checked + .slider {
+  background-color: var(--color-toggle-active, var(--pastelcore-cyan));
+  transition: transform 0.3s ease;
+}
+.toggle input:checked + .slider .knob {
+  transform: translateX(2.25rem);
+  transition: transform 0.3s ease;
+}
 
 /* toggle animations via variables */
-.toggle .slider { animation: var(--toggle-slider-animation, none); }
-.toggle .knob { animation: var(--toggle-knob-animation, none); }
+.toggle .slider {
+  animation: var(--toggle-slider-animation, none);
+}
+.toggle .knob {
+  animation: var(--toggle-knob-animation, none);
+}
 
 /* Switch visuals tuning */
 .toggle .slider {
   background: var(--color-toggle-background, #a7fcfb);
-  box-shadow: var(--toggle-slider-shadow, inset -1px 1px 0.5px rgba(0,0,0,0.12), inset 1px -1px 0.5px rgba(255,255,255,0.65));
+  box-shadow: var(
+    --toggle-slider-shadow,
+    inset -1px 1px 0.5px rgba(0, 0, 0, 0.12),
+    inset 1px -1px 0.5px rgba(255, 255, 255, 0.65)
+  );
   animation: var(--toggle-slider-animation, shimmer 5s infinite linear);
   background-size: var(--toggle-slider-bg-size, 300% 300%);
 }
 .toggle .knob {
   background: var(--toggle-knob-gradient, #fff);
-  box-shadow: var(--toggle-knob-shadow, inset -1px 1px 0.4px #ffffff, inset 1px -1px 0.4px #c5c6d1);
+  box-shadow: var(
+    --toggle-knob-shadow,
+    inset -1px 1px 0.4px #ffffff,
+    inset 1px -1px 0.4px #c5c6d1
+  );
   animation: var(--toggle-knob-animation, shimmer 5s infinite linear);
   background-size: var(--toggle-knob-bg-size, 300% 300%);
 }
 
 /* ===input base styles ==== */
-.input-grid { display: grid; grid-template-columns: 1fr; gap: 0.5rem; align-items: start; }
-.input-label { text-align: left; }
-.dreamdesk-input { font-family: var(--font-ui); height: 1.4rem; width: 60%; border-radius: 0px; border: var(--color-window-border, var(--border)); background: var(--color-input-background, #fff); color: var(--color-text, var(--black)); box-shadow: var(--input-shadow, none); }
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+.input-label {
+  text-align: left;
+}
+.dreamdesk-input {
+  font-family: var(--font-ui);
+  height: 1.4rem;
+  width: 60%;
+  border-radius: 0px;
+  border: var(--color-window-border, var(--border));
+  background: var(--color-input-background, #fff);
+  color: var(--color-text, var(--black));
+  box-shadow: var(--input-shadow, none);
+}
 
 /* Progress bar */
-.progress-bar { background: var(--color-progress-bar, #bababc); transition: width 0.5s ease, filter 0.5s linear; border: var(--color-window-border, var(--border)); border-left: none; text-align: end; font-weight: bold; height: 1.7rem; box-shadow: var(--progress-bar-shadow, none); border-radius: var(--dd-pb-bar-radius, var(--progress-bar-radius, 0)); }
-.progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); }
-.progress-track { inline-size: 100%; height: var(--dd-pb-h, 1.5rem); background: var(--color-progress-track, #e0e0e0); border: var(--color-window-border, var(--border)); display: flex; align-items: center; overflow: hidden;  white-space: nowrap; box-sizing: border-box; box-shadow: var(--progress-track-shadow, none); border-radius: var(--dd-pb-radius, var(--progress-radius, 0)); }
-.progress-track--blocky { padding-left: 3.4px; padding-right: 3.4px; }
-.progress-segment { transition: opacity 0.3s ease, background 0.3s ease, filter 0.3s ease; height: 100%; border: var(--color-window-border, var(--border)); opacity: 0.2; flex-shrink: 0; box-sizing: border-box; box-shadow: var(--progress-segment-shadow, none); }
+.progress-bar {
+  background: var(--color-progress-bar, #bababc);
+  transition:
+    width 0.5s ease,
+    filter 0.5s linear;
+  border: var(--color-window-border, var(--border));
+  border-left: none;
+  text-align: end;
+  font-weight: bold;
+  height: 1.7rem;
+  box-shadow: var(--progress-bar-shadow, none);
+  border-radius: var(--dd-pb-bar-radius, var(--progress-bar-radius, 0));
+}
+.progress-bar--gradient {
+  background: var(--color-progress-gradient, none);
+  box-shadow: var(--progress-bar-shadow, none);
+}
+.progress-track {
+  inline-size: 100%;
+  height: var(--dd-pb-h, 1.5rem);
+  background: var(--color-progress-track, #e0e0e0);
+  border: var(--color-window-border, var(--border));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  box-shadow: var(--progress-track-shadow, none);
+  border-radius: var(--dd-pb-radius, var(--progress-radius, 0));
+}
+.progress-track--blocky {
+  padding-left: 3.4px;
+  padding-right: 3.4px;
+}
+.progress-segment {
+  transition:
+    opacity 0.3s ease,
+    background 0.3s ease,
+    filter 0.3s ease;
+  height: 100%;
+  border: var(--color-window-border, var(--border));
+  opacity: 0.2;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  box-shadow: var(--progress-segment-shadow, none);
+}
 
 /* ====== utility classes ====== */
-.hidden { display: none; }
-.show { display: block; }
-.no-gap { display: flex; gap: 0px; }
-.scrollable { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
+.hidden {
+  display: none;
+}
+.show {
+  display: block;
+}
+.no-gap {
+  display: flex;
+  gap: 0px;
+}
+.scrollable {
+  overflow-y: auto;
+  padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem);
+  max-height: var(--scrollable-max-height, 16rem);
+  border: var(--color-window-border, var(--border));
+  border-right: none;
+  scrollbar-gutter: stable;
+  background: var(--dd-content-bg, var(--color-input-background, #fff));
+}
 /* Attribute-based global scroll helper (works for light DOM content) */
-.win-content[scrollable] { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
-.non-scrollable { overflow-y: hidden; }
-.win--sm { width: var(--win-width-sm, auto); }
-.win--md { width: var(--win-width-md, auto); }
-.win--lg { width: var(--win-width-lg, auto); }
-.win-content.scrollable:not(.overflowing) { border-right: var(--color-window-border, var(--border)); }
+.win-content[scrollable] {
+  overflow-y: auto;
+  padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem);
+  max-height: var(--scrollable-max-height, 16rem);
+  border: var(--color-window-border, var(--border));
+  border-right: none;
+  scrollbar-gutter: stable;
+  background: var(--dd-content-bg, var(--color-input-background, #fff));
+}
+.non-scrollable {
+  overflow-y: hidden;
+}
+.win--sm {
+  width: var(--win-width-sm, auto);
+}
+.win--md {
+  width: var(--win-width-md, auto);
+}
+.win--lg {
+  width: var(--win-width-lg, auto);
+}
+.win-content.scrollable:not(.overflowing) {
+  border-right: var(--color-window-border, var(--border));
+}
 /* Attribute variant border-right when not overflowing */
-.win-content[scrollable]:not(.overflowing) { border-right: var(--color-window-border, var(--border)); }
+.win-content[scrollable]:not(.overflowing) {
+  border-right: var(--color-window-border, var(--border));
+}
 
 /* Attribute-based API for window content scrollability */
 /* Shadow DOM styling for slotted content */
-:host([data-dd-role="window"]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); height: var(--dd-scrollable-h, 100%); max-height: var(--scrollable-max-height, none); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); display: block; }
+:host([data-dd-role="window"]) ::slotted(.win-content[scrollable]) {
+  overflow-y: auto;
+  padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem);
+  height: var(--dd-scrollable-h, 100%);
+  max-height: var(--scrollable-max-height, none);
+  border: var(--color-window-border, var(--border));
+  border-right: none;
+  scrollbar-gutter: stable;
+  background: var(--dd-content-bg, var(--color-input-background, #fff));
+  display: block;
+}
 /* Also apply inside tab panels */
-:host([data-panel]) ::slotted(.win-content[scrollable]) { overflow-y: auto; padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem); max-height: var(--scrollable-max-height, 16rem); border: var(--color-window-border, var(--border)); border-right: none; scrollbar-gutter: stable; background: var(--dd-content-bg, var(--color-input-background, #fff)); }
+:host([data-panel]) ::slotted(.win-content[scrollable]) {
+  overflow-y: auto;
+  padding: var(--dd-scrollable-py, 0.2rem) var(--dd-scrollable-px, 0.2rem);
+  max-height: var(--scrollable-max-height, 16rem);
+  border: var(--color-window-border, var(--border));
+  border-right: none;
+  scrollbar-gutter: stable;
+  background: var(--dd-content-bg, var(--color-input-background, #fff));
+}
 
 /* ===== Window Controls ===== */
-.win.minimized { height: 0; overflow: hidden; transition: height 0.3s ease; }
-.win.fullscreen-animating { box-shadow: 0 0 24px 4px rgba(0,0,0,0.18); transition: all 0.4s ease; }
-.win.in-fullscreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; transition: all 0.4s ease; }
+.win.minimized {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+.win.fullscreen-animating {
+  box-shadow: 0 0 24px 4px rgba(0, 0, 0, 0.18);
+  transition: all 0.4s ease;
+}
+.win.in-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  transition: all 0.4s ease;
+}
 
 /* Terminal window layout */
-.terminal-win { display: flex; flex-direction: column; }
-.terminal-win .terminal-win-body { flex: 1; background-color: var(--color-terminal-bg, #000); color: var(--color-terminal-fg, #fafafa); }
+.terminal-win {
+  display: flex;
+  flex-direction: column;
+}
+.terminal-win .terminal-win-body {
+  flex: 1;
+  background-color: var(--color-terminal-bg, #000);
+  color: var(--color-terminal-fg, #fafafa);
+}
 
 /* themed scroll class can add depth via variables */
-.pc-scroll::-webkit-scrollbar-track { box-shadow: none; }
-.bl-scroll::-webkit-scrollbar-track { box-shadow: none; }
+.pc-scroll::-webkit-scrollbar-track {
+  box-shadow: none;
+}
+.bl-scroll::-webkit-scrollbar-track {
+  box-shadow: none;
+}
 
 /* enhance gradient bar appearance */
-.progress-bar--gradient { background: var(--color-progress-gradient, none); box-shadow: var(--progress-bar-shadow, none); } 
+.progress-bar--gradient {
+  background: var(--color-progress-gradient, none);
+  box-shadow: var(--progress-bar-shadow, none);
+}
 
 /* button depth by type (fallback to generic) */
-.btn--primary { box-shadow: var(--button-shadow-primary, var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)); }
-.btn--ghost { box-shadow: var(--button-shadow-ghost, var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)); }
-.btn--help { box-shadow: var(--button-shadow-help, var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)); }
+.btn--primary {
+  box-shadow: var(
+    --button-shadow-primary,
+    var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)
+  );
+}
+.btn--ghost {
+  box-shadow: var(
+    --button-shadow-ghost,
+    var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)
+  );
+}
+.btn--help {
+  box-shadow: var(
+    --button-shadow-help,
+    var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4)
+  );
+}
 
 /* per-type toast depth */
-.toast-alert { box-shadow: var(--toast-alert-shadow, var(--toast-shadow, var(--shadow, none))); }
-.toast-notification { box-shadow: var(--toast-notification-shadow, var(--toast-shadow, var(--shadow, none))); }
-.toast-warning { box-shadow: var(--toast-warning-shadow, var(--toast-shadow, var(--shadow, none))); }
+.toast-alert {
+  box-shadow: var(
+    --toast-alert-shadow,
+    var(--toast-shadow, var(--shadow, none))
+  );
+}
+.toast-notification {
+  box-shadow: var(
+    --toast-notification-shadow,
+    var(--toast-shadow, var(--shadow, none))
+  );
+}
+.toast-warning {
+  box-shadow: var(
+    --toast-warning-shadow,
+    var(--toast-shadow, var(--shadow, none))
+  );
+}
 
 /* ensure control icons render */
-.win-controls button { background-repeat: no-repeat; background-position: center; background-size: contain; } 
+.win-controls button {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
 
 :host([data-dd-role="window"]) {
   display: block;
-  --ddw-w: auto;      
-  --ddw-h: auto;     
+  --ddw-w: auto;
+  --ddw-h: auto;
   --ddw-min-w: 180px;
   --ddw-min-h: 120px;
   --ddw-max-w: none;
@@ -390,25 +869,34 @@ dreamdesk-tab-panel.active { display: block; }
 
   /* responsive defaults (can be overridden by attributes or user CSS) */
   inline-size: clamp(var(--ddw-min-w), 90vw, var(--ddw-max-w, 48rem));
-  block-size:  clamp(var(--ddw-min-h), 80svh, var(--ddw-max-h, 32rem));
+  block-size: clamp(var(--ddw-min-h), 80svh, var(--ddw-max-h, 32rem));
 }
 
 /* if explicit size vars are set, use them */
 :host([data-dd-role="window"][data-ddw-explicit]) {
   inline-size: var(--ddw-w, auto);
-  block-size:  var(--ddw-h, auto);
+  block-size: var(--ddw-h, auto);
 }
 
 /* the visual window follows the host size */
 .win {
   inline-size: 100%;
-  block-size:  100%;
+  block-size: 100%;
 }
 
 /* optional size tokens */
-:host([data-dd-role="window"][size="sm"]) { --ddw-max-w: 22rem; --ddw-max-h: 12rem; }
-:host([data-dd-role="window"][size="md"]) { --ddw-max-w: 32rem; --ddw-max-h: 26rem; }
-:host([data-dd-role="window"][size="lg"]) { --ddw-max-w: 48rem; --ddw-max-h: 34rem; }
+:host([data-dd-role="window"][size="sm"]) {
+  --ddw-max-w: 22rem;
+  --ddw-max-h: 12rem;
+}
+:host([data-dd-role="window"][size="md"]) {
+  --ddw-max-w: 32rem;
+  --ddw-max-h: 26rem;
+}
+:host([data-dd-role="window"][size="lg"]) {
+  --ddw-max-w: 48rem;
+  --ddw-max-h: 34rem;
+}
 
 /* Button component sizing API (tokenized + overridable) */
 :host([data-dd-role="button"]) {

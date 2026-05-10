@@ -1,41 +1,12 @@
-import { minimize, unminimize, fullscreen, unfullscreen, close, cancelRunningAnimations, type PreviousState } from './animations';
+import { minimize, unminimize, fullscreen, unfullscreen, close, type PreviousState } from './animations';
+import { setupDrag } from './drag';
+import { setupResize } from './resize';
+import { defaultWindowManager } from './windowManager';
 
 // Derive the directory of this script once — plain string op, Vite won't treat it as an asset URL
 const _moduleUrl: string = import.meta.url;
 const _moduleDir: string = _moduleUrl.slice(0, _moduleUrl.lastIndexOf('/') + 1);
 const _cssBase: string = `${_moduleDir}../css/`;
-
-// Z-stack: ordered by z-index (last = topmost), mirrors the React fix
-const BASE_Z = 1000;
-const _zRegistry = new Map<string, HTMLElement>();
-const _zStack: string[] = [];
-
-function _reassignZ(): void {
-  _zStack.forEach((id, i) => {
-    const el = _zRegistry.get(id);
-    if (el) el.style.zIndex = String(BASE_Z + i);
-  });
-}
-
-function zRegister(id: string, el: HTMLElement): void {
-  _zRegistry.set(id, el);
-  if (!_zStack.includes(id)) _zStack.push(id);
-  _reassignZ();
-}
-
-function zUnregister(id: string): void {
-  _zRegistry.delete(id);
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _reassignZ();
-}
-
-function zRaise(id: string): void {
-  const idx = _zStack.indexOf(id);
-  if (idx !== -1) _zStack.splice(idx, 1);
-  _zStack.push(id);
-  _reassignZ();
-}
 
 let _winCounter = 0;
 
@@ -88,7 +59,6 @@ class DreamDeskComponent extends HTMLElement {
 
   constructor() {
     super();
-    this.setAttribute('data-dd-role', 'window');
     this._theme = document.documentElement.getAttribute('data-theme') || 'default';
     this._prefix = this._getThemePrefix(this._theme);
     this.attachShadow({ mode: 'open' });
@@ -178,6 +148,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   constructor() {
     super();
+    this.setAttribute('data-dd-role', 'window');
     this._winId = `dd-win-${++_winCounter}`;
     this.widthAttr = this.getAttribute('width');
     this.heightAttr = this.getAttribute('height');
@@ -204,7 +175,7 @@ class DreamDeskWindow extends DreamDeskComponent {
   }
 
   setup(): void {
-    zRegister(this._winId, this);
+    defaultWindowManager.register(this._winId, this, this.getAttribute('title') ?? 'Window');
     this._syncSizeFromAttributes();
     this._setupResizeObserver();
     this._bindButtons();
@@ -217,7 +188,7 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    zUnregister(this._winId);
+    defaultWindowManager.unregister(this._winId);
     if (this._dragController) { this._dragController.abort(); this._dragController = null; }
   }
 
@@ -261,7 +232,10 @@ class DreamDeskWindow extends DreamDeskComponent {
   fullscreen(): void {
     const win = this as unknown as HTMLElement;
     const goingFull = !this.state.isFullscreen;
-    if (goingFull) this._freezeWindowState();
+    if (goingFull) {
+      this._freezeWindowState();
+      this.setAttribute('data-ddw-explicit', '');
+    }
     const customId = this.getAttribute(goingFull ? 'fullscreen-animation' : 'unfullscreen-animation');
     let customFn = customId ? window.DreamDeskAnimations?.[customId] : undefined;
     if (!goingFull && typeof customFn !== 'function') {
@@ -346,27 +320,13 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (!handle) { handle = document.createElement('div'); handle.className = 'win-resize-handle'; win.appendChild(handle); }
     if (this._resizeHandleBound) return;
     this._resizeHandleBound = true;
-    let isResizing = false, startX = 0, startY = 0, startWidth = 0, startHeight = 0;
-    const minWidth = 180, minHeight = 120;
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isResizing) return;
-      this.style.setProperty('--ddw-w', `${Math.max(minWidth, startWidth + e.clientX - startX)}px`);
-      this.style.setProperty('--ddw-h', `${Math.max(minHeight, startHeight + e.clientY - startY)}px`);
-      this.setAttribute('data-ddw-explicit', '');
-    };
-    const stop = () => {
-      isResizing = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', stop, { capture: true });
-    };
-    handle.addEventListener('pointerdown', (e: PointerEvent) => {
-      if (this.state?.isFullscreen) return;
-      isResizing = true; startX = e.clientX; startY = e.clientY;
-      const rect = win!.getBoundingClientRect();
-      startWidth = rect.width; startHeight = rect.height;
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal: this._eventController?.signal ?? undefined });
-      document.addEventListener('pointerup', stop, { capture: true, signal: this._eventController?.signal ?? undefined });
-    }, { signal: this._eventController?.signal ?? undefined });
+    setupResize({
+      handle,
+      host: this,
+      signal: this._eventController?.signal,
+      disabled: () => !!this.state?.isFullscreen,
+      explicitAttr: 'data-ddw-explicit',
+    });
   }
 
   private _setupDragging(): void {
@@ -379,48 +339,30 @@ class DreamDeskWindow extends DreamDeskComponent {
     }
     if (this._dragController) return;
     this._dragController = new AbortController();
-    const { signal } = this._dragController;
     header.style.cursor = 'move';
-    let isDragging = false, offsetX = 0, offsetY = 0, rafId: number | null = null;
-    let maxLeft = 0, maxTop = 0;
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging) return;
-      const desiredLeft = e.clientX - offsetX, desiredTop = e.clientY - offsetY;
-      if (rafId) cancelAnimationFrame(rafId);
-      // No getBoundingClientRect or getComputedStyle here — cached at drag start
-      rafId = requestAnimationFrame(() => {
-        this.style.left = `${Math.max(0, Math.min(desiredLeft, maxLeft))}px`;
-        this.style.top = `${Math.max(0, Math.min(desiredTop, maxTop))}px`;
-      });
-    };
-    const onPointerUp = () => {
-      isDragging = false;
-      document.removeEventListener('pointermove', onPointerMove, { capture: true });
-      document.removeEventListener('pointerup', onPointerUp, { capture: true });
-    };
-    header.addEventListener('pointerdown', (e: PointerEvent) => {
-      if (!this._movable) return;
-      if (this.state?.isFullscreen && this.getAttribute('fullscreen-mode') !== 'expand') return;
-      if ((e.target as Element).closest('.win-controls')) return;
-      cancelRunningAnimations(this);
-      const hostRect = this.getBoundingClientRect();
-      offsetX = e.clientX - hostRect.left; offsetY = e.clientY - hostRect.top;
-      // Cache bounds once at drag start — reuse in every RAF tick
-      maxLeft = Math.max(0, window.innerWidth - hostRect.width);
-      maxTop = Math.max(0, window.innerHeight - hostRect.height);
-      isDragging = true;
-      this.setAttribute('data-ddw-explicit', '');
-      this.style.setProperty('--ddw-w', `${hostRect.width}px`);
-      this.style.setProperty('--ddw-h', `${hostRect.height}px`);
-      if (getComputedStyle(this).position === 'static') this.style.position = 'absolute';
-      zRaise(this._winId);
-      document.addEventListener('pointermove', onPointerMove, { capture: true, signal });
-      document.addEventListener('pointerup', onPointerUp, { capture: true, signal });
-    }, { signal });
+    setupDrag({
+      handle: header,
+      host: this,
+      signal: this._dragController.signal,
+      exclude: '.win-controls',
+      disabled: () => !this._movable || (!!this.state?.isFullscreen && this.getAttribute('fullscreen-mode') !== 'expand'),
+      onStart: (hostRect) => {
+        this.setAttribute('data-ddw-explicit', '');
+        this.style.setProperty('--ddw-w', `${hostRect.width}px`);
+        this.style.setProperty('--ddw-h', `${hostRect.height}px`);
+        const pos = getComputedStyle(this).position;
+        if (pos === 'static' || pos === 'relative') {
+          this.style.position = 'absolute';
+          this.style.left = `${hostRect.left + (window.scrollX || 0)}px`;
+          this.style.top = `${hostRect.top + (window.scrollY || 0)}px`;
+        }
+        defaultWindowManager.raise(this._winId);
+      },
+    });
   }
 
   private _bindFocusRaise(): void {
-    this.shadowRoot!.querySelector('.win')?.addEventListener('pointerdown', () => zRaise(this._winId), {
+    this.shadowRoot!.querySelector('.win')?.addEventListener('pointerdown', () => defaultWindowManager.raise(this._winId), {
       signal: this._eventController?.signal ?? undefined,
     });
   }
