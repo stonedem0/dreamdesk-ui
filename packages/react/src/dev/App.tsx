@@ -5,6 +5,7 @@ import { ProgressBar } from "../components/ProgressBar";
 import { Tabs, Tab, TabPanel } from "../components/Tabs";
 import { Toggle } from "../components/Toggle";
 import { TerminalWindow } from "../components/TerminalWindow";
+import { BrowserWindow } from "../components/BrowserWindow";
 import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
@@ -126,6 +127,23 @@ export default function App() {
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>
+
+        {/* Browser — center */}
+        <BrowserWindow
+          windowId="browser"
+          title="Internet Explorer"
+          url="https://www.google.com"
+          width="640px"
+          height="480px"
+          style={{ top: "80px", left: "calc(50vw - 320px)" }}
+          canGoBack={false}
+          canGoForward={false}
+        >
+          <div style={{ padding: "1rem", fontFamily: "serif" }}>
+            <h2>Welcome to DreamDesk Browser</h2>
+            <p>Type a URL above and click Go.</p>
+          </div>
+        </BrowserWindow>
 
         <Taskbar />
       </Desktop>
