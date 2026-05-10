@@ -14,6 +14,7 @@ export class WindowManager {
   private _zStack: string[] = [];
   private _listeners = new Set<() => void>();
   private _openRegistry = new Map<string, () => void>();
+  private _closeRegistry = new Map<string, () => void>();
 
   private _notify(): void {
     this._listeners.forEach(fn => fn());
@@ -61,6 +62,14 @@ export class WindowManager {
 
   registerOpen(id: string, fn: () => void): void {
     this._openRegistry.set(id, fn);
+  }
+
+  registerClose(id: string, fn: () => void): void {
+    this._closeRegistry.set(id, fn);
+  }
+
+  close(id: string): void {
+    this._closeRegistry.get(id)?.();
   }
 
   open(id: string): void {

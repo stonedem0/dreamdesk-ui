@@ -3,13 +3,13 @@ function M(n) {
   const t = ((e = n == null ? void 0 : n.getAnimations) == null ? void 0 : e.call(n)) ?? [];
   for (const s of t) s.cancel();
 }
-function P(n) {
+function R(n) {
   M(n), n.style.transformOrigin = "50% 100%", n.animate(
     [{ transform: "scale(1)" }, { transform: "scale(0)" }],
     { duration: 300, easing: "ease-in", fill: "forwards" }
   );
 }
-function R(n) {
+function P(n) {
   M(n), n.style.transformOrigin = "50% 100%", n.animate(
     [{ transform: "scale(0)" }, { transform: "scale(1)" }],
     { duration: 300, easing: "ease-out" }
@@ -17,9 +17,9 @@ function R(n) {
 }
 function I(n, t) {
   M(n);
-  const e = window.innerWidth, s = window.innerHeight, i = t.top - (window.scrollY || 0), r = t.left - (window.scrollX || 0), o = t.width, a = t.height;
+  const e = window.innerWidth, s = window.innerHeight, i = t.top - (window.scrollY || 0), r = t.left - (window.scrollX || 0), a = t.width, o = t.height;
   n.style.position = "fixed", n.style.top = "0", n.style.left = "0", n.style.width = "100vw", n.style.height = "100vh", n.style.setProperty("--ddw-w", "100vw"), n.style.setProperty("--ddw-h", "100vh"), n.style.zIndex = "9999";
-  const l = o / e, c = a / s, m = r + o / 2 - e / 2, p = i + a / 2 - s / 2;
+  const l = a / e, c = o / s, m = r + a / 2 - e / 2, p = i + o / 2 - s / 2;
   n.animate(
     [
       { transform: `translate(${m}px, ${p}px) scale(${l}, ${c})` },
@@ -30,7 +30,7 @@ function I(n, t) {
 }
 function F(n, t) {
   M(n);
-  const e = window.innerWidth, s = window.innerHeight, i = t.width, r = t.height, o = t.top - (window.scrollY || 0), a = t.left - (window.scrollX || 0), l = i / e, c = r / s, m = a + i / 2 - e / 2, p = o + r / 2 - s / 2, b = n.animate(
+  const e = window.innerWidth, s = window.innerHeight, i = t.width, r = t.height, a = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), l = i / e, c = r / s, m = o + i / 2 - e / 2, p = a + r / 2 - s / 2, b = n.animate(
     [
       { transform: "none" },
       { transform: `translate(${m}px, ${p}px) scale(${l}, ${c})` }
@@ -58,22 +58,22 @@ const nt = {
     return this.current;
   }
 };
-function B({ handle: n, host: t, container: e, reservedBottom: s = 0, signal: i, disabled: r, exclude: o, getBounds: a, onStart: l }) {
+function B({ handle: n, host: t, container: e, reservedBottom: s = 0, signal: i, disabled: r, exclude: a, getBounds: o, onStart: l }) {
   let c = !1, m = 0, p = 0, b = 0, d = 0, v = 0, C = 0, u = null, h = 0, _ = 0;
   const w = () => {
     t.style.left = `${Math.max(0, Math.min(h - v, b))}px`, t.style.top = `${Math.max(0, Math.min(_ - C, d))}px`;
-  }, y = (f) => {
-    c && (h = f.clientX - m, _ = f.clientY - p, u && cancelAnimationFrame(u), u = requestAnimationFrame(() => {
+  }, y = (g) => {
+    c && (h = g.clientX - m, _ = g.clientY - p, u && cancelAnimationFrame(u), u = requestAnimationFrame(() => {
       w(), u = null;
     }));
   }, z = () => {
     c = !1, document.removeEventListener("pointermove", y, { capture: !0 }), document.removeEventListener("pointerup", z, { capture: !0 }), u && (cancelAnimationFrame(u), u = null, w());
-  }, $ = (f) => {
-    if (r != null && r() || o && f.target.closest(o)) return;
+  }, $ = (g) => {
+    if (r != null && r() || a && g.target.closest(a)) return;
     M(t);
     const k = t.getBoundingClientRect(), A = e == null ? void 0 : e.getBoundingClientRect();
-    v = (A == null ? void 0 : A.left) ?? 0, C = (A == null ? void 0 : A.top) ?? 0, m = f.clientX - k.left, p = f.clientY - k.top;
-    const T = (a == null ? void 0 : a()) ?? {
+    v = (A == null ? void 0 : A.left) ?? 0, C = (A == null ? void 0 : A.top) ?? 0, m = g.clientX - k.left, p = g.clientY - k.top;
+    const T = (o == null ? void 0 : o()) ?? {
       maxLeft: A ? A.width - k.width : Math.max(0, window.innerWidth - k.width),
       maxTop: A ? A.height - k.height - s : Math.max(0, window.innerHeight - k.height - s)
     };
@@ -83,15 +83,15 @@ function B({ handle: n, host: t, container: e, reservedBottom: s = 0, signal: i,
     n.removeEventListener("pointerdown", $), document.removeEventListener("pointermove", y, { capture: !0 }), document.removeEventListener("pointerup", z, { capture: !0 }), u && cancelAnimationFrame(u);
   };
 }
-function X({ handle: n, host: t, signal: e, disabled: s, minWidth: i = 180, minHeight: r = 120, explicitAttr: o = "data-explicit" }) {
-  let a = !1, l = 0, c = 0, m = 0, p = 0;
+function X({ handle: n, host: t, signal: e, disabled: s, minWidth: i = 180, minHeight: r = 120, explicitAttr: a = "data-explicit" }) {
+  let o = !1, l = 0, c = 0, m = 0, p = 0;
   const b = (u) => {
-    a && (t.style.setProperty("--ddw-w", `${Math.max(i, m + u.clientX - l)}px`), t.style.setProperty("--ddw-h", `${Math.max(r, p + u.clientY - c)}px`), t.setAttribute(o, ""));
+    o && (t.style.setProperty("--ddw-w", `${Math.max(i, m + u.clientX - l)}px`), t.style.setProperty("--ddw-h", `${Math.max(r, p + u.clientY - c)}px`), t.setAttribute(a, ""));
   }, d = () => {
-    a = !1, document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 });
+    o = !1, document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 });
   }, v = (u) => {
     if (s != null && s()) return;
-    a = !0, l = u.clientX, c = u.clientY;
+    o = !0, l = u.clientX, c = u.clientY;
     const h = t.getBoundingClientRect();
     m = h.width, p = h.height, document.addEventListener("pointermove", b, { capture: !0 }), document.addEventListener("pointerup", d, { capture: !0 });
   }, C = e ? { signal: e } : {};
@@ -102,7 +102,7 @@ function X({ handle: n, host: t, signal: e, disabled: s, minWidth: i = 180, minH
 const Y = 1e3;
 class j {
   constructor() {
-    this._registry = /* @__PURE__ */ new Map(), this._zStack = [], this._listeners = /* @__PURE__ */ new Set(), this._openRegistry = /* @__PURE__ */ new Map();
+    this._registry = /* @__PURE__ */ new Map(), this._zStack = [], this._listeners = /* @__PURE__ */ new Set(), this._openRegistry = /* @__PURE__ */ new Map(), this._closeRegistry = /* @__PURE__ */ new Map();
   }
   _notify() {
     this._listeners.forEach((t) => t());
@@ -138,6 +138,13 @@ class j {
   registerOpen(t, e) {
     this._openRegistry.set(t, e);
   }
+  registerClose(t, e) {
+    this._closeRegistry.set(t, e);
+  }
+  close(t) {
+    var e;
+    (e = this._closeRegistry.get(t)) == null || e();
+  }
   open(t) {
     var s;
     const e = this._registry.get(t);
@@ -156,14 +163,14 @@ class j {
 }
 const S = new j();
 function Z({ track: n, getValue: t, isBlocky: e, isGradient: s }) {
-  let i = [], r = null, o = null, a = null;
+  let i = [], r = null, a = null, o = null;
   const l = 1, c = 10, m = c + l;
   function p() {
     const h = s(), _ = getComputedStyle(n), w = n.getBoundingClientRect().width - (parseFloat(_.borderLeftWidth) || 0) - (parseFloat(_.borderRightWidth) || 0), y = Math.max(1, Math.round((w + l) / m)), z = (w - (y - 1) * l) / y, $ = w;
     n.innerHTML = "", i = [];
     for (let E = 0; E < y; E++) {
-      const f = document.createElement("div");
-      f.className = "progress-segment", f.style.cssText = `width:${z}px;margin-right:${E < y - 1 ? l : 0}px`, h && (f.style.backgroundSize = `${$}px 100%`, f.style.backgroundPosition = `-${E * (z + l)}px 0`), n.appendChild(f), i.push(f);
+      const g = document.createElement("div");
+      g.className = "progress-segment", g.style.cssText = `width:${z}px;margin-right:${E < y - 1 ? l : 0}px`, h && (g.style.backgroundSize = `${$}px 100%`, g.style.backgroundPosition = `-${E * (z + l)}px 0`), n.appendChild(g), i.push(g);
     }
     b(t());
   }
@@ -182,15 +189,15 @@ function Z({ track: n, getValue: t, isBlocky: e, isGradient: s }) {
   }
   function v() {
     const h = e(), _ = s();
-    n.classList.toggle("progress-track--gradient", h && _), h ? (o == null || o.disconnect(), p(), o = new ResizeObserver(() => {
-      a && clearTimeout(a), a = setTimeout(p, 50);
-    }), o.observe(n)) : (r = n.querySelector(".progress-bar"), d(t()));
+    n.classList.toggle("progress-track--gradient", h && _), h ? (a == null || a.disconnect(), p(), a = new ResizeObserver(() => {
+      o && clearTimeout(o), o = setTimeout(p, 50);
+    }), a.observe(n)) : (r = n.querySelector(".progress-bar"), d(t()));
   }
   function C(h) {
     e() ? b(h) : d(h);
   }
   function u() {
-    o == null || o.disconnect(), a && clearTimeout(a);
+    a == null || a.disconnect(), o && clearTimeout(o);
   }
   return { update: C, rebuild: v, destroy: u };
 }
@@ -206,8 +213,8 @@ function H(n) {
         (r = i.parentNode) == null || r.removeChild(i);
         return;
       }
-      for (const o of Array.from(i.attributes))
-        (o.name.startsWith("on") || o.value.toLowerCase().includes("javascript:")) && i.removeAttribute(o.name);
+      for (const a of Array.from(i.attributes))
+        (a.name.startsWith("on") || a.value.toLowerCase().includes("javascript:")) && i.removeAttribute(a.name);
       Array.from(i.children).forEach(s);
     };
     return s(e.documentElement), new XMLSerializer().serializeToString(e.documentElement);
@@ -215,7 +222,7 @@ function H(n) {
     return "";
   }
 }
-function g(n) {
+function f(n) {
   return String(n).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 class x extends HTMLElement {
@@ -300,7 +307,7 @@ class O extends x {
     return `
       <div class="win">
         <div class="win-header">
-          <span class="win-title">${g(this.getAttribute("title") || "Window")}</span>
+          <span class="win-title">${f(this.getAttribute("title") || "Window")}</span>
           <div class="win-controls">
             <button class="btn--minimize" data-action="minimize" aria-label="minimize"></button>
             <button class="btn--fullscreen" data-action="fullscreen" aria-label="fullscreen"></button>
@@ -322,13 +329,13 @@ class O extends x {
   }
   _bindButtons() {
     var s, i, r;
-    const t = this.shadowRoot, e = (o) => (a) => {
-      const l = a.currentTarget;
+    const t = this.shadowRoot, e = (a) => (o) => {
+      const l = o.currentTarget;
       if ((l == null ? void 0 : l.getAttribute("aria-disabled")) === "true") {
-        a.preventDefault(), a.stopPropagation();
+        o.preventDefault(), o.stopPropagation();
         return;
       }
-      o();
+      a();
     };
     (s = t.querySelector('[data-action="minimize"]')) == null || s.addEventListener("click", e(() => this.minimize())), (i = t.querySelector('[data-action="fullscreen"]')) == null || i.addEventListener("click", e(() => this.fullscreen())), (r = t.querySelector('[data-action="close"]')) == null || r.addEventListener("click", e(() => this.close()));
   }
@@ -337,17 +344,17 @@ class O extends x {
     const t = this.shadowRoot.querySelector(".win"), e = this.getAttribute("minimize-animation"), s = e ? (r = window.DreamDeskAnimations) == null ? void 0 : r[e] : void 0, i = () => {
       this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.state.isMinimized ? S.minimize(this._winId) : S.restore(this._winId), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
     };
-    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: P, unminimize: R }, previousState: this.state.previousState })).then(i) : (!this.state.isMinimized ? P(t) : R(t), i());
+    typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: R, unminimize: P }, previousState: this.state.previousState })).then(i) : (!this.state.isMinimized ? R(t) : P(t), i());
   }
   fullscreen() {
-    var o, a;
+    var a, o;
     const t = this, e = !this.state.isFullscreen;
     e && (this._freezeWindowState(), this.setAttribute("data-ddw-explicit", ""));
     const s = this.getAttribute(e ? "fullscreen-animation" : "unfullscreen-animation");
-    let i = s ? (o = window.DreamDeskAnimations) == null ? void 0 : o[s] : void 0;
+    let i = s ? (a = window.DreamDeskAnimations) == null ? void 0 : a[s] : void 0;
     if (!e && typeof i != "function") {
       const l = this.getAttribute("fullscreen-animation");
-      i = l ? (a = window.DreamDeskAnimations) == null ? void 0 : a[l] : void 0;
+      i = l ? (o = window.DreamDeskAnimations) == null ? void 0 : o[l] : void 0;
     }
     const r = () => {
       this.state.isFullscreen = !this.state.isFullscreen, this.dispatchEvent(new CustomEvent("fullscreen", { detail: { isFullscreen: this.state.isFullscreen } }));
@@ -373,14 +380,14 @@ class O extends x {
     };
   }
   _setupResizeObserver() {
-    var r, o;
-    const t = new ResizeObserver((a) => {
-      a.forEach((l) => this._checkOverflow(l.target));
+    var r, a;
+    const t = new ResizeObserver((o) => {
+      o.forEach((l) => this._checkOverflow(l.target));
     }), e = this.shadowRoot.querySelector("slot"), s = (e == null ? void 0 : e.assignedElements({ flatten: !0 })) ?? [], i = () => {
-      const a = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
+      const o = ".win-content[scrollable], [scrollable], p.scrollable, .scrollable";
       this._observedScrollables.forEach((l) => t.unobserve(l)), this._observedScrollables = [], s.forEach((l) => {
         var p, b;
-        const c = (p = l.matches) != null && p.call(l, a) ? [l] : [], m = ((b = l.querySelectorAll) == null ? void 0 : b.call(l, a)) ?? [];
+        const c = (p = l.matches) != null && p.call(l, o) ? [l] : [], m = ((b = l.querySelectorAll) == null ? void 0 : b.call(l, o)) ?? [];
         [...c, ...Array.from(m)].forEach((d) => {
           d.classList.forEach((v) => {
             v.endsWith("-scroll") && d.classList.remove(v);
@@ -390,7 +397,7 @@ class O extends x {
     };
     i(), document.addEventListener("dreamdesk-theme-changed", () => {
       this._theme = document.documentElement.getAttribute("data-theme") || "default", this._prefix = this._getThemePrefix(this._theme), i();
-    }, { signal: ((r = this._eventController) == null ? void 0 : r.signal) ?? void 0 }), e == null || e.addEventListener("slotchange", i, { signal: ((o = this._eventController) == null ? void 0 : o.signal) ?? void 0 }), this._resizeObserver = t;
+    }, { signal: ((r = this._eventController) == null ? void 0 : r.signal) ?? void 0 }), e == null || e.addEventListener("slotchange", i, { signal: ((a = this._eventController) == null ? void 0 : a.signal) ?? void 0 }), this._resizeObserver = t;
   }
   _checkOverflow(t) {
     t.classList.toggle("overflowing", t.scrollHeight > t.clientHeight || t.scrollWidth > t.clientWidth);
@@ -451,11 +458,11 @@ class O extends x {
       var m;
       const r = t.querySelector(s);
       if (!r) return;
-      const o = this.getAttribute(i);
-      if (!o) return;
-      const a = o.trim();
+      const a = this.getAttribute(i);
+      if (!a) return;
+      const o = a.trim();
       let l = "";
-      if (a.startsWith("<svg") ? l = H(a) : (m = window.DreamDeskIcons) != null && m[a] && (l = H(window.DreamDeskIcons[a])), !l) return;
+      if (o.startsWith("<svg") ? l = H(o) : (m = window.DreamDeskIcons) != null && m[o] && (l = H(window.DreamDeskIcons[o])), !l) return;
       r.innerHTML = l, r.style.backgroundImage = "none";
       const c = r.querySelector("svg");
       c && (c.setAttribute("aria-hidden", "true"), c.setAttribute("focusable", "false"));
@@ -466,10 +473,10 @@ class O extends x {
     const t = this.shadowRoot, e = (s, i) => {
       const r = t.querySelector(s);
       if (!r) return;
-      const o = this.getAttribute(i), a = o !== null && o !== "false" && o !== "0";
-      if (r.setAttribute("aria-disabled", String(a)), a) {
+      const a = this.getAttribute(i), o = a !== null && a !== "false" && a !== "0";
+      if (r.setAttribute("aria-disabled", String(o)), o) {
         r.setAttribute("tabindex", "-1");
-        const l = o && o !== "true" && o !== "1" ? o : this.getAttribute(`${i}-tooltip`);
+        const l = a && a !== "true" && a !== "1" ? a : this.getAttribute(`${i}-tooltip`);
         l ? r.setAttribute("data-tooltip", l) : r.removeAttribute("data-tooltip");
       } else
         r.removeAttribute("tabindex"), r.removeAttribute("data-tooltip");
@@ -575,14 +582,14 @@ const L = class L extends x {
     super(), this.variant = this.getAttribute("variant") || "primary", this.action = this.getAttribute("action"), this.setAttribute("data-dd-role", "button");
   }
   template() {
-    const t = this.action ? `data-action="${g(this.action)}"` : "", e = this.action ? `aria-label="${g(this.action)}"` : "", s = this.getAttribute("disabled"), i = s !== null && s !== "false" && s !== "0" ? 'disabled aria-disabled="true"' : "";
-    return `<button class="btn btn--${g(this.variant)}" ${t} ${e} ${i}><slot></slot></button>`;
+    const t = this.action ? `data-action="${f(this.action)}"` : "", e = this.action ? `aria-label="${f(this.action)}"` : "", s = this.getAttribute("disabled"), i = s !== null && s !== "false" && s !== "0" ? 'disabled aria-disabled="true"' : "";
+    return `<button class="btn btn--${f(this.variant)}" ${t} ${e} ${i}><slot></slot></button>`;
   }
   connectedCallback() {
     super.connectedCallback(), this._applyButtonSizeOverrides(), this._syncDisabled();
   }
   attributeChangedCallback(t, e, s) {
-    var r, o;
+    var r, a;
     if (e === s || t === "size") return;
     if (t === "disabled") {
       this._syncDisabled();
@@ -590,14 +597,14 @@ const L = class L extends x {
     }
     if (t === "variant") {
       this.variant = s ?? "primary";
-      const a = (r = this.shadowRoot) == null ? void 0 : r.querySelector("button");
-      a && (a.className = `btn btn--${this.variant}`);
+      const o = (r = this.shadowRoot) == null ? void 0 : r.querySelector("button");
+      o && (o.className = `btn btn--${this.variant}`);
       return;
     }
     if (t === "action") {
       this.action = s;
-      const a = (o = this.shadowRoot) == null ? void 0 : o.querySelector("button");
-      a && (s ? (a.setAttribute("data-action", s), a.setAttribute("aria-label", s)) : (a.removeAttribute("data-action"), a.removeAttribute("aria-label")));
+      const o = (a = this.shadowRoot) == null ? void 0 : a.querySelector("button");
+      o && (s ? (o.setAttribute("data-action", s), o.setAttribute("aria-label", s)) : (o.removeAttribute("data-action"), o.removeAttribute("aria-label")));
       return;
     }
     const i = L.sizeVarMap[t];
@@ -634,9 +641,9 @@ class tt extends x {
     super(), this._type = this.getAttribute("type") || "notification", this._message = this.getAttribute("message") || "";
   }
   template() {
-    return `<div class="toast toast-${g(this._type)}">
+    return `<div class="toast toast-${f(this._type)}">
       <button class="toast-btn--close" data-action="close" aria-label="close">&times;</button>
-      ${g(this._message)}
+      ${f(this._message)}
     </div>`;
   }
   setup() {
@@ -661,9 +668,9 @@ class et extends x {
   }
   template() {
     return `<div style="${this._label ? "display:flex;align-items:center;gap:0.5rem" : ""}">
-      ${this._label ? `<label class="input-label" for="${g(this._inputId)}">${g(this._label)}</label>` : ""}
-      <input type="${g(this._type)}" id="${g(this._inputId)}" class="dreamdesk-input"
-        value="${g(this._value)}" placeholder="${g(this._placeholder)}" />
+      ${this._label ? `<label class="input-label" for="${f(this._inputId)}">${f(this._label)}</label>` : ""}
+      <input type="${f(this._type)}" id="${f(this._inputId)}" class="dreamdesk-input"
+        value="${f(this._value)}" placeholder="${f(this._placeholder)}" />
     </div>`;
   }
   connectedCallback() {
@@ -702,7 +709,7 @@ class it extends O {
   template() {
     return `<div class="win terminal-win">
       <div class="win-header">
-        <span class="win-title">${g(this.getAttribute("title") || "Terminal")}</span>
+        <span class="win-title">${f(this.getAttribute("title") || "Terminal")}</span>
         <div class="win-controls">
           <button class="btn--minimize" data-action="minimize"></button>
           <button class="btn--fullscreen" data-action="fullscreen"></button>
@@ -730,10 +737,10 @@ export {
   q as close,
   S as defaultWindowManager,
   I as fullscreen,
-  P as minimize,
+  R as minimize,
   B as setupDrag,
   Z as setupProgressBar,
   X as setupResize,
   F as unfullscreen,
-  R as unminimize
+  P as unminimize
 };

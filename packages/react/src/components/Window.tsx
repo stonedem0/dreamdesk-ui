@@ -156,11 +156,13 @@ export function Window({
   };
 
   const toggleRef = useRef<() => void>(() => {});
+  const closeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
     wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+    wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
@@ -225,6 +227,8 @@ export function Window({
       onClose?.();
     });
   }, [onClose, wm, windowId]);
+
+  closeRef.current = handleClose;
 
   // Dragging
   useEffect(() => {
