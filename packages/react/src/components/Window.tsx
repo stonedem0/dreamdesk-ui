@@ -185,12 +185,14 @@ export function Window({
     const next = !isMinimized;
     if (next) {
       animMinimize(win);
+      defaultWindowManager.minimize(windowId);
     } else {
       animUnminimize(win);
+      defaultWindowManager.restore(windowId);
     }
     setIsMinimized(next);
     onMinimize?.(next);
-  }, [isMinimized, onMinimize]);
+  }, [isMinimized, onMinimize, windowId]);
 
   const handleFullscreen = useCallback(() => {
     const host = hostRef.current;

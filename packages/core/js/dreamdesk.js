@@ -1,22 +1,22 @@
-function C(i) {
+function E(i) {
   var e;
   const t = ((e = i == null ? void 0 : i.getAnimations) == null ? void 0 : e.call(i)) ?? [];
   for (const s of t) s.cancel();
 }
 function M(i) {
-  C(i), i.style.transformOrigin = "50% 100%", i.animate(
+  E(i), i.style.transformOrigin = "50% 100%", i.animate(
     [{ transform: "scale(1)" }, { transform: "scale(0)" }],
     { duration: 300, easing: "ease-in", fill: "forwards" }
   );
 }
 function D(i) {
-  C(i), i.style.transformOrigin = "50% 100%", i.animate(
+  E(i), i.style.transformOrigin = "50% 100%", i.animate(
     [{ transform: "scale(0)" }, { transform: "scale(1)" }],
     { duration: 300, easing: "ease-out" }
   );
 }
 function T(i, t) {
-  C(i);
+  E(i);
   const e = window.innerWidth, s = window.innerHeight, n = t.top - (window.scrollY || 0), r = t.left - (window.scrollX || 0), a = t.width, o = t.height;
   i.style.position = "fixed", i.style.top = "0", i.style.left = "0", i.style.width = "100vw", i.style.height = "100vh", i.style.setProperty("--ddw-w", "100vw"), i.style.setProperty("--ddw-h", "100vh"), i.style.zIndex = "9999";
   const l = a / e, u = o / s, m = r + a / 2 - e / 2, p = n + o / 2 - s / 2;
@@ -29,7 +29,7 @@ function T(i, t) {
   );
 }
 function P(i, t) {
-  C(i);
+  E(i);
   const e = window.innerWidth, s = window.innerHeight, n = t.width, r = t.height, a = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), l = n / e, u = r / s, m = o + n / 2 - e / 2, p = a + r / 2 - s / 2, c = i.animate(
     [
       { transform: "none" },
@@ -70,14 +70,14 @@ function W({ handle: i, host: t, signal: e, disabled: s, exclude: n, getBounds: 
     o = !1, document.removeEventListener("pointermove", _, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 }), c && (cancelAnimationFrame(c), c = null, z());
   }, v = (b) => {
     if (s != null && s() || n && b.target.closest(n)) return;
-    C(t);
+    E(t);
     const y = t.getBoundingClientRect();
     l = b.clientX - y.left, u = b.clientY - y.top;
-    const E = (r == null ? void 0 : r()) ?? {
+    const S = (r == null ? void 0 : r()) ?? {
       maxLeft: Math.max(0, window.innerWidth - y.width),
       maxTop: Math.max(0, window.innerHeight - y.height)
     };
-    m = E.maxLeft, p = E.maxTop, a == null || a(y), o = !0, document.addEventListener("pointermove", _, { capture: !0 }), document.addEventListener("pointerup", d, { capture: !0 });
+    m = S.maxLeft, p = S.maxTop, a == null || a(y), o = !0, document.addEventListener("pointermove", _, { capture: !0 }), document.addEventListener("pointerup", d, { capture: !0 });
   }, w = e ? { signal: e } : {};
   return i.addEventListener("pointerdown", v, w), () => {
     i.removeEventListener("pointerdown", v), document.removeEventListener("pointermove", _, { capture: !0 }), document.removeEventListener("pointerup", d, { capture: !0 }), c && cancelAnimationFrame(c);
@@ -140,16 +140,16 @@ class O {
     return this._listeners.add(t), () => this._listeners.delete(t);
   }
 }
-const L = new O();
+const k = new O();
 function X({ track: i, getValue: t, isBlocky: e, isGradient: s }) {
   let n = [], r = null, a = null, o = null;
   const l = 1, u = 10, m = u + l;
   function p() {
-    const d = s(), v = getComputedStyle(i), w = i.getBoundingClientRect().width - (parseFloat(v.borderLeftWidth) || 0) - (parseFloat(v.borderRightWidth) || 0), b = Math.max(1, Math.round((w + l) / m)), y = (w - (b - 1) * l) / b, E = w;
+    const d = s(), v = getComputedStyle(i), w = i.getBoundingClientRect().width - (parseFloat(v.borderLeftWidth) || 0) - (parseFloat(v.borderRightWidth) || 0), b = Math.max(1, Math.round((w + l) / m)), y = (w - (b - 1) * l) / b, S = w;
     i.innerHTML = "", n = [];
-    for (let S = 0; S < b; S++) {
+    for (let L = 0; L < b; L++) {
       const x = document.createElement("div");
-      x.className = "progress-segment", x.style.cssText = `width:${y}px;margin-right:${S < b - 1 ? l : 0}px`, d && (x.style.backgroundSize = `${E}px 100%`, x.style.backgroundPosition = `-${S * (y + l)}px 0`), i.appendChild(x), n.push(x);
+      x.className = "progress-segment", x.style.cssText = `width:${y}px;margin-right:${L < b - 1 ? l : 0}px`, d && (x.style.backgroundSize = `${S}px 100%`, x.style.backgroundPosition = `-${L * (y + l)}px 0`), i.appendChild(x), n.push(x);
     }
     c(t());
   }
@@ -180,9 +180,9 @@ function X({ track: i, getValue: t, isBlocky: e, isGradient: s }) {
   }
   return { update: z, rebuild: g, destroy: _ };
 }
-const F = import.meta.url, Y = F.slice(0, F.lastIndexOf("/") + 1), j = `${Y}../css/`;
+const I = import.meta.url, Y = I.slice(0, I.lastIndexOf("/") + 1), j = `${Y}../css/`;
 let Z = 0;
-function I(i) {
+function F(i) {
   try {
     const e = new DOMParser().parseFromString(i, "image/svg+xml");
     if (e.querySelector("parsererror")) return "";
@@ -297,10 +297,10 @@ class q extends A {
       </div>`;
   }
   setup() {
-    L.register(this._winId, this, this.getAttribute("title") ?? "Window"), this._syncSizeFromAttributes(), this._setupResizeObserver(), this._bindButtons(), this._setupResizeHandle(), this._setupDragging(), this._applyControlIcons(), this._applyControlsDisabled(), this._bindFocusRaise();
+    k.register(this._winId, this, this.getAttribute("title") ?? "Window"), this._syncSizeFromAttributes(), this._setupResizeObserver(), this._bindButtons(), this._setupResizeHandle(), this._setupDragging(), this._applyControlIcons(), this._applyControlsDisabled(), this._bindFocusRaise();
   }
   disconnectedCallback() {
-    super.disconnectedCallback(), L.unregister(this._winId), this._dragController && (this._dragController.abort(), this._dragController = null);
+    super.disconnectedCallback(), k.unregister(this._winId), this._dragController && (this._dragController.abort(), this._dragController = null);
   }
   _syncSizeFromAttributes() {
     const t = this.widthAttr, e = this.heightAttr;
@@ -321,7 +321,7 @@ class q extends A {
   minimize() {
     var r;
     const t = this.shadowRoot.querySelector(".win"), e = this.getAttribute("minimize-animation"), s = e ? (r = window.DreamDeskAnimations) == null ? void 0 : r[e] : void 0, n = () => {
-      this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
+      this.state.isMinimized = !this.state.isMinimized, this.state.isMinimized ? this.setAttribute("minimized", "") : this.removeAttribute("minimized"), this.state.isMinimized ? k.minimize(this._winId) : k.restore(this._winId), this.dispatchEvent(new CustomEvent("minimize", { detail: { isMinimized: this.state.isMinimized } }));
     };
     typeof s == "function" ? Promise.resolve(s(t, { defaultFns: { minimize: M, unminimize: D }, previousState: this.state.previousState })).then(n) : (!this.state.isMinimized ? M(t) : D(t), n());
   }
@@ -421,14 +421,14 @@ class q extends A {
         onStart: (s) => {
           this.setAttribute("data-ddw-explicit", ""), this.style.setProperty("--ddw-w", `${s.width}px`), this.style.setProperty("--ddw-h", `${s.height}px`);
           const n = getComputedStyle(this).position;
-          (n === "static" || n === "relative") && (this.style.position = "absolute", this.style.left = `${s.left + (window.scrollX || 0)}px`, this.style.top = `${s.top + (window.scrollY || 0)}px`), L.raise(this._winId);
+          (n === "static" || n === "relative") && (this.style.position = "absolute", this.style.left = `${s.left + (window.scrollX || 0)}px`, this.style.top = `${s.top + (window.scrollY || 0)}px`), k.raise(this._winId);
         }
       }));
     }
   }
   _bindFocusRaise() {
     var t, e;
-    (e = this.shadowRoot.querySelector(".win")) == null || e.addEventListener("pointerdown", () => L.raise(this._winId), {
+    (e = this.shadowRoot.querySelector(".win")) == null || e.addEventListener("pointerdown", () => k.raise(this._winId), {
       signal: ((t = this._eventController) == null ? void 0 : t.signal) ?? void 0
     });
   }
@@ -441,7 +441,7 @@ class q extends A {
       if (!a) return;
       const o = a.trim();
       let l = "";
-      if (o.startsWith("<svg") ? l = I(o) : (m = window.DreamDeskIcons) != null && m[o] && (l = I(window.DreamDeskIcons[o])), !l) return;
+      if (o.startsWith("<svg") ? l = F(o) : (m = window.DreamDeskIcons) != null && m[o] && (l = F(window.DreamDeskIcons[o])), !l) return;
       r.innerHTML = l, r.style.backgroundImage = "none";
       const u = r.querySelector("svg");
       u && (u.setAttribute("aria-hidden", "true"), u.setAttribute("focusable", "false"));
@@ -553,7 +553,7 @@ class J extends A {
     return "<style>:host{display:none}:host(.active){display:block}</style><slot></slot>";
   }
 }
-const k = class k extends A {
+const C = class C extends A {
   static get observedAttributes() {
     return ["variant", "action", "size", "min-width", "width", "height", "font-size", "px", "py", "disabled"];
   }
@@ -586,11 +586,11 @@ const k = class k extends A {
       o && (s ? (o.setAttribute("data-action", s), o.setAttribute("aria-label", s)) : (o.removeAttribute("data-action"), o.removeAttribute("aria-label")));
       return;
     }
-    const n = k.sizeVarMap[t];
+    const n = C.sizeVarMap[t];
     n && (s == null ? this.style.removeProperty(n) : this.style.setProperty(n, s));
   }
   _applyButtonSizeOverrides() {
-    Object.entries(k.sizeVarMap).forEach(([t, e]) => {
+    Object.entries(C.sizeVarMap).forEach(([t, e]) => {
       const s = this.getAttribute(t);
       s != null && this.style.setProperty(e, s);
     });
@@ -603,7 +603,7 @@ const k = class k extends A {
     t.disabled = e, t.setAttribute("aria-disabled", String(e)), t.classList.toggle("btn--disable", e), e ? t.setAttribute("tabindex", "-1") : t.removeAttribute("tabindex");
   }
 };
-k.sizeVarMap = {
+C.sizeVarMap = {
   "min-width": "--dd-btn-min-w",
   width: "--dd-btn-w",
   height: "--dd-btn-h",
@@ -611,7 +611,7 @@ k.sizeVarMap = {
   px: "--dd-btn-px",
   py: "--dd-btn-py"
 };
-let $ = k;
+let $ = C;
 class K extends A {
   static get observedAttributes() {
     return ["type", "message"];
@@ -712,9 +712,9 @@ customElements.define("dreamdesk-terminal-window", tt);
 export {
   et as DreamDeskThemeManager,
   O as WindowManager,
-  C as cancelRunningAnimations,
+  E as cancelRunningAnimations,
   R as close,
-  L as defaultWindowManager,
+  k as defaultWindowManager,
   T as fullscreen,
   M as minimize,
   W as setupDrag,

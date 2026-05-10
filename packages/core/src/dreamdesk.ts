@@ -218,6 +218,9 @@ class DreamDeskWindow extends DreamDeskComponent {
     const done = () => {
       this.state.isMinimized = !this.state.isMinimized;
       this.state.isMinimized ? this.setAttribute('minimized', '') : this.removeAttribute('minimized');
+      this.state.isMinimized
+        ? defaultWindowManager.minimize(this._winId)
+        : defaultWindowManager.restore(this._winId);
       this.dispatchEvent(new CustomEvent('minimize', { detail: { isMinimized: this.state.isMinimized } }));
     };
     if (typeof customFn === 'function') {

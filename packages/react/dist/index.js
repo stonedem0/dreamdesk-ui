@@ -1,12 +1,12 @@
 import { jsx as d, jsxs as T } from "react/jsx-runtime";
-import { createContext as rt, useState as W, useEffect as P, useCallback as I, useContext as st, useRef as $, useId as V, Children as it, isValidElement as ot } from "react";
+import { createContext as rt, useState as A, useEffect as P, useCallback as W, useContext as st, useRef as $, useId as V, Children as it, isValidElement as ot } from "react";
 const q = rt(null);
-function Et({ children: e, defaultTheme: t = "pastelcore" }) {
-  const [n, r] = W(t);
+function zt({ children: e, defaultTheme: t = "pastelcore" }) {
+  const [n, r] = A(t);
   P(() => {
     document.documentElement.setAttribute("data-theme", n);
   }, [n]);
-  const i = I((o) => {
+  const i = W((o) => {
     r(o);
   }, []);
   return /* @__PURE__ */ d(q.Provider, { value: { theme: n, setTheme: i }, children: e });
@@ -19,25 +19,25 @@ const at = {
 function ct() {
   return st(q) ?? at;
 }
-function A(e) {
+function B(e) {
   var n;
   const t = ((n = e == null ? void 0 : e.getAnimations) == null ? void 0 : n.call(e)) ?? [];
   for (const r of t) r.cancel();
 }
 function lt(e) {
-  A(e), e.style.transformOrigin = "50% 100%", e.animate(
+  B(e), e.style.transformOrigin = "50% 100%", e.animate(
     [{ transform: "scale(1)" }, { transform: "scale(0)" }],
     { duration: 300, easing: "ease-in", fill: "forwards" }
   );
 }
 function dt(e) {
-  A(e), e.style.transformOrigin = "50% 100%", e.animate(
+  B(e), e.style.transformOrigin = "50% 100%", e.animate(
     [{ transform: "scale(0)" }, { transform: "scale(1)" }],
     { duration: 300, easing: "ease-out" }
   );
 }
 function ut(e, t) {
-  A(e);
+  B(e);
   const n = window.innerWidth, r = window.innerHeight, i = t.top - (window.scrollY || 0), o = t.left - (window.scrollX || 0), s = t.width, l = t.height;
   e.style.position = "fixed", e.style.top = "0", e.style.left = "0", e.style.width = "100vw", e.style.height = "100vh", e.style.setProperty("--ddw-w", "100vw"), e.style.setProperty("--ddw-h", "100vh"), e.style.zIndex = "9999";
   const a = s / n, f = l / r, m = o + s / 2 - n / 2, g = i + l / 2 - r / 2;
@@ -50,7 +50,7 @@ function ut(e, t) {
   );
 }
 function ft(e, t) {
-  A(e);
+  B(e);
   const n = window.innerWidth, r = window.innerHeight, i = t.width, o = t.height, s = t.top - (window.scrollY || 0), l = t.left - (window.scrollX || 0), a = i / n, f = o / r, m = l + i / 2 - n / 2, g = s + o / 2 - r / 2, c = e.animate(
     [
       { transform: "none" },
@@ -72,17 +72,17 @@ function mt(e, t) {
 }
 function pt({ handle: e, host: t, signal: n, disabled: r, exclude: i, getBounds: o, onStart: s }) {
   let l = !1, a = 0, f = 0, m = 0, g = 0, c = null, u = 0, v = 0;
-  const _ = () => {
+  const z = () => {
     t.style.left = `${Math.max(0, Math.min(u, m))}px`, t.style.top = `${Math.max(0, Math.min(v, g))}px`;
   }, b = (w) => {
     l && (u = w.clientX - a, v = w.clientY - f, c && cancelAnimationFrame(c), c = requestAnimationFrame(() => {
-      _(), c = null;
+      z(), c = null;
     }));
   }, p = () => {
-    l = !1, document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", p, { capture: !0 }), c && (cancelAnimationFrame(c), c = null, _());
+    l = !1, document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", p, { capture: !0 }), c && (cancelAnimationFrame(c), c = null, z());
   }, L = (w) => {
     if (r != null && r() || w.target.closest(i)) return;
-    A(t);
+    B(t);
     const x = t.getBoundingClientRect();
     a = w.clientX - x.left, f = w.clientY - x.top;
     const N = (o == null ? void 0 : o()) ?? {
@@ -90,8 +90,8 @@ function pt({ handle: e, host: t, signal: n, disabled: r, exclude: i, getBounds:
       maxTop: Math.max(0, window.innerHeight - x.height)
     };
     m = N.maxLeft, g = N.maxTop, s == null || s(x), l = !0, document.addEventListener("pointermove", b, { capture: !0 }), document.addEventListener("pointerup", p, { capture: !0 });
-  }, k = n ? { signal: n } : {};
-  return e.addEventListener("pointerdown", L, k), () => {
+  }, E = n ? { signal: n } : {};
+  return e.addEventListener("pointerdown", L, E), () => {
     e.removeEventListener("pointerdown", L), document.removeEventListener("pointermove", b, { capture: !0 }), document.removeEventListener("pointerup", p, { capture: !0 }), c && cancelAnimationFrame(c);
   };
 }
@@ -106,8 +106,8 @@ function ht({ handle: e, host: t, signal: n, disabled: r, minWidth: i = 180, min
     l = !0, a = b.clientX, f = b.clientY;
     const p = t.getBoundingClientRect();
     m = p.width, g = p.height, document.addEventListener("pointermove", c, { capture: !0 }), document.addEventListener("pointerup", u, { capture: !0 });
-  }, _ = n ? { signal: n } : {};
-  return e.addEventListener("pointerdown", v, _), () => {
+  }, z = n ? { signal: n } : {};
+  return e.addEventListener("pointerdown", v, z), () => {
     e.removeEventListener("pointerdown", v), document.removeEventListener("pointermove", c, { capture: !0 }), document.removeEventListener("pointerup", u, { capture: !0 });
   };
 }
@@ -152,27 +152,27 @@ class yt {
     return this._listeners.add(t), () => this._listeners.delete(t);
   }
 }
-const C = new yt();
+const I = new yt();
 function vt({ track: e, getValue: t, isBlocky: n, isGradient: r }) {
   let i = [], o = null, s = null, l = null;
   const a = 1, f = 10, m = f + a;
   function g() {
-    const p = r(), L = getComputedStyle(e), k = e.getBoundingClientRect().width - (parseFloat(L.borderLeftWidth) || 0) - (parseFloat(L.borderRightWidth) || 0), w = Math.max(1, Math.round((k + a) / m)), x = (k - (w - 1) * a) / w, N = k;
+    const p = r(), L = getComputedStyle(e), E = e.getBoundingClientRect().width - (parseFloat(L.borderLeftWidth) || 0) - (parseFloat(L.borderRightWidth) || 0), w = Math.max(1, Math.round((E + a) / m)), x = (E - (w - 1) * a) / w, N = E;
     e.innerHTML = "", i = [];
     for (let M = 0; M < w; M++) {
-      const E = document.createElement("div");
-      E.className = "progress-segment", E.style.cssText = `width:${x}px;margin-right:${M < w - 1 ? a : 0}px`, p && (E.style.backgroundSize = `${N}px 100%`, E.style.backgroundPosition = `-${M * (x + a)}px 0`), e.appendChild(E), i.push(E);
+      const _ = document.createElement("div");
+      _.className = "progress-segment", _.style.cssText = `width:${x}px;margin-right:${M < w - 1 ? a : 0}px`, p && (_.style.backgroundSize = `${N}px 100%`, _.style.backgroundPosition = `-${M * (x + a)}px 0`), e.appendChild(_), i.push(_);
     }
     c(t());
   }
   function c(p) {
-    const L = Math.min(Math.max(p, 0), 100), k = Math.floor(L / 100 * i.length);
-    i.forEach((w, x) => w.classList.toggle("progress-segment--active", x < k));
+    const L = Math.min(Math.max(p, 0), 100), E = Math.floor(L / 100 * i.length);
+    i.forEach((w, x) => w.classList.toggle("progress-segment--active", x < E));
   }
   function u(p) {
     if (!o) return;
-    const L = Math.min(Math.max(p, 0), 100), k = r();
-    if (o.style.width = `${L}%`, !k) {
+    const L = Math.min(Math.max(p, 0), 100), E = r();
+    if (o.style.width = `${L}%`, !E) {
       const w = getComputedStyle(o).getPropertyValue("--dd-progress-enable-hue-rotate").trim();
       o.style.filter = w === "0" ? "none" : `hue-rotate(${L * 3.6}deg)`;
     }
@@ -184,13 +184,13 @@ function vt({ track: e, getValue: t, isBlocky: n, isGradient: r }) {
       l && clearTimeout(l), l = setTimeout(g, 50);
     }), s.observe(e)) : (o = e.querySelector(".progress-bar"), u(t()));
   }
-  function _(p) {
+  function z(p) {
     n() ? c(p) : u(p);
   }
   function b() {
     s == null || s.disconnect(), l && clearTimeout(l);
   }
-  return { update: _, rebuild: v, destroy: b };
+  return { update: z, rebuild: v, destroy: b };
 }
 function xt(e) {
   const t = e.getBoundingClientRect(), n = getComputedStyle(e);
@@ -271,39 +271,39 @@ function bt({
   fullscreenMode: c,
   bodyOverflow: u,
   scrollContent: v,
-  onMinimize: _,
+  onMinimize: z,
   onFullscreen: b,
   onClose: p,
   children: L,
-  style: k,
+  style: E,
   className: w
 }) {
-  const x = $(null), N = $(null), M = $(null), E = V(), [Y, Z] = W(!1), [S, U] = W(!1), B = $(null), G = !!(i || o), O = {
+  const x = $(null), N = $(null), M = $(null), _ = V(), [Y, Z] = A(!1), [S, U] = A(!1), R = $(null), G = !!(i || o), O = {
     ...i ? { "--ddw-w": i } : {},
     ...o ? { "--ddw-h": o } : {},
-    ...k
+    ...E
   };
   P(() => {
     const y = x.current;
     if (y)
-      return C.register(E, y, e ?? "Window"), () => C.unregister(E);
-  }, [E, e]);
-  const R = I(() => {
-    C.raise(E);
-  }, [E]), J = I(() => {
-    var z;
-    const y = (z = x.current) == null ? void 0 : z.querySelector(".dd-win");
+      return I.register(_, y, e ?? "Window"), () => I.unregister(_);
+  }, [_, e]);
+  const C = W(() => {
+    I.raise(_);
+  }, [_]), J = W(() => {
+    var k;
+    const y = (k = x.current) == null ? void 0 : k.querySelector(".dd-win");
     if (!y) return;
     const h = !Y;
-    h ? lt(y) : dt(y), Z(h), _ == null || _(h);
-  }, [Y, _]), K = I(() => {
+    h ? (lt(y), I.minimize(_)) : (dt(y), I.restore(_)), Z(h), z == null || z(h);
+  }, [Y, z, _]), K = W(() => {
     const y = x.current;
     if (!y) return;
     const h = !S;
-    h ? (B.current = xt(y), y.setAttribute("data-explicit", ""), ut(y, B.current)) : B.current && ft(y, B.current);
-    const z = h;
-    U(z), b == null || b(z);
-  }, [S, b]), Q = I(() => {
+    h ? (R.current = xt(y), y.setAttribute("data-explicit", ""), ut(y, R.current)) : R.current && ft(y, R.current);
+    const k = h;
+    U(k), b == null || b(k);
+  }, [S, b]), Q = W(() => {
     var h;
     const y = (h = x.current) == null ? void 0 : h.querySelector(".dd-win");
     y && mt(y, () => {
@@ -318,13 +318,13 @@ function bt({
         host: h,
         exclude: ".dd-win-controls",
         disabled: () => S && c !== "expand",
-        onStart: (z) => {
-          h.hasAttribute("data-explicit") || (h.style.setProperty("--ddw-w", `${z.width}px`), h.style.setProperty("--ddw-h", `${z.height}px`), h.setAttribute("data-explicit", ""));
+        onStart: (k) => {
+          h.hasAttribute("data-explicit") || (h.style.setProperty("--ddw-w", `${k.width}px`), h.style.setProperty("--ddw-h", `${k.height}px`), h.setAttribute("data-explicit", ""));
           const H = getComputedStyle(h).position;
-          (H === "static" || H === "relative") && (h.style.position = "absolute", h.style.left = `${z.left + (window.scrollX || 0)}px`, h.style.top = `${z.top + (window.scrollY || 0)}px`), R();
+          (H === "static" || H === "relative") && (h.style.position = "absolute", h.style.left = `${k.left + (window.scrollX || 0)}px`, h.style.top = `${k.top + (window.scrollY || 0)}px`), C();
         }
       });
-  }, [r, S, c, R]), P(() => {
+  }, [r, S, c, C]), P(() => {
     const y = M.current, h = x.current;
     if (!(!y || !h || !n))
       return ht({
@@ -342,7 +342,7 @@ function bt({
       "data-size": t,
       "data-explicit": G ? "" : void 0,
       style: O,
-      onPointerDown: R,
+      onPointerDown: C,
       children: /* @__PURE__ */ T("div", { className: "dd-win", children: [
         /* @__PURE__ */ T(
           "div",
@@ -402,7 +402,7 @@ function bt({
     }
   );
 }
-function kt({
+function Et({
   variant: e = "primary",
   size: t,
   disabled: n = !1,
@@ -426,7 +426,7 @@ function kt({
     ...a ? { "--dd-btn-px": a } : {},
     ...f ? { "--dd-btn-py": f } : {},
     ...u
-  }, _ = [
+  }, z = [
     "btn",
     `btn--${e}`,
     n ? "btn--disable" : "",
@@ -436,7 +436,7 @@ function kt({
   return /* @__PURE__ */ d(
     "button",
     {
-      className: _,
+      className: z,
       style: v,
       disabled: n,
       "aria-disabled": n ? "true" : void 0,
@@ -448,8 +448,8 @@ function kt({
     }
   );
 }
-function zt({ type: e = "notification", message: t, onClose: n }) {
-  const [r, i] = W(!0), o = $(t);
+function kt({ type: e = "notification", message: t, onClose: n }) {
+  const [r, i] = A(!0), o = $(t);
   if (P(() => {
     t !== o.current && (o.current = t, i(!0));
   }, [t]), !r) return null;
@@ -553,7 +553,7 @@ function $t({
   className: i,
   style: o
 }) {
-  const [s, l] = W(e), a = t ?? s, f = (c) => {
+  const [s, l] = A(e), a = t ?? s, f = (c) => {
     t === void 0 && l(c), n == null || n(c);
   }, m = [], g = [];
   return it.forEach(r, (c) => {
@@ -601,15 +601,15 @@ function Pt({ children: e, className: t, ...n }) {
   );
 }
 export {
-  kt as Button,
+  Et as Button,
   Nt as Input,
   Mt as ProgressBar,
   D as Tab,
   F as TabPanel,
   $t as Tabs,
   Pt as TerminalWindow,
-  Et as ThemeProvider,
-  zt as Toast,
+  zt as ThemeProvider,
+  kt as Toast,
   Tt as Toggle,
   bt as Window,
   ct as useTheme
