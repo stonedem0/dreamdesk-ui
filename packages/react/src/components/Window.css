@@ -58,6 +58,11 @@
 
 .dd-win-header--no-move { cursor: default; }
 
+.dd-win-title-icon {
+  margin-right: 0.3rem;
+  flex-shrink: 0;
+}
+
 .dd-win-title {
   user-select: none;
   text-shadow: var(--dd-title-text-shadow, none);

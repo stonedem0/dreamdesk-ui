@@ -19,6 +19,7 @@ import {
 } from "@dreamdesk/core";
 import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
 import { sanitizeSvg } from "../utils/svg";
+import { Icon } from "./Icon";
 import "./Window.css";
 
 export interface WindowProps {
@@ -298,6 +299,7 @@ export function Window({
           ref={headerRef}
           className={["dd-win-header", !movable ? "dd-win-header--no-move" : ""].filter(Boolean).join(" ")}
         >
+          {icon && <Icon src={icon} size={16} className="dd-win-title-icon" />}
           <span className="dd-win-title">{title}</span>
           <div className="dd-win-controls">
             <ControlButton
