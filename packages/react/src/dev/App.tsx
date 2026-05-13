@@ -59,6 +59,8 @@ function BrowserWindowDemo() {
     <BrowserWindow
       windowId="browser"
       title="Internet Explorer"
+      icon="/icons/world.png"
+      defaultOpen={false}
       url={src}
       width="640px"
       height="480px"
@@ -117,9 +119,11 @@ function WindowShortcuts() {
   const focus = (id: string) => wm.open(id);
   return (
     <div style={{ position: "absolute", top: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "1.5rem" }}>
-      <DesktopIcon label="Notes" onClick={() => focus("notes")} />
-      <DesktopIcon label="Login" onClick={() => focus("login")} />
-      <DesktopIcon label="Terminal" onClick={() => focus("terminal")} />
+      <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => focus("notes")} />
+      <DesktopIcon label="Login" icon="/icons/password_manager.png" onClick={() => focus("login")} />
+      <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => focus("terminal")} />
+      <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
+      <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
     </div>
   );
 }
@@ -147,8 +151,9 @@ export default function App() {
         <WindowShortcuts />
 
         {/* Notes — tabbed scrollable window, top-left */}
-        <Window windowId="notes" title="Notes" scrollContent width="560px" height="430px"
-          style={{ top: "16px", left: "16px" }}>
+        <Window windowId="notes" title="Notes" scrollContent width="560px" height="430px" defaultOpen={false}
+          style={{ top: "16px", left: "16px" }}
+          icon="/icons/notepad.png">
           <Tabs>
             <Tab>General</Tab>
             <Tab>Appearance</Tab>
@@ -173,8 +178,9 @@ export default function App() {
         </Window>
 
         {/* Login — below Notes, left */}
-        <Window windowId="login" title="Login" size="sm" resizable={false} bodyOverflow="hidden"
-          style={{ top: "462px", left: "16px" }}>
+        <Window windowId="login" title="Login" size="sm" resizable={false} bodyOverflow="hidden" defaultOpen={false}
+          style={{ top: "462px", left: "16px" }}
+          icon="/icons/password_manager.png">
           <div className="win-content" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <Input type="text" label="Username:" placeholder="" layout="inline" />
             <Input type="password" label="Password:" placeholder="" layout="inline" />
@@ -186,8 +192,9 @@ export default function App() {
         </Window>
 
         {/* Components — top-right */}
-        <Window title="Components" width="620px" height="560px" scrollContent
-          style={{ top: "16px", left: "calc(100vw - 636px)" }}>
+        <Window windowId="components" title="Components" width="620px" height="560px" scrollContent defaultOpen={false}
+          style={{ top: "16px", left: "calc(100vw - 636px)" }}
+          icon="/icons/tools.png">
           <div className="win-content dd-scrollable dd-scrollable--fill" style={{ display: "flex", flexDirection: "column", gap: "0.75rem", padding: "0.5rem" }}>
             <ThemeToggle />
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
@@ -205,8 +212,9 @@ export default function App() {
         </Window>
 
         {/* Terminal — bottom-right */}
-        <TerminalWindow windowId="terminal" title="Terminal" width="500px" height="220px"
-          style={{ top: "460px", left: "calc(100vw - 516px)" }}>
+        <TerminalWindow windowId="terminal" title="Terminal" width="500px" height="220px" defaultOpen={false}
+          style={{ top: "460px", left: "calc(100vw - 516px)" }}
+          icon="/icons/script_file.png">
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>

@@ -43,6 +43,7 @@ export interface WindowProps {
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
+  defaultOpen?: boolean;
   onClose?: () => void;
   children?: ReactNode;
   style?: CSSProperties;
@@ -130,6 +131,7 @@ export function Window({
   onMinimize,
   onFullscreen,
   fullscreenAnimation,
+  defaultOpen = true,
   onClose,
   children,
   style,
@@ -164,7 +166,8 @@ export function Window({
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+    if (!defaultOpen) el.style.display = "none";
+    if (defaultOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
     wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
@@ -299,8 +302,10 @@ export function Window({
           ref={headerRef}
           className={["dd-win-header", !movable ? "dd-win-header--no-move" : ""].filter(Boolean).join(" ")}
         >
-          {icon && <Icon src={icon} size={16} className="dd-win-title-icon" />}
-          <span className="dd-win-title">{title}</span>
+          <div className="dd-win-title-group">
+            {icon && <Icon src={icon} size={16} className="dd-win-title-icon" />}
+            <span className="dd-win-title">{title}</span>
+          </div>
           <div className="dd-win-controls">
             <ControlButton
               className="dd-btn--minimize"
