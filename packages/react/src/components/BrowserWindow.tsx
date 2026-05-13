@@ -1,5 +1,6 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Window, type WindowProps } from "./Window";
+import { Icon } from "./Icon";
 import "./BrowserWindow.css";
 
 export interface BrowserWindowProps extends Omit<WindowProps, "children" | "scrollContent" | "bodyOverflow"> {
@@ -7,12 +8,20 @@ export interface BrowserWindowProps extends Omit<WindowProps, "children" | "scro
   canGoBack?: boolean;
   canGoForward?: boolean;
   status?: string;
+  history?: string[];
   onNavigate?: (url: string) => void;
   onBack?: () => void;
   onForward?: () => void;
   onStop?: () => void;
   onRefresh?: () => void;
   onHome?: () => void;
+  // toolbar icon overrides — SVG string, URL, or plain unicode char
+  backIcon?: string;
+  forwardIcon?: string;
+  stopIcon?: string;
+  refreshIcon?: string;
+  homeIcon?: string;
+  historyIcon?: string;
   children?: ReactNode;
 }
 
@@ -20,9 +29,14 @@ interface ToolbarBtn {
   id: string;
   label?: string;
   icon?: string;
-  arrow?: boolean;
   disabled?: boolean;
   onClick?: () => void;
+}
+
+function ToolbarIcon({ src }: { src: string }) {
+  const isImage = src.startsWith("/") || src.startsWith("http") || src.startsWith("<svg");
+  if (isImage) return <Icon src={src} size={20} />;
+  return <>{src}</>;
 }
 
 export function BrowserWindow({
@@ -30,21 +44,41 @@ export function BrowserWindow({
   canGoBack = false,
   canGoForward = false,
   status = "Done",
+  history = [],
   onNavigate,
   onBack,
   onForward,
   onStop,
   onRefresh,
   onHome,
+  backIcon = "←",
+  forwardIcon = "→",
+  stopIcon = "✕",
+  refreshIcon = "↻",
+  homeIcon = "⌂",
+  historyIcon = "⊞",
   children,
   className,
   ...windowProps
 }: BrowserWindowProps) {
   const [addressValue, setAddressValue] = useState(url);
+  const [showHistory, setShowHistory] = useState(false);
+  const historyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setAddressValue(url);
   }, [url]);
+
+  useEffect(() => {
+    if (!showHistory) return;
+    const handler = (e: MouseEvent) => {
+      if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
+        setShowHistory(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showHistory]);
 
   const handleGo = () => {
     const target = addressValue.trim();
@@ -56,16 +90,14 @@ export function BrowserWindow({
   };
 
   const toolbarButtons: (ToolbarBtn | "sep")[] = [
-    { id: "back",     label: "Back",     icon: "←", arrow: true, disabled: !canGoBack,    onClick: onBack },
-    { id: "forward",  label: "Forward",  icon: "→", arrow: true, disabled: !canGoForward, onClick: onForward },
+    { id: "back",    label: "Back",    icon: backIcon,    disabled: !canGoBack,    onClick: onBack },
+    { id: "forward", label: "Forward", icon: forwardIcon, disabled: !canGoForward, onClick: onForward },
     "sep",
-    { id: "stop",     label: "Stop",     icon: "✕",              onClick: onStop },
-    { id: "refresh",  label: "Refresh",  icon: "↻",              onClick: onRefresh },
-    { id: "home",     label: "Home",     icon: "⌂",              onClick: onHome },
+    { id: "stop",    label: "Stop",    icon: stopIcon,               onClick: onStop },
+    { id: "refresh", label: "Refresh", icon: refreshIcon,            onClick: onRefresh },
+    { id: "home",    label: "Home",    icon: homeIcon,               onClick: onHome },
     "sep",
-    { id: "search",   label: "Search",   icon: "⚲" },
-    { id: "favorites",label: "Favorites",icon: "★" },
-    { id: "history",  label: "History",  icon: "⊞" },
+    { id: "history", label: "History", icon: historyIcon, onClick: () => setShowHistory(v => !v) },
   ];
 
   return (
@@ -88,13 +120,25 @@ export function BrowserWindow({
                 tabIndex={btn.disabled ? -1 : undefined}
                 aria-disabled={btn.disabled}
               >
-                <span className="dd-browser-btn-icon">{btn.icon}</span>
-                <span className="dd-browser-btn-label">
-                  {btn.label}
-                  {btn.arrow && <span className="dd-browser-btn-arrow"> ▾</span>}
-                </span>
+                <span className="dd-browser-btn-icon">{btn.icon && <ToolbarIcon src={btn.icon} />}</span>
+                <span className="dd-browser-btn-label">{btn.label}</span>
               </button>
             )
+          )}
+
+          {/* History dropdown */}
+          {showHistory && history.length > 0 && (
+            <div ref={historyRef} className="dd-browser-history-dropdown">
+              {[...history].reverse().map((href, i) => (
+                <button
+                  key={i}
+                  className="dd-browser-history-item"
+                  onClick={() => { onNavigate?.(href); setShowHistory(false); }}
+                >
+                  {href}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

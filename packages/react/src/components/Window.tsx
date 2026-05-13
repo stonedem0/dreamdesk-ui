@@ -172,6 +172,18 @@ export function Window({
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
+      // Centre + cascade on the desktop container
+      const container = desktopRef?.current;
+      if (container) {
+        const th = taskbarHeight;
+        const cw = container.offsetWidth;
+        const ch = container.offsetHeight - th;
+        const ww = el.offsetWidth;
+        const wh = el.offsetHeight;
+        const { dx, dy } = wm.getCascadeOffset();
+        el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
+        el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+      }
       const inner = el.querySelector<HTMLElement>(".dd-win");
       if (inner) {
         inner.getAnimations().forEach((a) => a.cancel());

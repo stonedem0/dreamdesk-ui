@@ -19,6 +19,7 @@ const HOME = "https://en.m.wikipedia.org/wiki/Main_Page";
 
 function BrowserWindowDemo() {
   const [src, setSrc] = useState(HOME);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [navHistory, setNavHistory] = useState<string[]>([HOME]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [error, setError] = useState(false);
@@ -53,7 +54,8 @@ function BrowserWindowDemo() {
     setSrc(navHistory[idx]);
   };
 
-  const refresh = () => { setError(false); setLoading(true); setSrc((s) => s + ""); };
+  const refresh = () => { setError(false); setLoading(true); setRefreshKey(k => k + 1); };
+  const stop = () => setLoading(false);
 
   return (
     <BrowserWindow
@@ -71,7 +73,11 @@ function BrowserWindowDemo() {
       onBack={goBack}
       onForward={goForward}
       onRefresh={refresh}
+      onStop={stop}
       onHome={() => navigate(HOME)}
+      homeIcon="/icons/world.png"
+      historyIcon="/icons/clock.png"
+      history={navHistory}
       status={loading ? `Opening page: ${src}…` : error ? "Page cannot be displayed" : "Done"}
     >
       {error ? (
@@ -84,7 +90,7 @@ function BrowserWindowDemo() {
             </div>
           )}
           <iframe
-            key={src}
+            key={`${src}-${refreshKey}`}
             src={src}
             style={{ width: "100%", height: "2000px", border: "none", display: "block" }}
             scrolling="no"
