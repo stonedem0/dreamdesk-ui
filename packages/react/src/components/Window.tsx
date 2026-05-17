@@ -12,9 +12,11 @@ import {
   unminimize as animUnminimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
+  unsnap as animUnsnap,
   close as closeAnimation,
   setupDrag,
   setupResize,
+  snapRect,
   type PreviousState,
 } from "@dreamdesk/core";
 import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
@@ -149,6 +151,7 @@ export function Window({
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previousStateRef = useRef<PreviousState | null>(null);
+  const preSnapStateRef = useRef<{ left: string; top: string; width: string; height: string } | null>(null);
 
   // Explicit size from props
   const hasExplicitSize = !!(width || height);
@@ -222,6 +225,18 @@ export function Window({
   const handleFullscreen = useCallback(() => {
     const host = hostRef.current;
     if (!host) return;
+    // If window is currently snapped, restore to pre-snap position instead of toggling fullscreen
+    if (!isFullscreen && preSnapStateRef.current) {
+      const pre = preSnapStateRef.current;
+      preSnapStateRef.current = null;
+      const fromRect = host.getBoundingClientRect();
+      host.style.left = pre.left;
+      host.style.top = pre.top;
+      host.style.setProperty("--ddw-w", pre.width);
+      host.style.setProperty("--ddw-h", pre.height);
+      animUnsnap(host, fromRect);
+      return;
+    }
     const goingFull = !isFullscreen;
     const defaultFn = () => {
       if (goingFull) {
@@ -259,14 +274,26 @@ export function Window({
     const header = headerRef.current;
     const host = hostRef.current;
     if (!header || !host || !movable) return;
-    return setupDrag({
+
+    const container = desktopRef?.current ?? null;
+
+    let snapOverlay: HTMLElement | null = null;
+    if (container) {
+      snapOverlay = document.createElement("div");
+      snapOverlay.style.cssText =
+        "position:absolute;pointer-events:none;background:rgba(100,150,255,0.18);border:2px solid rgba(100,150,255,0.45);border-radius:4px;z-index:9998;transition:top 0.08s,left 0.08s,width 0.08s,height 0.08s;display:none;box-sizing:border-box";
+      container.appendChild(snapOverlay);
+    }
+
+    const cleanup = setupDrag({
       handle: header,
       host,
-      container: desktopRef?.current,
+      container,
       reservedBottom: taskbarHeight,
       exclude: ".dd-win-controls",
       disabled: () => isFullscreen && fullscreenMode !== "expand",
       onStart: (hostRect) => {
+        preSnapStateRef.current = null;
         if (!host.hasAttribute("data-explicit")) {
           host.style.setProperty("--ddw-w", `${hostRect.width}px`);
           host.style.setProperty("--ddw-h", `${hostRect.height}px`);
@@ -274,14 +301,49 @@ export function Window({
         }
         const pos = getComputedStyle(host).position;
         if (pos === "static" || pos === "relative") {
-          const containerRect = desktopRef?.current?.getBoundingClientRect();
+          const containerRect = container?.getBoundingClientRect();
           host.style.position = "absolute";
           host.style.left = `${hostRect.left + (window.scrollX || 0) - (containerRect?.left ?? 0)}px`;
           host.style.top = `${hostRect.top + (window.scrollY || 0) - (containerRect?.top ?? 0)}px`;
         }
         raise();
       },
+      onSnap: (zone) => {
+        if (!snapOverlay || !container) return;
+        if (zone === "none") { snapOverlay.style.display = "none"; return; }
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height - taskbarHeight);
+        if (!rect) { snapOverlay.style.display = "none"; return; }
+        snapOverlay.style.display = "block";
+        snapOverlay.style.left = `${rect.left}px`;
+        snapOverlay.style.top = `${rect.top}px`;
+        snapOverlay.style.width = `${rect.width}px`;
+        snapOverlay.style.height = `${rect.height}px`;
+      },
+      onSnapCommit: (zone) => {
+        if (snapOverlay) snapOverlay.style.display = "none";
+        if (!container) return;
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height - taskbarHeight);
+        if (!rect) return;
+        preSnapStateRef.current = {
+          left: host.style.left,
+          top: host.style.top,
+          width: host.style.getPropertyValue("--ddw-w"),
+          height: host.style.getPropertyValue("--ddw-h"),
+        };
+        host.style.left = `${rect.left}px`;
+        host.style.top = `${rect.top}px`;
+        host.style.setProperty("--ddw-w", `${rect.width}px`);
+        host.style.setProperty("--ddw-h", `${rect.height}px`);
+        host.setAttribute("data-explicit", "");
+      },
     });
+
+    return () => {
+      cleanup();
+      snapOverlay?.remove();
+    };
   }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight]);
 
   // Resize

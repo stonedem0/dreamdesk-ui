@@ -1,7 +1,8 @@
-import { minimize, unminimize, fullscreen, unfullscreen, close, type PreviousState } from './animations';
+import { minimize, unminimize, fullscreen, unfullscreen, unsnap, close, type PreviousState } from './animations';
 import { setupDrag } from './drag';
 import { setupResize } from './resize';
 import { defaultWindowManager } from './windowManager';
+import { snapRect, type SnapZone } from './snap';
 import { setupProgressBar, type ProgressBarHandle } from './progressBar';
 
 // Derive the directory of this script once — plain string op, Vite won't treat it as an asset URL
@@ -139,6 +140,8 @@ class DreamDeskWindow extends DreamDeskComponent {
   private _resizeHandleBound = false;
   private _dragController: AbortController | null = null;
   private _observedScrollables: Element[] = [];
+  private _snapOverlay: HTMLElement | null = null;
+  private _preSnapState: { left: string; top: string; width: string; height: string } | null = null;
 
   static get observedAttributes() {
     return ['title', 'width', 'height', 'resizable', 'movable',
@@ -190,6 +193,8 @@ class DreamDeskWindow extends DreamDeskComponent {
     super.disconnectedCallback();
     defaultWindowManager.unregister(this._winId);
     if (this._dragController) { this._dragController.abort(); this._dragController = null; }
+    this._snapOverlay?.remove();
+    this._snapOverlay = null;
   }
 
   private _syncSizeFromAttributes(): void {
@@ -234,6 +239,18 @@ class DreamDeskWindow extends DreamDeskComponent {
 
   fullscreen(): void {
     const win = this as unknown as HTMLElement;
+    // If snapped, restore to pre-snap position instead of toggling fullscreen
+    if (!this.state.isFullscreen && this._preSnapState) {
+      const pre = this._preSnapState;
+      this._preSnapState = null;
+      const fromRect = this.getBoundingClientRect();
+      this.style.left = pre.left;
+      this.style.top = pre.top;
+      this.style.setProperty('--ddw-w', pre.width);
+      this.style.setProperty('--ddw-h', pre.height);
+      unsnap(this, fromRect);
+      return;
+    }
     const goingFull = !this.state.isFullscreen;
     if (goingFull) {
       this._freezeWindowState();
@@ -343,13 +360,23 @@ class DreamDeskWindow extends DreamDeskComponent {
     if (this._dragController) return;
     this._dragController = new AbortController();
     header.style.cursor = 'move';
+
+    const container = this.parentElement as HTMLElement | null;
+
+    if (!this._snapOverlay && container) {
+      this._snapOverlay = this._createSnapOverlay();
+      container.appendChild(this._snapOverlay);
+    }
+
     setupDrag({
       handle: header,
       host: this,
+      container,
       signal: this._dragController.signal,
       exclude: '.win-controls',
       disabled: () => !this._movable || (!!this.state?.isFullscreen && this.getAttribute('fullscreen-mode') !== 'expand'),
       onStart: (hostRect) => {
+        this._preSnapState = null;
         this.setAttribute('data-ddw-explicit', '');
         this.style.setProperty('--ddw-w', `${hostRect.width}px`);
         this.style.setProperty('--ddw-h', `${hostRect.height}px`);
@@ -361,7 +388,43 @@ class DreamDeskWindow extends DreamDeskComponent {
         }
         defaultWindowManager.raise(this._winId);
       },
+      onSnap: (zone) => {
+        const overlay = this._snapOverlay;
+        if (!overlay || !container) return;
+        if (zone === 'none') { overlay.style.display = 'none'; return; }
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height);
+        if (!rect) { overlay.style.display = 'none'; return; }
+        overlay.style.display = 'block';
+        overlay.style.left = `${rect.left}px`;
+        overlay.style.top = `${rect.top}px`;
+        overlay.style.width = `${rect.width}px`;
+        overlay.style.height = `${rect.height}px`;
+      },
+      onSnapCommit: (zone) => {
+        if (this._snapOverlay) this._snapOverlay.style.display = 'none';
+        if (!container) return;
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height);
+        if (!rect) return;
+        this._preSnapState = {
+          left: this.style.left || `${this.getBoundingClientRect().left}px`,
+          top: this.style.top || `${this.getBoundingClientRect().top}px`,
+          width: this.style.getPropertyValue('--ddw-w'),
+          height: this.style.getPropertyValue('--ddw-h'),
+        };
+        this.style.left = `${rect.left}px`;
+        this.style.top = `${rect.top}px`;
+        this.style.setProperty('--ddw-w', `${rect.width}px`);
+        this.style.setProperty('--ddw-h', `${rect.height}px`);
+      },
     });
+  }
+
+  private _createSnapOverlay(): HTMLElement {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:absolute;pointer-events:none;background:rgba(100,150,255,0.18);border:2px solid rgba(100,150,255,0.45);border-radius:4px;z-index:9998;transition:top 0.08s,left 0.08s,width 0.08s,height 0.08s;display:none;box-sizing:border-box';
+    return el;
   }
 
   private _bindFocusRaise(): void {
