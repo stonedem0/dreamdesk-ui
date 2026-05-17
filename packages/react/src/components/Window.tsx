@@ -19,6 +19,7 @@ import {
 } from "@dreamdesk/core";
 import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
 import { sanitizeSvg } from "../utils/svg";
+import { Icon } from "./Icon";
 import "./Window.css";
 
 export interface WindowProps {
@@ -41,6 +42,8 @@ export interface WindowProps {
   scrollContent?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
+  fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
+  defaultOpen?: boolean;
   onClose?: () => void;
   children?: ReactNode;
   style?: CSSProperties;
@@ -127,6 +130,8 @@ export function Window({
   scrollContent,
   onMinimize,
   onFullscreen,
+  fullscreenAnimation,
+  defaultOpen = true,
   onClose,
   children,
   style,
@@ -161,11 +166,24 @@ export function Window({
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+    if (!defaultOpen) el.style.display = "none";
+    if (defaultOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
     wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
+      // Centre + cascade on the desktop container
+      const container = desktopRef?.current;
+      if (container) {
+        const th = taskbarHeight;
+        const cw = container.offsetWidth;
+        const ch = container.offsetHeight - th;
+        const ww = el.offsetWidth;
+        const wh = el.offsetHeight;
+        const { dx, dy } = wm.getCascadeOffset();
+        el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
+        el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+      }
       const inner = el.querySelector<HTMLElement>(".dd-win");
       if (inner) {
         inner.getAnimations().forEach((a) => a.cancel());
@@ -205,17 +223,23 @@ export function Window({
     const host = hostRef.current;
     if (!host) return;
     const goingFull = !isFullscreen;
-    if (goingFull) {
-      previousStateRef.current = freezeState(host);
-      host.setAttribute("data-explicit", "");
-      animFullscreen(host, previousStateRef.current);
+    const defaultFn = () => {
+      if (goingFull) {
+        previousStateRef.current = freezeState(host);
+        host.setAttribute("data-explicit", "");
+        animFullscreen(host, previousStateRef.current);
+      } else {
+        if (previousStateRef.current) animUnfullscreen(host, previousStateRef.current);
+      }
+    };
+    if (fullscreenAnimation) {
+      fullscreenAnimation(host, { isFullscreen: goingFull, defaultFn });
     } else {
-      if (previousStateRef.current) animUnfullscreen(host, previousStateRef.current);
+      defaultFn();
     }
-    const next = goingFull;
-    setIsFullscreen(next);
-    onFullscreen?.(next);
-  }, [isFullscreen, onFullscreen]);
+    setIsFullscreen(goingFull);
+    onFullscreen?.(goingFull);
+  }, [isFullscreen, onFullscreen, fullscreenAnimation]);
 
   const handleClose = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
@@ -290,7 +314,10 @@ export function Window({
           ref={headerRef}
           className={["dd-win-header", !movable ? "dd-win-header--no-move" : ""].filter(Boolean).join(" ")}
         >
-          <span className="dd-win-title">{title}</span>
+          <div className="dd-win-title-group">
+            {icon && <Icon src={icon} size={16} className="dd-win-title-icon" />}
+            <span className="dd-win-title">{title}</span>
+          </div>
           <div className="dd-win-controls">
             <ControlButton
               className="dd-btn--minimize"

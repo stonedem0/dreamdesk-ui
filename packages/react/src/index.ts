@@ -30,3 +30,6 @@ export { Toggle } from "./components/Toggle";
 export type { ToggleProps } from "./components/Toggle";
 export { TerminalWindow } from "./components/TerminalWindow";
 export type { TerminalWindowProps } from "./components/TerminalWindow";
+
+export { BrowserWindow, BrowserErrorPage } from "./components/BrowserWindow";
+export type { BrowserWindowProps, BrowserErrorPageProps } from "./components/BrowserWindow";

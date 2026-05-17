@@ -94,6 +94,7 @@ html[data-theme="pastelcore"] {
   /* Visual Depth Tokens */
   --window-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   --window-header-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --dd-browser-sep-shadow: inset 0 1px 0 #f9f7ff, inset 0 -1px 0 #c0bfbf;
   --window-controls-button-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
   --toast-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #db989f, var(--shadow);
   --progress-track-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
@@ -134,6 +135,7 @@ html[data-theme="pastelcore"] {
 
   /* tighter header/progress shadows */
   --window-header-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
+  --dd-browser-sep-shadow: inset 0 1px 0 #f9f7ff, inset 0 -1px 0 #c0bfbf;
   --progress-track-shadow: inset -2px 2px 1px #f9f7ff, inset 2px -2px 1px var(--pasteclore-cyan-shadow);
   --progress-bar-shadow: inset -2px 5px 1px #ffffff, inset 2px -4px 1px #d1b5c0;
 

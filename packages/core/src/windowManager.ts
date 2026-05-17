@@ -9,12 +9,22 @@ export interface WindowEntry {
   toggle: () => void;
 }
 
+const CASCADE_STEP = 24;
+const CASCADE_MAX = 8;
+
 export class WindowManager {
   private _registry = new Map<string, WindowEntry>();
   private _zStack: string[] = [];
   private _listeners = new Set<() => void>();
   private _openRegistry = new Map<string, () => void>();
   private _closeRegistry = new Map<string, () => void>();
+  private _cascadeCount = 0;
+
+  getCascadeOffset(): { dx: number; dy: number } {
+    const step = this._cascadeCount % CASCADE_MAX;
+    this._cascadeCount++;
+    return { dx: step * CASCADE_STEP, dy: step * CASCADE_STEP };
+  }
 
   private _notify(): void {
     this._listeners.forEach(fn => fn());
