@@ -13,9 +13,10 @@ export interface DragOptions {
   onStart?: (hostRect: DOMRect) => void;
   onSnap?: (zone: SnapZone) => void;
   onSnapCommit?: (zone: SnapZone) => void;
+  onEnd?: () => void;
 }
 
-export function setupDrag({ handle, host, container, reservedBottom = 0, signal, disabled, exclude, getBounds, onStart, onSnap, onSnapCommit }: DragOptions): () => void {
+export function setupDrag({ handle, host, container, reservedBottom = 0, signal, disabled, exclude, getBounds, onStart, onSnap, onSnapCommit, onEnd }: DragOptions): () => void {
   let isDragging = false;
   let offsetX = 0, offsetY = 0;
   let maxLeft = 0, maxTop = 0;
@@ -60,6 +61,7 @@ export function setupDrag({ handle, host, container, reservedBottom = 0, signal,
     }
     if (onSnap) onSnap('none');
     currentZone = 'none';
+    onEnd?.();
   };
 
   const onPointerDown = (e: PointerEvent) => {

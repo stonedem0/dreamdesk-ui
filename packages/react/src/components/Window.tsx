@@ -17,6 +17,8 @@ import {
   setupDrag,
   setupResize,
   snapRect,
+  saveWindowState,
+  loadWindowState,
   type PreviousState,
 } from "@dreamdesk/core";
 import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
@@ -148,7 +150,8 @@ export function Window({
   const desktopRef = useDesktopContainer();
   const taskbarHeight = useDesktopTaskbarHeight();
 
-  const [isMinimized, setIsMinimized] = useState(false);
+  const persisted = windowIdProp ? loadWindowState(windowIdProp) : null;
+  const [isMinimized, setIsMinimized] = useState(persisted?.isMinimized ?? false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previousStateRef = useRef<PreviousState | null>(null);
   const preSnapStateRef = useRef<{ left: string; top: string; width: string; height: string } | null>(null);
@@ -166,26 +169,56 @@ export function Window({
   const toggleRef = useRef<() => void>(() => {});
   const closeRef = useRef<() => void>(() => {});
 
+  const saveState = useCallback((overrides: { isOpen?: boolean; isMinimized?: boolean } = {}) => {
+    if (!windowIdProp) return;
+    const el = hostRef.current;
+    if (!el) return;
+    saveWindowState(windowIdProp, {
+      left: el.style.left,
+      top: el.style.top,
+      width: el.style.getPropertyValue("--ddw-w"),
+      height: el.style.getPropertyValue("--ddw-h"),
+      isOpen: el.style.display !== "none",
+      isMinimized,
+      ...overrides,
+    });
+  }, [windowIdProp, isMinimized]);
+
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    if (!defaultOpen) el.style.display = "none";
-    if (defaultOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+
+    // Restore persisted position/size
+    const saved = windowIdProp ? loadWindowState(windowIdProp) : null;
+    if (saved) {
+      if (saved.left) el.style.left = saved.left;
+      if (saved.top) el.style.top = saved.top;
+      if (saved.width) el.style.setProperty("--ddw-w", saved.width);
+      if (saved.height) el.style.setProperty("--ddw-h", saved.height);
+      if (saved.width || saved.height) el.setAttribute("data-explicit", "");
+    }
+
+    const shouldOpen = saved?.isOpen ?? defaultOpen;
+    if (!shouldOpen) el.style.display = "none";
+    if (shouldOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+
     wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
-      // Centre + cascade on the desktop container
-      const container = desktopRef?.current;
-      if (container) {
-        const th = taskbarHeight;
-        const cw = container.offsetWidth;
-        const ch = container.offsetHeight - th;
-        const ww = el.offsetWidth;
-        const wh = el.offsetHeight;
-        const { dx, dy } = wm.getCascadeOffset();
-        el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
-        el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+      const hasSavedPos = !!(saved?.left || saved?.top);
+      if (!hasSavedPos) {
+        const container = desktopRef?.current;
+        if (container) {
+          const th = taskbarHeight;
+          const cw = container.offsetWidth;
+          const ch = container.offsetHeight - th;
+          const ww = el.offsetWidth;
+          const wh = el.offsetHeight;
+          const { dx, dy } = wm.getCascadeOffset();
+          el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
+          el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+        }
       }
       const inner = el.querySelector<HTMLElement>(".dd-win");
       if (inner) {
@@ -194,6 +227,7 @@ export function Window({
       }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
       wm.raise(windowId);
+      if (windowIdProp) saveWindowState(windowIdProp, { left: el.style.left, top: el.style.top, width: el.style.getPropertyValue("--ddw-w"), height: el.style.getPropertyValue("--ddw-h"), isOpen: true, isMinimized: false });
     });
     return () => wm.unregister(windowId);
   }, [windowId, title, icon, wm]);
@@ -218,7 +252,8 @@ export function Window({
     }
     setIsMinimized(next);
     onMinimize?.(next);
-  }, [isMinimized, onMinimize, windowId, wm]);
+    saveState({ isMinimized: next });
+  }, [isMinimized, onMinimize, windowId, wm, saveState]);
 
   toggleRef.current = handleMinimize;
 
@@ -263,9 +298,10 @@ export function Window({
     closeAnimation(win, () => {
       host.style.display = "none";
       wm.unregister(windowId);
+      saveState({ isOpen: false });
       onClose?.();
     });
-  }, [onClose, wm, windowId]);
+  }, [onClose, wm, windowId, saveState]);
 
   closeRef.current = handleClose;
 
@@ -338,6 +374,7 @@ export function Window({
         host.style.setProperty("--ddw-h", `${rect.height}px`);
         host.setAttribute("data-explicit", "");
       },
+      onEnd: () => saveState(),
     });
 
     return () => {
@@ -355,8 +392,9 @@ export function Window({
       handle,
       host,
       disabled: () => isFullscreen,
+      onEnd: () => saveState(),
     });
-  }, [resizable, isFullscreen]);
+  }, [resizable, isFullscreen, saveState]);
 
   const minSvg = resolveIcon(minimizeIcon);
   const fsSvg = resolveIcon(fullscreenIcon);
