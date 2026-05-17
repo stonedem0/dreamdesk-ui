@@ -121,8 +121,12 @@ export function unsnap(win: HTMLElement, fromRect: DOMRect): void {
 }
 
 export function close(win: HTMLElement, onfinish?: () => void): void {
-  win.animate(
+  const anim = win.animate(
     [{ opacity: '1', transform: 'scale(1)' }, { opacity: '0', transform: 'scale(0.95)' }],
     { duration: 300, easing: 'ease', fill: 'forwards' }
-  ).onfinish = () => onfinish?.();
+  );
+  anim.onfinish = () => {
+    anim.cancel(); // clear fill effect so re-opening the window works correctly
+    onfinish?.();
+  };
 }

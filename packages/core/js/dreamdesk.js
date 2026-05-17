@@ -55,10 +55,13 @@ function J(n, t) {
   );
 }
 function X(n, t) {
-  n.animate(
+  const e = n.animate(
     [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
     { duration: 300, easing: "ease", fill: "forwards" }
-  ).onfinish = () => t == null ? void 0 : t();
+  );
+  e.onfinish = () => {
+    e.cancel(), t == null || t();
+  };
 }
 const bt = {
   current: "default",
