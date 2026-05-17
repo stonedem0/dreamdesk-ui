@@ -200,7 +200,20 @@ export function Window({
 
     const shouldOpen = saved?.isOpen ?? defaultOpen;
     if (!shouldOpen) el.style.display = "none";
-    if (shouldOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+
+    if (shouldOpen) {
+      // Restore minimized visual state
+      if (saved?.isMinimized) {
+        const inner = el.querySelector<HTMLElement>(".dd-win");
+        if (inner) {
+          inner.style.transformOrigin = "50% 100%";
+          inner.style.transform = "scale(0)";
+        }
+        el.style.pointerEvents = "none";
+      }
+      wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+      if (saved?.isMinimized) wm.minimize(windowId);
+    }
 
     wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
@@ -223,6 +236,8 @@ export function Window({
       const inner = el.querySelector<HTMLElement>(".dd-win");
       if (inner) {
         inner.getAnimations().forEach((a) => a.cancel());
+        inner.style.transform = "";
+        inner.style.transformOrigin = "";
         animUnminimize(inner);
       }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
@@ -246,6 +261,8 @@ export function Window({
       wm.minimize(windowId);
       host.style.pointerEvents = "none";
     } else {
+      win.style.transform = "";
+      win.style.transformOrigin = "";
       animUnminimize(win);
       wm.restore(windowId);
       host.style.pointerEvents = "";
@@ -298,10 +315,10 @@ export function Window({
     closeAnimation(win, () => {
       host.style.display = "none";
       wm.unregister(windowId);
-      saveState({ isOpen: false });
+      if (windowIdProp) saveWindowState(windowIdProp, { isOpen: false });
       onClose?.();
     });
-  }, [onClose, wm, windowId, saveState]);
+  }, [onClose, wm, windowId, windowIdProp]);
 
   closeRef.current = handleClose;
 
