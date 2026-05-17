@@ -6,9 +6,10 @@ export interface ResizeOptions {
   minWidth?: number;
   minHeight?: number;
   explicitAttr?: string;
+  onEnd?: () => void;
 }
 
-export function setupResize({ handle, host, signal, disabled, minWidth = 180, minHeight = 120, explicitAttr = 'data-explicit' }: ResizeOptions): () => void {
+export function setupResize({ handle, host, signal, disabled, minWidth = 180, minHeight = 120, explicitAttr = 'data-explicit', onEnd }: ResizeOptions): () => void {
   let isResizing = false;
   let startX = 0, startY = 0, startWidth = 0, startHeight = 0;
 
@@ -23,6 +24,7 @@ export function setupResize({ handle, host, signal, disabled, minWidth = 180, mi
     isResizing = false;
     document.removeEventListener('pointermove', onPointerMove, { capture: true });
     document.removeEventListener('pointerup', onPointerUp, { capture: true });
+    onEnd?.();
   };
 
   const onPointerDown = (e: PointerEvent) => {

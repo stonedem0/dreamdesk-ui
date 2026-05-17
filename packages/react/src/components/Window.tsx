@@ -12,9 +12,13 @@ import {
   unminimize as animUnminimize,
   fullscreen as animFullscreen,
   unfullscreen as animUnfullscreen,
+  unsnap as animUnsnap,
   close as closeAnimation,
   setupDrag,
   setupResize,
+  snapRect,
+  saveWindowState,
+  loadWindowState,
   type PreviousState,
 } from "@dreamdesk/core";
 import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
@@ -146,9 +150,11 @@ export function Window({
   const desktopRef = useDesktopContainer();
   const taskbarHeight = useDesktopTaskbarHeight();
 
-  const [isMinimized, setIsMinimized] = useState(false);
+  const persisted = windowIdProp ? loadWindowState(windowIdProp) : null;
+  const [isMinimized, setIsMinimized] = useState(persisted?.isMinimized ?? false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previousStateRef = useRef<PreviousState | null>(null);
+  const preSnapStateRef = useRef<{ left: string; top: string; width: string; height: string } | null>(null);
 
   // Explicit size from props
   const hasExplicitSize = !!(width || height);
@@ -163,34 +169,80 @@ export function Window({
   const toggleRef = useRef<() => void>(() => {});
   const closeRef = useRef<() => void>(() => {});
 
+  const saveState = useCallback((overrides: { isOpen?: boolean; isMinimized?: boolean } = {}) => {
+    if (!windowIdProp) return;
+    const el = hostRef.current;
+    if (!el) return;
+    saveWindowState(windowIdProp, {
+      left: el.style.left,
+      top: el.style.top,
+      width: el.style.getPropertyValue("--ddw-w"),
+      height: el.style.getPropertyValue("--ddw-h"),
+      isOpen: el.style.display !== "none",
+      isMinimized,
+      ...overrides,
+    });
+  }, [windowIdProp, isMinimized]);
+
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    if (!defaultOpen) el.style.display = "none";
-    if (defaultOpen) wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+
+    // Restore persisted position/size
+    const saved = windowIdProp ? loadWindowState(windowIdProp) : null;
+    if (saved) {
+      if (saved.left) el.style.left = saved.left;
+      if (saved.top) el.style.top = saved.top;
+      if (saved.width) el.style.setProperty("--ddw-w", saved.width);
+      if (saved.height) el.style.setProperty("--ddw-h", saved.height);
+      if (saved.width || saved.height) el.setAttribute("data-explicit", "");
+    }
+
+    const shouldOpen = saved?.isOpen ?? defaultOpen;
+    if (!shouldOpen) el.style.display = "none";
+
+    if (shouldOpen) {
+      // Restore minimized visual state
+      if (saved?.isMinimized) {
+        const inner = el.querySelector<HTMLElement>(".dd-win");
+        if (inner) {
+          inner.style.transformOrigin = "50% 100%";
+          inner.style.transform = "scale(0)";
+        }
+        el.style.pointerEvents = "none";
+      }
+      wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
+      if (saved?.isMinimized) wm.minimize(windowId);
+    }
+
     wm.registerClose(windowId, () => closeRef.current());
     wm.registerOpen(windowId, () => {
       if (!el || !document.contains(el)) return;
       el.style.display = "";
-      // Centre + cascade on the desktop container
-      const container = desktopRef?.current;
-      if (container) {
-        const th = taskbarHeight;
-        const cw = container.offsetWidth;
-        const ch = container.offsetHeight - th;
-        const ww = el.offsetWidth;
-        const wh = el.offsetHeight;
-        const { dx, dy } = wm.getCascadeOffset();
-        el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
-        el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+      const hasSavedPos = !!(saved?.left || saved?.top);
+      if (!hasSavedPos) {
+        const container = desktopRef?.current;
+        if (container) {
+          const th = taskbarHeight;
+          const cw = container.offsetWidth;
+          const ch = container.offsetHeight - th;
+          const ww = el.offsetWidth;
+          const wh = el.offsetHeight;
+          const { dx, dy } = wm.getCascadeOffset();
+          el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
+          el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+        }
       }
       const inner = el.querySelector<HTMLElement>(".dd-win");
       if (inner) {
         inner.getAnimations().forEach((a) => a.cancel());
+        inner.style.transform = "";
+        inner.style.transformOrigin = "";
         animUnminimize(inner);
       }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
       wm.raise(windowId);
+      if (windowIdProp) saveWindowState(windowIdProp, { left: el.style.left, top: el.style.top, width: el.style.getPropertyValue("--ddw-w"), height: el.style.getPropertyValue("--ddw-h"), isOpen: true, isMinimized: false });
     });
     return () => wm.unregister(windowId);
   }, [windowId, title, icon, wm]);
@@ -209,19 +261,34 @@ export function Window({
       wm.minimize(windowId);
       host.style.pointerEvents = "none";
     } else {
+      win.style.transform = "";
+      win.style.transformOrigin = "";
       animUnminimize(win);
       wm.restore(windowId);
       host.style.pointerEvents = "";
     }
     setIsMinimized(next);
     onMinimize?.(next);
-  }, [isMinimized, onMinimize, windowId, wm]);
+    saveState({ isMinimized: next });
+  }, [isMinimized, onMinimize, windowId, wm, saveState]);
 
   toggleRef.current = handleMinimize;
 
   const handleFullscreen = useCallback(() => {
     const host = hostRef.current;
     if (!host) return;
+    // If window is currently snapped, restore to pre-snap position instead of toggling fullscreen
+    if (!isFullscreen && preSnapStateRef.current) {
+      const pre = preSnapStateRef.current;
+      preSnapStateRef.current = null;
+      const fromRect = host.getBoundingClientRect();
+      host.style.left = pre.left;
+      host.style.top = pre.top;
+      host.style.setProperty("--ddw-w", pre.width);
+      host.style.setProperty("--ddw-h", pre.height);
+      animUnsnap(host, fromRect);
+      return;
+    }
     const goingFull = !isFullscreen;
     const defaultFn = () => {
       if (goingFull) {
@@ -248,9 +315,10 @@ export function Window({
     closeAnimation(win, () => {
       host.style.display = "none";
       wm.unregister(windowId);
+      if (windowIdProp) saveWindowState(windowIdProp, { isOpen: false });
       onClose?.();
     });
-  }, [onClose, wm, windowId]);
+  }, [onClose, wm, windowId, windowIdProp]);
 
   closeRef.current = handleClose;
 
@@ -259,14 +327,26 @@ export function Window({
     const header = headerRef.current;
     const host = hostRef.current;
     if (!header || !host || !movable) return;
-    return setupDrag({
+
+    const container = desktopRef?.current ?? null;
+
+    let snapOverlay: HTMLElement | null = null;
+    if (container) {
+      snapOverlay = document.createElement("div");
+      snapOverlay.style.cssText =
+        "position:absolute;pointer-events:none;background:rgba(100,150,255,0.18);border:2px solid rgba(100,150,255,0.45);border-radius:4px;z-index:9998;transition:top 0.08s,left 0.08s,width 0.08s,height 0.08s;display:none;box-sizing:border-box";
+      container.appendChild(snapOverlay);
+    }
+
+    const cleanup = setupDrag({
       handle: header,
       host,
-      container: desktopRef?.current,
+      container,
       reservedBottom: taskbarHeight,
       exclude: ".dd-win-controls",
       disabled: () => isFullscreen && fullscreenMode !== "expand",
       onStart: (hostRect) => {
+        preSnapStateRef.current = null;
         if (!host.hasAttribute("data-explicit")) {
           host.style.setProperty("--ddw-w", `${hostRect.width}px`);
           host.style.setProperty("--ddw-h", `${hostRect.height}px`);
@@ -274,14 +354,50 @@ export function Window({
         }
         const pos = getComputedStyle(host).position;
         if (pos === "static" || pos === "relative") {
-          const containerRect = desktopRef?.current?.getBoundingClientRect();
+          const containerRect = container?.getBoundingClientRect();
           host.style.position = "absolute";
           host.style.left = `${hostRect.left + (window.scrollX || 0) - (containerRect?.left ?? 0)}px`;
           host.style.top = `${hostRect.top + (window.scrollY || 0) - (containerRect?.top ?? 0)}px`;
         }
         raise();
       },
+      onSnap: (zone) => {
+        if (!snapOverlay || !container) return;
+        if (zone === "none") { snapOverlay.style.display = "none"; return; }
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height - taskbarHeight);
+        if (!rect) { snapOverlay.style.display = "none"; return; }
+        snapOverlay.style.display = "block";
+        snapOverlay.style.left = `${rect.left}px`;
+        snapOverlay.style.top = `${rect.top}px`;
+        snapOverlay.style.width = `${rect.width}px`;
+        snapOverlay.style.height = `${rect.height}px`;
+      },
+      onSnapCommit: (zone) => {
+        if (snapOverlay) snapOverlay.style.display = "none";
+        if (!container) return;
+        const cr = container.getBoundingClientRect();
+        const rect = snapRect(zone, cr.width, cr.height - taskbarHeight);
+        if (!rect) return;
+        preSnapStateRef.current = {
+          left: host.style.left,
+          top: host.style.top,
+          width: host.style.getPropertyValue("--ddw-w"),
+          height: host.style.getPropertyValue("--ddw-h"),
+        };
+        host.style.left = `${rect.left}px`;
+        host.style.top = `${rect.top}px`;
+        host.style.setProperty("--ddw-w", `${rect.width}px`);
+        host.style.setProperty("--ddw-h", `${rect.height}px`);
+        host.setAttribute("data-explicit", "");
+      },
+      onEnd: () => saveState(),
     });
+
+    return () => {
+      cleanup();
+      snapOverlay?.remove();
+    };
   }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight]);
 
   // Resize
@@ -293,8 +409,9 @@ export function Window({
       handle,
       host,
       disabled: () => isFullscreen,
+      onEnd: () => saveState(),
     });
-  }, [resizable, isFullscreen]);
+  }, [resizable, isFullscreen, saveState]);
 
   const minSvg = resolveIcon(minimizeIcon);
   const fsSvg = resolveIcon(fullscreenIcon);

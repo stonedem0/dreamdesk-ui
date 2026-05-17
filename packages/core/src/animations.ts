@@ -104,9 +104,29 @@ export function unfullscreen(win: HTMLElement, previousState: PreviousState): vo
   animation.oncancel = applyFinal;
 }
 
-export function close(win: HTMLElement, onfinish?: () => void): void {
+export function unsnap(win: HTMLElement, fromRect: DOMRect): void {
+  cancelRunningAnimations(win);
+  const toRect = win.getBoundingClientRect();
+  const scaleX = fromRect.width / (toRect.width || 1);
+  const scaleY = fromRect.height / (toRect.height || 1);
+  const tx = (fromRect.left + fromRect.width / 2) - (toRect.left + toRect.width / 2);
+  const ty = (fromRect.top + fromRect.height / 2) - (toRect.top + toRect.height / 2);
   win.animate(
+    [
+      { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
+      { transform: 'none' },
+    ],
+    { duration: 300, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+  );
+}
+
+export function close(win: HTMLElement, onfinish?: () => void): void {
+  const anim = win.animate(
     [{ opacity: '1', transform: 'scale(1)' }, { opacity: '0', transform: 'scale(0.95)' }],
     { duration: 300, easing: 'ease', fill: 'forwards' }
-  ).onfinish = () => onfinish?.();
+  );
+  anim.onfinish = () => {
+    anim.cancel(); // clear fill effect so re-opening the window works correctly
+    onfinish?.();
+  };
 }
