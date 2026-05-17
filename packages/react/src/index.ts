@@ -33,3 +33,6 @@ export type { TerminalWindowProps } from "./components/TerminalWindow";
 
 export { BrowserWindow, BrowserErrorPage } from "./components/BrowserWindow";
 export type { BrowserWindowProps, BrowserErrorPageProps } from "./components/BrowserWindow";
+
+export { Dialog, DialogProvider, useDialog } from "./components/Dialog";
+export type { DialogProps, DialogAction, DialogAPI } from "./components/Dialog";

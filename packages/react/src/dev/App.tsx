@@ -10,6 +10,7 @@ import { Input } from "../components/Input";
 import { Toast } from "../components/Toast";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { Desktop, useWindowManager } from "../components/Desktop";
+import { DialogProvider, useDialog } from "../components/Dialog";
 import { Taskbar } from "../components/Taskbar";
 import { DesktopIcon } from "../components/DesktopIcon";
 
@@ -120,6 +121,17 @@ function ThemeToggle() {
 
 // ── App registrar + desktop icons ─────────────────────────────────────────────
 
+function DialogDemo() {
+  const dialog = useDialog();
+  return (
+    <div style={{ position: "absolute", bottom: "48px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "0.5rem" }}>
+      <button onClick={() => dialog.alert("File saved successfully!")}>Alert</button>
+      <button onClick={async () => { const ok = await dialog.confirm("Delete this file?"); console.log("confirm:", ok); }}>Confirm</button>
+      <button onClick={async () => { const val = await dialog.prompt("Enter new name:", { defaultValue: "file.txt" }); console.log("prompt:", val); }}>Prompt</button>
+    </div>
+  );
+}
+
 function WindowShortcuts() {
   const wm = useWindowManager();
   const focus = (id: string) => wm.open(id);
@@ -152,6 +164,7 @@ export default function App() {
 
   return (
     <ThemeProvider defaultTheme="pastelcore">
+      <DialogProvider>
       <Desktop style={{ width: "100vw", height: "100vh" }}>
 
         <WindowShortcuts />
@@ -228,8 +241,10 @@ export default function App() {
         {/* Browser — center */}
         <BrowserWindowDemo />
 
+        <DialogDemo />
         <Taskbar />
       </Desktop>
+      </DialogProvider>
     </ThemeProvider>
   );
 }

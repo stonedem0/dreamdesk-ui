@@ -1,0 +1,59 @@
+.dd-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--dd-dialog-backdrop, rgba(0, 0, 0, 0.35));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.dd-dialog {
+  position: relative;
+  inline-size: clamp(200px, 90vw, 22rem);
+  block-size: auto;
+  pointer-events: auto;
+}
+
+.dd-dialog--md { inline-size: clamp(200px, 90vw, 30rem); }
+.dd-dialog--lg { inline-size: clamp(200px, 90vw, 42rem); }
+
+@keyframes dd-dialog-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes dd-dialog-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
+.dd-dialog .dd-win {
+  animation: dd-dialog-in 0.15s cubic-bezier(0.2, 0, 0, 1);
+  height: auto;
+}
+
+.dd-dialog--closing .dd-win {
+  animation: dd-dialog-out 0.25s ease forwards;
+}
+
+.dd-dialog-message {
+  margin: 0;
+  padding: 0.75rem 0.5rem 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dd-dialog-prompt-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  box-sizing: border-box;
+}
+
+.dd-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  padding: 0.5rem 0.5rem 0.6rem;
+}
