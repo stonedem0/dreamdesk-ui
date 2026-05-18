@@ -37,5 +37,8 @@ export type { BrowserWindowProps, BrowserErrorPageProps } from "./components/Bro
 export { ContextMenu, useContextMenu } from "./components/ContextMenu";
 export type { ContextMenuItem, ContextMenuProps } from "./components/ContextMenu";
 
+export { MenuBar, Menu, MenuItem, MenuSeparator } from "./components/MenuBar";
+export type { MenuBarProps, MenuProps, MenuItemProps } from "./components/MenuBar";
+
 export { Dialog, DialogProvider, useDialog } from "./components/Dialog";
 export type { DialogProps, DialogAction, DialogAPI } from "./components/Dialog";
