@@ -1,0 +1,61 @@
+.dd-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px 4px;
+  background: var(--dd-toolbar-bg, var(--color-surface, #d4d0c8));
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* ── Button ── */
+.dd-toolbar-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 2px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  gap: 1px;
+}
+
+.dd-toolbar-btn:hover:not(.dd-toolbar-btn--disabled) {
+  border-color: var(--dd-border-color, #000);
+  background: var(--color-surface-hover, #e8e8e8);
+}
+
+.dd-toolbar-btn--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.dd-toolbar-btn--active {
+  border-color: var(--dd-border-color, #000);
+  background: var(--color-surface-hover, #e8e8e8);
+}
+
+.dd-toolbar-btn-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--color-text, #000);
+}
+
+.dd-toolbar-btn-label {
+  font-size: 0.68rem;
+  white-space: nowrap;
+  color: var(--color-text, #000);
+}
+
+/* ── Separator ── */
+.dd-toolbar-sep {
+  width: 1px;
+  height: 36px;
+  background: var(--dd-border-color, #000);
+  margin: 0 3px;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
