@@ -1,0 +1,30 @@
+.dd-statusbar {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: var(--dd-statusbar-bg, var(--color-surface, #d4d0c8));
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  height: 22px;
+  box-sizing: border-box;
+}
+
+.dd-statusbar-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+.dd-statusbar-section + .dd-statusbar-section {
+  border-left: var(--dd-border, 1px solid #000);
+  padding-left: 8px;
+  margin-left: 4px;
+}
+
+.dd-statusbar-section--flex {
+  flex: 1;
+}

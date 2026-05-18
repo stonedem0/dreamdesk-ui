@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Window, type WindowProps } from "./Window";
-import { Icon } from "./Icon";
+import { Toolbar, ToolbarButton, ToolbarSeparator } from "./Toolbar";
+import { StatusBar, StatusBarSection } from "./StatusBar";
 import "./BrowserWindow.css";
 
 export interface BrowserWindowProps extends Omit<WindowProps, "children" | "scrollContent" | "bodyOverflow"> {
@@ -23,20 +24,6 @@ export interface BrowserWindowProps extends Omit<WindowProps, "children" | "scro
   homeIcon?: string;
   historyIcon?: string;
   children?: ReactNode;
-}
-
-interface ToolbarBtn {
-  id: string;
-  label?: string;
-  icon?: string;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-
-function ToolbarIcon({ src }: { src: string }) {
-  const isImage = src.startsWith("/") || src.startsWith("http") || src.startsWith("<svg");
-  if (isImage) return <Icon src={src} size={20} />;
-  return <>{src}</>;
 }
 
 export function BrowserWindow({
@@ -89,17 +76,6 @@ export function BrowserWindow({
     if (e.key === "Enter") handleGo();
   };
 
-  const toolbarButtons: (ToolbarBtn | "sep")[] = [
-    { id: "back",    label: "Back",    icon: backIcon,    disabled: !canGoBack,    onClick: onBack },
-    { id: "forward", label: "Forward", icon: forwardIcon, disabled: !canGoForward, onClick: onForward },
-    "sep",
-    { id: "stop",    label: "Stop",    icon: stopIcon,               onClick: onStop },
-    { id: "refresh", label: "Refresh", icon: refreshIcon,            onClick: onRefresh },
-    { id: "home",    label: "Home",    icon: homeIcon,               onClick: onHome },
-    "sep",
-    { id: "history", label: "History", icon: historyIcon, onClick: () => setShowHistory(v => !v) },
-  ];
-
   return (
     <Window
       {...windowProps}
@@ -108,23 +84,15 @@ export function BrowserWindow({
     >
       <div className="dd-browser">
         {/* Toolbar row */}
-        <div className="dd-browser-toolbar">
-          {toolbarButtons.map((btn, i) =>
-            btn === "sep" ? (
-              <div key={`sep-${i}`} className="dd-browser-sep" />
-            ) : (
-              <button
-                key={btn.id}
-                className={["dd-browser-btn", btn.disabled ? "dd-browser-btn--disabled" : ""].filter(Boolean).join(" ")}
-                onClick={btn.disabled ? undefined : btn.onClick}
-                tabIndex={btn.disabled ? -1 : undefined}
-                aria-disabled={btn.disabled}
-              >
-                <span className="dd-browser-btn-icon">{btn.icon && <ToolbarIcon src={btn.icon} />}</span>
-                <span className="dd-browser-btn-label">{btn.label}</span>
-              </button>
-            )
-          )}
+        <Toolbar className="dd-browser-toolbar">
+          <ToolbarButton icon={backIcon}    label="Back"    disabled={!canGoBack}    onClick={onBack} />
+          <ToolbarButton icon={forwardIcon} label="Forward" disabled={!canGoForward} onClick={onForward} />
+          <ToolbarSeparator />
+          <ToolbarButton icon={stopIcon}    label="Stop"    onClick={onStop} />
+          <ToolbarButton icon={refreshIcon} label="Refresh" onClick={onRefresh} />
+          <ToolbarButton icon={homeIcon}    label="Home"    onClick={onHome} />
+          <ToolbarSeparator />
+          <ToolbarButton icon={historyIcon} label="History" active={showHistory} onClick={() => setShowHistory(v => !v)} />
 
           {/* History dropdown */}
           {showHistory && history.length > 0 && (
@@ -140,7 +108,7 @@ export function BrowserWindow({
               ))}
             </div>
           )}
-        </div>
+        </Toolbar>
 
         {/* Address bar row */}
         <div className="dd-browser-addressbar">
@@ -163,13 +131,10 @@ export function BrowserWindow({
         <div className="dd-browser-content dd-scrollable dd-scrollable--fill">{children}</div>
 
         {/* Status bar */}
-        <div className="dd-browser-statusbar">
-          <span className="dd-browser-status-text">{status}</span>
-          <div className="dd-browser-status-zone">
-            <span className="dd-browser-status-zone-icon">🌐</span>
-            <span>Internet</span>
-          </div>
-        </div>
+        <StatusBar className="dd-browser-statusbar">
+          <StatusBarSection flex>{status}</StatusBarSection>
+          <StatusBarSection><span className="dd-browser-status-zone-icon">🌐</span> Internet</StatusBarSection>
+        </StatusBar>
       </div>
     </Window>
   );
