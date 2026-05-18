@@ -49,6 +49,12 @@ export type { StatusBarProps, StatusBarSectionProps } from "./components/StatusB
 export { Dialog, DialogProvider, useDialog } from "./components/Dialog";
 export type { DialogProps, DialogAction, DialogAPI } from "./components/Dialog";
 
+export { TreeView } from "./components/TreeView";
+export type { TreeViewProps, TreeNode } from "./components/TreeView";
+
+export { ListView } from "./components/ListView";
+export type { ListViewProps, ListViewItem, ListViewMode } from "./components/ListView";
+
 export { Checkbox } from "./components/Checkbox";
 export type { CheckboxProps } from "./components/Checkbox";
 

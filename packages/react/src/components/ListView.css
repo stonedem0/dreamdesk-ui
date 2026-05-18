@@ -1,0 +1,112 @@
+.dd-listview {
+  font-size: 0.82rem;
+  user-select: none;
+  outline: none;
+  overflow: auto;
+}
+
+/* ── Icons mode ── */
+.dd-listview--icons {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dd-listview-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 72px;
+  padding: 4px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dd-listview-icon-item:hover {
+  background: var(--dd-list-hover-bg, rgba(0, 0, 0, 0.06));
+}
+
+.dd-listview-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dd-listview-icon-label {
+  margin-top: 3px;
+  text-align: center;
+  word-break: break-word;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  max-width: 100%;
+}
+
+/* ── Details mode ── */
+.dd-listview--details {
+  width: 100%;
+}
+
+.dd-listview-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.dd-listview-th {
+  text-align: left;
+  padding: 2px 6px;
+  background: var(--color-surface, #d4d0c8);
+  border-right: 1px solid var(--dd-border-color, #999);
+  border-bottom: 1px solid var(--dd-border-color, #999);
+  font-weight: normal;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.dd-listview-th:hover {
+  background: var(--color-surface-hover, #e0dcd4);
+}
+
+.dd-listview-th--name {
+  width: 45%;
+}
+
+.dd-listview-sort-arrow {
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+.dd-listview-row {
+  cursor: pointer;
+}
+
+.dd-listview-row:hover {
+  background: var(--dd-list-hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.dd-listview-td {
+  padding: 1px 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.dd-listview-td--name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Shared selection ── */
+.dd-listview-item--selected,
+.dd-listview-item--selected:hover {
+  background: var(--dd-list-selected-bg, var(--color-active, #000080)) !important;
+  color: var(--dd-list-selected-fg, #fff);
+}

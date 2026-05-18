@@ -13,6 +13,8 @@ import { DialogProvider, useDialog } from "../components/Dialog";
 import { Taskbar } from "../components/Taskbar";
 import { DesktopIcon } from "../components/DesktopIcon";
 import { MenuBar, Menu, MenuItem, MenuSeparator } from "../components/MenuBar";
+import { TreeView, type TreeNode } from "../components/TreeView";
+import { ListView, type ListViewItem } from "../components/ListView";
 import { Checkbox } from "../components/Checkbox";
 import { Radio, RadioGroup } from "../components/Radio";
 import { Select } from "../components/Select";
@@ -146,6 +148,135 @@ function WindowShortcuts() {
       <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => focus("terminal")} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
       <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
+      <DesktopIcon label="Explorer" icon="/icons/folder.png" onClick={() => focus("explorer")} />
+    </div>
+  );
+}
+
+// ── Explorer demo ─────────────────────────────────────────────────────────────
+
+const TREE_NODES: TreeNode[] = [
+  { id: "desktop", label: "Desktop", icon: "🖥️", children: [
+    { id: "shortcut1", label: "My Computer", icon: "💻" },
+    { id: "shortcut2", label: "Recycle Bin", icon: "🗑️" },
+  ]},
+  { id: "docs", label: "My Documents", icon: "📁", children: [
+    { id: "work", label: "Work", icon: "📁", children: [
+      { id: "report", label: "report.doc", icon: "📄" },
+      { id: "budget", label: "budget.xls", icon: "📊" },
+    ]},
+    { id: "readme",  label: "readme.txt",  icon: "📄" },
+    { id: "photo",   label: "photo.png",   icon: "🖼️" },
+    { id: "music",   label: "music.mp3",   icon: "🎵" },
+  ]},
+  { id: "downloads", label: "Downloads", icon: "📁", children: [
+    { id: "setup",   label: "setup.exe",   icon: "⚙️" },
+    { id: "archive", label: "archive.zip", icon: "📦" },
+  ]},
+];
+
+const FILE_META: Record<string, Partial<ListViewItem>> = {
+  shortcut1: { type: "Shortcut" },
+  shortcut2: { type: "Shortcut" },
+  work:      { type: "File Folder",   date: "5/10/2026" },
+  readme:    { type: "Text Document", size: "2 KB",   date: "5/12/2026" },
+  photo:     { type: "PNG Image",     size: "1.2 MB", date: "5/14/2026" },
+  music:     { type: "MP3 Audio",     size: "4.8 MB", date: "5/1/2026"  },
+  setup:     { type: "Application",   size: "3.4 MB", date: "4/20/2026" },
+  archive:   { type: "ZIP Archive",   size: "18 MB",  date: "4/28/2026" },
+  report:    { type: "Word Document", size: "48 KB",  date: "5/8/2026"  },
+  budget:    { type: "Spreadsheet",   size: "12 KB",  date: "5/9/2026"  },
+};
+
+function findNode(nodes: TreeNode[], id: string): TreeNode | null {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    if (n.children) { const f = findNode(n.children, id); if (f) return f; }
+  }
+  return null;
+}
+
+function getPath(nodes: TreeNode[], id: string, path: TreeNode[] = []): TreeNode[] | null {
+  for (const n of nodes) {
+    const next = [...path, n];
+    if (n.id === id) return next;
+    if (n.children) { const f = getPath(n.children, id, next); if (f) return f; }
+  }
+  return null;
+}
+
+function nodeToListItem(n: TreeNode): ListViewItem {
+  return { id: n.id, name: n.label, icon: n.icon, ...FILE_META[n.id] };
+}
+
+function ExplorerDemo() {
+  const [selectedTree, setSelectedTree] = useState<string>("docs");
+  const [selectedList, setSelectedList] = useState<string[]>([]);
+  const [listMode, setListMode] = useState<"icons" | "details">("details");
+
+  const node = findNode(TREE_NODES, selectedTree);
+  const listItems: ListViewItem[] = node?.children?.map(nodeToListItem) ?? [];
+  const path = getPath(TREE_NODES, selectedTree) ?? [];
+
+  const handleTreeSelect = (id: string) => {
+    setSelectedTree(id);
+    setSelectedList([]);
+  };
+
+  const handleListOpen = (id: string) => {
+    const target = findNode(TREE_NODES, id);
+    if (target?.children) handleTreeSelect(id);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+      {/* Path bar */}
+      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
+        <span style={{ opacity: 0.6, marginRight: "2px" }}>Address:</span>
+        {path.map((n, i) => (
+          <span key={n.id} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            {i > 0 && <span style={{ opacity: 0.4 }}>›</span>}
+            <button
+              onClick={() => handleTreeSelect(n.id)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "0 2px", font: "inherit", fontSize: "0.78rem", color: "var(--color-text, #000)" }}
+            >
+              {n.label}
+            </button>
+          </span>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* Tree panel */}
+        <div style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #999)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #999)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
+          <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
+          <TreeView
+            nodes={TREE_NODES}
+            selected={selectedTree}
+            defaultExpanded={["docs", "downloads"]}
+            onSelect={handleTreeSelect}
+          />
+          </div>
+        </div>
+
+        {/* List panel */}
+        <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", gap: "4px", padding: "3px 4px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
+            <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Details</button>
+            <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Icons</button>
+          </div>
+          <ListView
+            items={listItems}
+            mode={listMode}
+            selected={selectedList}
+            multiSelect
+            onSelect={setSelectedList}
+            onOpen={handleListOpen}
+            style={{ flex: 1 }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -277,6 +408,14 @@ export default function App() {
           <p>$ hello world</p>
           <p>$ _</p>
         </TerminalWindow>
+
+        {/* Explorer — center */}
+        <Window windowId="explorer" title="My Documents" width="600px" height="400px" defaultOpen={false}
+          style={{ top: "80px", left: "calc(50vw - 300px)" }}
+          icon="/icons/folder.png"
+          bodyOverflow="hidden">
+          <ExplorerDemo />
+        </Window>
 
         {/* Browser — center */}
         <BrowserWindowDemo />
