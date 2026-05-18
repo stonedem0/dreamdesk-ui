@@ -1,0 +1,74 @@
+.dd-context-menu {
+  position: fixed;
+  left: var(--dd-cm-x);
+  top: var(--dd-cm-y);
+  z-index: 11000;
+  min-width: 10rem;
+  background: var(--dd-cm-bg, var(--color-window-body, #fff));
+  border: var(--dd-cm-border, var(--color-window-border, var(--border)));
+  box-shadow: var(--dd-cm-shadow, 2px 2px 0 rgba(0,0,0,0.18));
+  padding: 0.15rem 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+@keyframes dd-cm-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dd-context-menu {
+  animation: dd-cm-in 0.1s ease;
+}
+
+.dd-cm-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.2rem 0.75rem 0.2rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--dd-cm-fg, var(--color-text, inherit));
+  text-align: left;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.dd-cm-item:hover:not(:disabled) {
+  background: var(--dd-cm-item-hover-bg, var(--color-window-header, #c0e0ff));
+  color: var(--dd-cm-item-hover-fg, inherit);
+}
+
+.dd-cm-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.dd-cm-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.dd-cm-label {
+  flex: 1;
+}
+
+.dd-cm-shortcut {
+  margin-left: 1.5rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.dd-cm-separator {
+  height: 1px;
+  margin: 0.15rem 0;
+  background: var(--dd-cm-separator, var(--color-window-border, var(--border, #ccc)));
+}

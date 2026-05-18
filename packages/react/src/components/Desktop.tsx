@@ -12,6 +12,7 @@ import {
 } from "react";
 import { WindowManager, defaultWindowManager, AppDef } from "@dreamdesk/core";
 import { Window } from "./Window";
+import { useContextMenu, type ContextMenuItem } from "./ContextMenu";
 import "./Desktop.css";
 
 const TASKBAR_H_DEFAULT = 36;
@@ -46,11 +47,13 @@ export interface DesktopProps {
   className?: string;
   style?: CSSProperties;
   taskbarHeight?: number;
+  contextMenuItems?: ContextMenuItem[];
 }
 
-export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_DEFAULT }: DesktopProps) {
+export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_DEFAULT, contextMenuItems = [] }: DesktopProps) {
   const wm = useMemo(() => new WindowManager(), []);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { onContextMenu, contextMenu } = useContextMenu(contextMenuItems);
   const appRegistry = useRef(new Map<string, ReactAppDef>());
   const [launchedApps, setLaunchedApps] = useState<LaunchedApp[]>([]);
   const cascadeCount = useRef(0);
@@ -84,8 +87,10 @@ export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_
           "--dd-taskbar-h": `${taskbarHeight}px`,
           ...style,
         } as CSSProperties}
+        onContextMenu={onContextMenu}
       >
         {children}
+        {contextMenu}
         {launchedApps.map(({ instanceId, def, top, left }) => (
           <Window
             key={instanceId}
