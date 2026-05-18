@@ -15,6 +15,10 @@ import { DesktopIcon } from "../components/DesktopIcon";
 import { MenuBar, Menu, MenuItem, MenuSeparator } from "../components/MenuBar";
 import { TreeView, type TreeNode } from "../components/TreeView";
 import { ListView, type ListViewItem } from "../components/ListView";
+import { Checkbox } from "../components/Checkbox";
+import { Radio, RadioGroup } from "../components/Radio";
+import { Select } from "../components/Select";
+import { Slider } from "../components/Slider";
 
 // ── Browser demo ─────────────────────────────────────────────────────────────
 
@@ -369,6 +373,31 @@ export default function App() {
               <Toast type="notification" message="This is a notification." />
               <Toast type="warning" message="This is a warning." />
             </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <Checkbox label="Enable notifications" defaultChecked />
+              <Checkbox label="Show in taskbar" />
+              <Checkbox label="Indeterminate state" indeterminate />
+              <Checkbox label="Disabled" disabled />
+            </div>
+            <RadioGroup value="b" onChange={() => {}}>
+              <Radio value="a" label="Option A" />
+              <Radio value="b" label="Option B" />
+              <Radio value="c" label="Option C" />
+              <Radio value="d" label="Disabled" disabled />
+            </RadioGroup>
+            <Select
+              options={[
+                { value: "xp", label: "Windows XP" },
+                { value: "98", label: "Windows 98" },
+                { value: "vista", label: "Windows Vista" },
+                { value: "7", label: "Windows 7" },
+              ]}
+              defaultValue="xp"
+              label="Theme:"
+              layout="inline"
+            />
+            <Slider label="Volume:" defaultValue={60} showValue />
+            <Slider label="Brightness:" defaultValue={80} showValue />
           </div>
         </Window>
 

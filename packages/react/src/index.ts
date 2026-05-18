@@ -40,6 +40,12 @@ export type { ContextMenuItem, ContextMenuProps } from "./components/ContextMenu
 export { MenuBar, Menu, MenuItem, MenuSeparator } from "./components/MenuBar";
 export type { MenuBarProps, MenuProps, MenuItemProps } from "./components/MenuBar";
 
+export { Toolbar, ToolbarButton, ToolbarSeparator } from "./components/Toolbar";
+export type { ToolbarProps, ToolbarButtonProps } from "./components/Toolbar";
+
+export { StatusBar, StatusBarSection } from "./components/StatusBar";
+export type { StatusBarProps, StatusBarSectionProps } from "./components/StatusBar";
+
 export { Dialog, DialogProvider, useDialog } from "./components/Dialog";
 export type { DialogProps, DialogAction, DialogAPI } from "./components/Dialog";
 
@@ -48,3 +54,15 @@ export type { TreeViewProps, TreeNode } from "./components/TreeView";
 
 export { ListView } from "./components/ListView";
 export type { ListViewProps, ListViewItem, ListViewMode } from "./components/ListView";
+
+export { Checkbox } from "./components/Checkbox";
+export type { CheckboxProps } from "./components/Checkbox";
+
+export { Radio, RadioGroup } from "./components/Radio";
+export type { RadioProps, RadioGroupProps } from "./components/Radio";
+
+export { Select } from "./components/Select";
+export type { SelectProps, SelectOption } from "./components/Select";
+
+export { Slider } from "./components/Slider";
+export type { SliderProps } from "./components/Slider";
