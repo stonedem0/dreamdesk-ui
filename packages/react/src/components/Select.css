@@ -1,0 +1,84 @@
+.dd-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+}
+
+.dd-select-container--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dd-select-container--disabled {
+  opacity: 0.5;
+}
+
+.dd-select-label {
+  font-size: 0.875rem;
+  color: var(--color-text, inherit);
+  white-space: nowrap;
+}
+
+/* ── Wrapper to position the arrow ── */
+.dd-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dd-select-container--inline .dd-select-wrap {
+  flex: 1;
+}
+
+/* ── Native select, styled retro ── */
+.dd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 2px 20px 2px 4px;
+  background: var(--dd-select-bg, #fff);
+  border-top: 1px solid var(--dd-select-shadow, #808080);
+  border-left: 1px solid var(--dd-select-shadow, #808080);
+  border-bottom: 1px solid var(--dd-select-highlight, #dfdfdf);
+  border-right: 1px solid var(--dd-select-highlight, #dfdfdf);
+  box-shadow: inset 1px 1px 0 var(--dd-select-inner-shadow, #404040);
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--color-text, inherit);
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.dd-select:focus-visible {
+  outline: 1px dotted var(--color-text, #000);
+  outline-offset: -2px;
+}
+
+.dd-select:disabled {
+  cursor: default;
+  background: var(--color-surface, #d4d0c8);
+}
+
+/* ── Dropdown arrow ── */
+.dd-select-arrow {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface, #d4d0c8);
+  border-top: 1px solid var(--dd-select-highlight, #dfdfdf);
+  border-right: 1px solid var(--dd-select-highlight, #dfdfdf);
+  border-bottom: 1px solid var(--dd-select-shadow, #808080);
+  border-left: 1px solid var(--dd-select-shadow, #808080);
+  font-size: 0.6rem;
+  pointer-events: none;
+  color: var(--color-text, #000);
+  box-sizing: border-box;
+}

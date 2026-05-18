@@ -1,0 +1,97 @@
+.dd-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.dd-slider-container--disabled {
+  opacity: 0.5;
+}
+
+.dd-slider-label {
+  font-size: 0.875rem;
+  color: var(--color-text, inherit);
+}
+
+.dd-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Range input ── */
+.dd-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  margin: 0;
+}
+
+.dd-slider-container--disabled .dd-slider {
+  cursor: default;
+}
+
+/* Track */
+.dd-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: var(--dd-slider-track-bg, #fff);
+  border-top: 1px solid var(--dd-slider-shadow, #808080);
+  border-left: 1px solid var(--dd-slider-shadow, #808080);
+  border-bottom: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-right: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  box-shadow: inset 1px 1px 0 var(--dd-slider-inner-shadow, #404040);
+}
+
+.dd-slider::-moz-range-track {
+  height: 4px;
+  background: var(--dd-slider-track-bg, #fff);
+  border-top: 1px solid var(--dd-slider-shadow, #808080);
+  border-left: 1px solid var(--dd-slider-shadow, #808080);
+  border-bottom: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-right: 1px solid var(--dd-slider-highlight, #dfdfdf);
+}
+
+/* Thumb */
+.dd-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 20px;
+  margin-top: -9px;
+  background: var(--color-surface, #d4d0c8);
+  border-top: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-left: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-bottom: 1px solid var(--dd-slider-shadow, #808080);
+  border-right: 1px solid var(--dd-slider-shadow, #808080);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dd-slider::-moz-range-thumb {
+  width: 11px;
+  height: 20px;
+  border-radius: 0;
+  background: var(--color-surface, #d4d0c8);
+  border-top: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-left: 1px solid var(--dd-slider-highlight, #dfdfdf);
+  border-bottom: 1px solid var(--dd-slider-shadow, #808080);
+  border-right: 1px solid var(--dd-slider-shadow, #808080);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dd-slider:focus-visible {
+  outline: 1px dotted var(--color-text, #000);
+}
+
+/* ── Value display ── */
+.dd-slider-value {
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  text-align: right;
+  color: var(--color-text, inherit);
+}
