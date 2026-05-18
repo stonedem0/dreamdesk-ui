@@ -165,7 +165,12 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="pastelcore">
       <DialogProvider>
-      <Desktop style={{ width: "100vw", height: "100vh" }}>
+      <Desktop style={{ width: "100vw", height: "100vh" }} contextMenuItems={[
+          { label: "Refresh", shortcut: "F5", onClick: () => window.location.reload() },
+          { type: "separator" },
+          { label: "Arrange Icons", disabled: true, onClick: () => {} },
+          { label: "Properties", disabled: true, onClick: () => {} },
+        ]}>
 
         <WindowShortcuts />
 
