@@ -1,0 +1,130 @@
+.dd-treeview {
+  font-size: 0.82rem;
+  user-select: none;
+  outline: none;
+}
+
+/* ── Node row ── */
+.dd-tree-node {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  outline: none;
+  box-sizing: border-box;
+  padding-right: 4px;
+}
+
+.dd-tree-node:hover {
+  background: var(--dd-tree-hover-bg, rgba(0, 0, 0, 0.06));
+}
+
+.dd-tree-node--selected {
+  background: var(--dd-tree-selected-bg, var(--color-active, #000080));
+  color: var(--dd-tree-selected-fg, #fff);
+}
+
+.dd-tree-node--selected:hover {
+  background: var(--dd-tree-selected-bg, var(--color-active, #000080));
+}
+
+/* ── Indent guides (vertical lines for ancestor depths) ── */
+.dd-tree-indent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 20px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Vertical dotted line running through the full height of the indent */
+.dd-tree-indent::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dotted var(--dd-tree-line-color, #808080);
+}
+
+/* ── Connector (last segment before icon: horizontal line + expander) ── */
+.dd-tree-connector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 20px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Vertical line continuing down (for non-last siblings) */
+.dd-tree-connector::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dotted var(--dd-tree-line-color, #808080);
+}
+
+/* Vertical line only goes to center for last sibling */
+.dd-tree-connector--last::before {
+  bottom: 50%;
+}
+
+/* Horizontal line from vertical trunk to node */
+.dd-tree-connector::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 9px;
+  border-top: 1px dotted var(--dd-tree-line-color, #808080);
+}
+
+/* Root nodes: no connector lines */
+.dd-treeview > .dd-tree-subtree > .dd-tree-node .dd-tree-connector::before,
+.dd-treeview > .dd-tree-subtree > .dd-tree-node .dd-tree-connector::after {
+  display: none;
+}
+
+/* ── [+]/[-] expander box ── */
+.dd-tree-expander {
+  position: relative;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--dd-tree-line-color, #808080);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  color: #000;
+  font-family: monospace;
+}
+
+/* ── Icon ── */
+.dd-tree-node-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+  margin-right: 3px;
+}
+
+/* ── Label ── */
+.dd-tree-node-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
