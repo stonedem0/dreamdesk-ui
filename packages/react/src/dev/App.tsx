@@ -20,6 +20,129 @@ import { Radio, RadioGroup } from "../components/Radio";
 import { Select } from "../components/Select";
 import { Slider } from "../components/Slider";
 import { useContextMenu } from "../components/ContextMenu";
+import { OSProvider, useOS, type AppDef, type ProcessArgs } from "@dreamdesk/os";
+
+// ── Notepad app ───────────────────────────────────────────────────────────────
+
+function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
+  const { fs, pm } = useOS();
+  const filePath = args.filePath ?? "";
+  const [content, setContent] = useState(() => {
+    try { return fs.readFile(filePath); } catch { return ""; }
+  });
+  const [dirty, setDirty] = useState(false);
+
+  const save = () => {
+    if (filePath) { fs.writeFile(filePath, content); setDirty(false); }
+  };
+
+  const fileName = filePath.split("/").pop() ?? "Untitled";
+
+  return (
+    <Window
+      windowId={pid}
+      title={`${dirty ? "* " : ""}${fileName} — Notepad`}
+      icon="/icons/notepad.png"
+      width="480px"
+      height="320px"
+      scrollContent
+      defaultOpen
+      onClose={() => pm.kill(pid)}
+    >
+      <MenuBar>
+        <Menu label="File">
+          <MenuItem shortcut="Ctrl+S" onClick={save}>Save</MenuItem>
+          <MenuSeparator />
+          <MenuItem onClick={() => pm.kill(pid)}>Exit</MenuItem>
+        </Menu>
+      </MenuBar>
+      <textarea
+        className="dd-scrollable dd-scrollable--fill"
+        value={content}
+        onChange={e => { setContent(e.target.value); setDirty(true); }}
+        spellCheck={false}
+        style={{ width: "100%", flex: 1, border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-window-body, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box" }}
+      />
+    </Window>
+  );
+}
+
+// ── Open With dialog ──────────────────────────────────────────────────────────
+
+function OpenWithDialog({ pid, args }: { pid: string; args: ProcessArgs }) {
+  const { pm, apps, openWith } = useOS();
+  const filePath = args.filePath ?? "";
+  const fileName = filePath.split("/").pop() ?? filePath;
+  const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
+
+  const available = Object.entries(apps)
+    .filter(([id, def]) => id !== "openwith" && (def.extensions?.includes(ext) ?? false))
+    .map(([appId, def]) => ({ appId, def }));
+
+  const allApps = Object.entries(apps)
+    .filter(([id]) => id !== "openwith")
+    .map(([appId, def]) => ({ appId, def }));
+
+  const listed = available.length > 0 ? available : allApps;
+  const [chosen, setChosen] = useState<string | null>(listed[0]?.appId ?? null);
+
+  const launch = (appId: string) => { openWith(appId, { filePath }); pm.kill(pid); };
+
+  return (
+    <Window
+      windowId={pid}
+      title="Open With"
+      icon="/icons/tools.png"
+      width="320px"
+      height="260px"
+      resizable={false}
+      defaultOpen
+      onClose={() => pm.kill(pid)}
+    >
+      <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", height: "100%", boxSizing: "border-box" }}>
+        <div style={{ fontSize: "0.8rem" }}>
+          Choose the program to open <strong>{fileName}</strong>:
+        </div>
+        <div style={{ flex: 1, border: "2px inset var(--dd-border-shadow, #888)", background: "var(--color-window-body, #fff)", overflow: "auto" }}>
+          {listed.map(({ appId, def }) => (
+            <div
+              key={appId}
+              onClick={() => setChosen(appId)}
+              onDoubleClick={() => launch(appId)}
+              style={{
+                display: "flex", alignItems: "center", gap: "8px",
+                padding: "3px 8px", cursor: "default", fontSize: "0.82rem", userSelect: "none",
+                background: chosen === appId ? "var(--color-selection, #0078d7)" : "none",
+                color: chosen === appId ? "#fff" : "inherit",
+              }}
+            >
+              {def.icon && <img src={def.icon} alt="" width={16} height={16} style={{ imageRendering: "pixelated" }} />}
+              {def.title}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: "4px", justifyContent: "flex-end" }}>
+          <Button variant="primary" onClick={() => { if (chosen) launch(chosen); }}>OK</Button>
+          <Button variant="ghost" onClick={() => pm.kill(pid)}>Cancel</Button>
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+const OS_APPS: Record<string, AppDef> = {
+  notepad: {
+    component: NotepadApp,
+    title: "Notepad",
+    icon: "/icons/notepad.png",
+    extensions: ["txt", "doc", "md"],
+  },
+  openwith: {
+    component: OpenWithDialog,
+    title: "Open With",
+    icon: "/icons/tools.png",
+  },
+};
 
 // ── Browser demo ─────────────────────────────────────────────────────────────
 
@@ -249,6 +372,7 @@ function ExplorerDemo() {
   const [listMode, setListMode] = useState<"icons" | "details">("details");
   const [, setTick] = useState(0);
   const dialog = useDialog();
+  const os = useOS();
 
   useEffect(() => demoFS.watch("/", () => setTick(t => t + 1)), []);
 
@@ -259,7 +383,11 @@ function ExplorerDemo() {
 
   const handleTreeSelect = (id: string) => { setSelectedPath(id); setSelectedList([]); };
   const handleListOpen = (id: string) => {
-    if (demoFS.exists(id) && demoFS.stat(id).kind === "dir") handleTreeSelect(id);
+    if (!demoFS.exists(id)) return;
+    const stat = demoFS.stat(id);
+    if (stat.kind === "dir") { handleTreeSelect(id); return; }
+    const pid = os.open(id);
+    if (!pid) os.openWith("openwith", { filePath: id });
   };
 
   const newFolder = async () => {
@@ -282,10 +410,20 @@ function ExplorerDemo() {
     setSelectedList([]);
   };
 
+  const singleFile = selectedList.length === 1 &&
+    demoFS.exists(selectedList[0]) &&
+    demoFS.stat(selectedList[0]).kind === "file";
+
+  const openWithSelected = () => {
+    if (!singleFile) return;
+    os.openWith("openwith", { filePath: selectedList[0] });
+  };
+
   const { onContextMenu: onListContext, contextMenu: listContextMenu } = useContextMenu([
     { label: "New Folder",         onClick: newFolder },
     { label: "New Text Document",  onClick: newFile },
     { type: "separator" },
+    { label: "Open with…", disabled: !singleFile, onClick: openWithSelected },
     { label: "Delete", disabled: selectedList.length === 0, onClick: deleteSelected },
   ]);
 
@@ -368,6 +506,7 @@ export default function App() {
           { label: "Arrange Icons", disabled: true, onClick: () => {} },
           { label: "Properties", disabled: true, onClick: () => {} },
         ]}>
+        <OSProvider fs={demoFS} apps={OS_APPS}>
 
         <WindowShortcuts />
 
@@ -484,6 +623,7 @@ export default function App() {
 
         <DialogDemo />
         <Taskbar />
+        </OSProvider>
       </Desktop>
       </DialogProvider>
     </ThemeProvider>
