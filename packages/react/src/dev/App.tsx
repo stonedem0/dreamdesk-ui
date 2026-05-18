@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
-import { Tabs, Tab, TabPanel } from "../components/Tabs";
 import { Toggle } from "../components/Toggle";
 import { TerminalWindow } from "../components/TerminalWindow";
 import { BrowserWindow, BrowserErrorPage } from "../components/BrowserWindow";
@@ -13,6 +12,7 @@ import { Desktop, useWindowManager } from "../components/Desktop";
 import { DialogProvider, useDialog } from "../components/Dialog";
 import { Taskbar } from "../components/Taskbar";
 import { DesktopIcon } from "../components/DesktopIcon";
+import { MenuBar, Menu, MenuItem, MenuSeparator } from "../components/MenuBar";
 
 // ── Browser demo ─────────────────────────────────────────────────────────────
 
@@ -178,27 +178,33 @@ export default function App() {
         <Window windowId="notes" title="Notes" scrollContent width="560px" height="430px" defaultOpen={false}
           style={{ top: "16px", left: "16px" }}
           icon="/icons/notepad.png">
-          <Tabs>
-            <Tab>General</Tab>
-            <Tab>Appearance</Tab>
-            <Tab>Advanced</Tab>
-            <TabPanel>
-              <p className="win-content dd-scrollable dd-scrollable--fill">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contrary to popular belief,
-                Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
-                literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-                professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
-                Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of
-                the word in classical literature, discovered the undoubtable source.
-              </p>
-            </TabPanel>
-            <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>Appearance settings.</p>
-            </TabPanel>
-            <TabPanel>
-              <p className="win-content" style={{ padding: "0.5rem" }}>Advanced settings.</p>
-            </TabPanel>
-          </Tabs>
+          <MenuBar>
+            <Menu label="File">
+              <MenuItem shortcut="Ctrl+N" onClick={() => {}}>New</MenuItem>
+              <MenuItem shortcut="Ctrl+O" onClick={() => {}}>Open…</MenuItem>
+              <MenuItem shortcut="Ctrl+S" onClick={() => {}}>Save</MenuItem>
+              <MenuSeparator />
+              <MenuItem onClick={() => {}}>Exit</MenuItem>
+            </Menu>
+            <Menu label="Edit">
+              <MenuItem shortcut="Ctrl+Z" disabled>Undo</MenuItem>
+              <MenuSeparator />
+              <MenuItem shortcut="Ctrl+X" onClick={() => {}}>Cut</MenuItem>
+              <MenuItem shortcut="Ctrl+C" onClick={() => {}}>Copy</MenuItem>
+              <MenuItem shortcut="Ctrl+V" onClick={() => {}}>Paste</MenuItem>
+            </Menu>
+            <Menu label="Help">
+              <MenuItem onClick={() => {}}>About Notes</MenuItem>
+            </Menu>
+          </MenuBar>
+          <p className="win-content dd-scrollable dd-scrollable--fill">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contrary to popular belief,
+            Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
+            literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
+            professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
+            Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of
+            the word in classical literature, discovered the undoubtable source.
+          </p>
         </Window>
 
         {/* Login — below Notes, left */}

@@ -1,0 +1,114 @@
+.dd-menubar {
+  display: flex;
+  align-items: stretch;
+  background: var(--dd-menubar-bg, var(--color-surface, #d4d0c8));
+  border-bottom: var(--dd-menubar-border-bottom, none);
+  flex-shrink: 0;
+  position: relative;
+  font-size: 0.875rem;
+  user-select: none;
+}
+
+/* ── Menu trigger button ── */
+.dd-menu-trigger {
+  padding: 0.15rem 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: inherit;
+  color: var(--dd-menubar-fg, var(--color-text, inherit));
+  white-space: nowrap;
+  position: relative;
+}
+
+.dd-menu-trigger:hover,
+.dd-menu-trigger[aria-expanded="true"] {
+  background: var(--dd-menu-trigger-active-bg, var(--color-window-header, #c0d8f0));
+  border-color: transparent;
+  font-weight: bold;
+  outline: none;
+}
+
+/* Underline first letter as access key hint */
+.dd-menu-trigger::first-letter {
+  text-decoration: underline;
+}
+
+.dd-menu-trigger:focus-visible {
+  outline: 1px dotted var(--color-text, #000);
+  outline-offset: -2px;
+}
+
+/* ── Dropdown ── */
+.dd-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9500;
+  min-width: 10rem;
+  background: var(--dd-cm-bg, var(--color-window-body, #fff));
+  border: var(--dd-cm-border, var(--color-window-border, var(--border)));
+  box-shadow: var(--dd-cm-shadow, 2px 2px 0 rgba(0,0,0,0.18));
+  padding: 0.15rem 0;
+}
+
+@keyframes dd-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dd-menu-dropdown {
+  animation: dd-menu-in 0.08s ease;
+}
+
+/* ── Menu items ── */
+.dd-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.2rem 0.75rem 0.2rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--dd-cm-fg, var(--color-text, inherit));
+  text-align: left;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.dd-menu-item:hover:not(:disabled),
+.dd-menu-item:focus-visible:not(:disabled) {
+  background: var(--dd-cm-item-hover-bg, var(--color-window-header, #c0e0ff));
+  outline: none;
+}
+
+.dd-menu-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.dd-menu-item-check {
+  position: absolute;
+  left: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.dd-menu-item-label {
+  flex: 1;
+}
+
+.dd-menu-item-shortcut {
+  margin-left: 1.5rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.dd-menu-separator {
+  height: 1px;
+  margin: 0.15rem 0;
+  background: var(--dd-cm-separator, var(--color-window-border, var(--border, #ccc)));
+}
