@@ -19,6 +19,7 @@ import { Checkbox } from "../components/Checkbox";
 import { Radio, RadioGroup } from "../components/Radio";
 import { Select } from "../components/Select";
 import { Slider } from "../components/Slider";
+import { useContextMenu } from "../components/ContextMenu";
 
 // ── Browser demo ─────────────────────────────────────────────────────────────
 
@@ -148,98 +149,155 @@ function WindowShortcuts() {
       <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => focus("terminal")} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
       <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
-      <DesktopIcon label="Explorer" icon="/icons/folder.png" onClick={() => focus("explorer")} />
+      <DesktopIcon label="Explorer" icon="/icons/folder_open.png" onClick={() => focus("explorer")} />
     </div>
   );
 }
 
-// ── Explorer demo ─────────────────────────────────────────────────────────────
+// ── VirtualFS instance (singleton for the demo) ───────────────────────────────
 
-const TREE_NODES: TreeNode[] = [
-  { id: "desktop", label: "Desktop", icon: "🖥️", children: [
-    { id: "shortcut1", label: "My Computer", icon: "💻" },
-    { id: "shortcut2", label: "Recycle Bin", icon: "🗑️" },
-  ]},
-  { id: "docs", label: "My Documents", icon: "📁", children: [
-    { id: "work", label: "Work", icon: "📁", children: [
-      { id: "report", label: "report.doc", icon: "📄" },
-      { id: "budget", label: "budget.xls", icon: "📊" },
-    ]},
-    { id: "readme",  label: "readme.txt",  icon: "📄" },
-    { id: "photo",   label: "photo.png",   icon: "🖼️" },
-    { id: "music",   label: "music.mp3",   icon: "🎵" },
-  ]},
-  { id: "downloads", label: "Downloads", icon: "📁", children: [
-    { id: "setup",   label: "setup.exe",   icon: "⚙️" },
-    { id: "archive", label: "archive.zip", icon: "📦" },
-  ]},
-];
+import { VirtualFS } from "@dreamdesk/os";
+import type { FSNode } from "@dreamdesk/os";
 
-const FILE_META: Record<string, Partial<ListViewItem>> = {
-  shortcut1: { type: "Shortcut" },
-  shortcut2: { type: "Shortcut" },
-  work:      { type: "File Folder",   date: "5/10/2026" },
-  readme:    { type: "Text Document", size: "2 KB",   date: "5/12/2026" },
-  photo:     { type: "PNG Image",     size: "1.2 MB", date: "5/14/2026" },
-  music:     { type: "MP3 Audio",     size: "4.8 MB", date: "5/1/2026"  },
-  setup:     { type: "Application",   size: "3.4 MB", date: "4/20/2026" },
-  archive:   { type: "ZIP Archive",   size: "18 MB",  date: "4/28/2026" },
-  report:    { type: "Word Document", size: "48 KB",  date: "5/8/2026"  },
-  budget:    { type: "Spreadsheet",   size: "12 KB",  date: "5/9/2026"  },
-};
+const demoFS = new VirtualFS();
+demoFS.mkdir("/Desktop");
+demoFS.mkdir("/My Documents");
+demoFS.mkdir("/My Documents/Work");
+demoFS.mkdir("/Downloads");
+demoFS.writeFile("/My Documents/readme.txt", "Welcome to DreamDesk!\n\nThis file is stored in a VirtualFS instance running in your browser.");
+demoFS.writeFile("/My Documents/notes.txt", "TODO:\n- Finish Level 3\n- Build Notepad\n- Wire up IPC");
+demoFS.writeFile("/My Documents/Work/report.doc", "Q1 Report\n\nRevenue: $0\nExpenses: $0\nProfit: priceless");
+demoFS.writeFile("/My Documents/Work/budget.xls", "Month,Income,Expenses\nJan,0,0\nFeb,0,0");
+demoFS.writeFile("/Downloads/setup.exe", "MZ\x90\x00 (this is a fake binary)");
+demoFS.writeFile("/Downloads/archive.zip", "PK (this is a fake zip)");
+demoFS.writeFile("/Desktop/shortcut.lnk", "[InternetShortcut]\nURL=https://github.com");
 
-function findNode(nodes: TreeNode[], id: string): TreeNode | null {
+// ── Explorer helpers ──────────────────────────────────────────────────────────
+
+function extIcon(name: string, isDir: boolean): string {
+  if (isDir) return "/icons/folder_closed.png";
+  const ext = name.split(".").pop()?.toLowerCase();
+  if (ext === "txt" || ext === "doc") return "/icons/text_file.png";
+  if (ext === "xls") return "/icons/spreadsheet_file.png";
+  if (ext === "png" || ext === "jpg") return "/icons/image_file.png";
+  if (ext === "mp3") return "/icons/audio_file.png";
+  if (ext === "zip") return "/icons/3d_graphics_file.png";
+  if (ext === "exe") return "/icons/script_file.png";
+  if (ext === "lnk") return "/icons/webpage_file.png";
+  return "/icons/text_file_2.png";
+}
+
+function extType(name: string, isDir: boolean): string {
+  if (isDir) return "File Folder";
+  const ext = name.split(".").pop()?.toLowerCase();
+  if (ext === "txt") return "Text Document";
+  if (ext === "doc") return "Word Document";
+  if (ext === "xls") return "Spreadsheet";
+  if (ext === "png") return "PNG Image";
+  if (ext === "mp3") return "MP3 Audio";
+  if (ext === "zip") return "ZIP Archive";
+  if (ext === "exe") return "Application";
+  if (ext === "lnk") return "Shortcut";
+  return "File";
+}
+
+function fsToTreeNodes(fs: VirtualFS, path: string = "/"): TreeNode[] {
+  return fs.ls(path)
+    .filter(node => node.kind === "dir")
+    .map(node => {
+      const id = path === "/" ? `/${node.name}` : `${path}/${node.name}`;
+      return {
+        id,
+        label: node.name,
+        icon: extIcon(node.name, true),
+        children: fsToTreeNodes(fs, id),
+      };
+    });
+}
+
+function fsToListItems(fs: VirtualFS, path: string): ListViewItem[] {
+  return fs.ls(path).map((node) => ({
+    id: path === "/" ? `/${node.name}` : `${path}/${node.name}`,
+    name: node.name,
+    icon: extIcon(node.name, node.kind === "dir"),
+    type: extType(node.name, node.kind === "dir"),
+    size: node.kind === "file" ? `${node.content.length} B` : "",
+    date: new Date(node.modified).toLocaleDateString(),
+  }));
+}
+
+function findTreeNode(nodes: TreeNode[], id: string): TreeNode | null {
   for (const n of nodes) {
     if (n.id === id) return n;
-    if (n.children) { const f = findNode(n.children, id); if (f) return f; }
+    if (n.children) { const f = findTreeNode(n.children, id); if (f) return f; }
   }
   return null;
 }
 
-function getPath(nodes: TreeNode[], id: string, path: TreeNode[] = []): TreeNode[] | null {
+function getTreePath(nodes: TreeNode[], id: string, path: TreeNode[] = []): TreeNode[] | null {
   for (const n of nodes) {
     const next = [...path, n];
     if (n.id === id) return next;
-    if (n.children) { const f = getPath(n.children, id, next); if (f) return f; }
+    if (n.children) { const f = getTreePath(n.children, id, next); if (f) return f; }
   }
   return null;
 }
 
-function nodeToListItem(n: TreeNode): ListViewItem {
-  return { id: n.id, name: n.label, icon: n.icon, ...FILE_META[n.id] };
-}
-
 function ExplorerDemo() {
-  const [selectedTree, setSelectedTree] = useState<string>("docs");
+  const [selectedPath, setSelectedPath] = useState<string>("/My Documents");
   const [selectedList, setSelectedList] = useState<string[]>([]);
   const [listMode, setListMode] = useState<"icons" | "details">("details");
+  const [, setTick] = useState(0);
+  const dialog = useDialog();
 
-  const node = findNode(TREE_NODES, selectedTree);
-  const listItems: ListViewItem[] = node?.children?.map(nodeToListItem) ?? [];
-  const path = getPath(TREE_NODES, selectedTree) ?? [];
+  useEffect(() => demoFS.watch("/", () => setTick(t => t + 1)), []);
 
-  const handleTreeSelect = (id: string) => {
-    setSelectedTree(id);
+  const treeNodes = fsToTreeNodes(demoFS);
+  const isDir = demoFS.exists(selectedPath) && demoFS.stat(selectedPath).kind === "dir";
+  const listItems = isDir ? fsToListItems(demoFS, selectedPath) : [];
+  const breadcrumb = getTreePath(treeNodes, selectedPath) ?? [];
+
+  const handleTreeSelect = (id: string) => { setSelectedPath(id); setSelectedList([]); };
+  const handleListOpen = (id: string) => {
+    if (demoFS.exists(id) && demoFS.stat(id).kind === "dir") handleTreeSelect(id);
+  };
+
+  const newFolder = async () => {
+    const name = await dialog.prompt("Folder name:", { defaultValue: "New Folder" });
+    if (!name) return;
+    try { demoFS.mkdir(`${selectedPath}/${name}`); } catch { dialog.alert(`Could not create "${name}"`); }
+  };
+
+  const newFile = async () => {
+    const name = await dialog.prompt("File name:", { defaultValue: "New Text Document.txt" });
+    if (!name) return;
+    try { demoFS.writeFile(`${selectedPath}/${name}`, ""); } catch { dialog.alert(`Could not create "${name}"`); }
+  };
+
+  const deleteSelected = async () => {
+    if (!selectedList.length) return;
+    const ok = await dialog.confirm(`Delete ${selectedList.length} item(s)?`);
+    if (!ok) return;
+    selectedList.forEach(p => { try { demoFS.rm(p); } catch {} });
     setSelectedList([]);
   };
 
-  const handleListOpen = (id: string) => {
-    const target = findNode(TREE_NODES, id);
-    if (target?.children) handleTreeSelect(id);
-  };
+  const { onContextMenu: onListContext, contextMenu: listContextMenu } = useContextMenu([
+    { label: "New Folder",         onClick: newFolder },
+    { label: "New Text Document",  onClick: newFile },
+    { type: "separator" },
+    { label: "Delete", disabled: selectedList.length === 0, onClick: deleteSelected },
+  ]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
       {/* Path bar */}
       <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
         <span style={{ opacity: 0.6, marginRight: "2px" }}>Address:</span>
-        {path.map((n, i) => (
+        {breadcrumb.map((n, i) => (
           <span key={n.id} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
             {i > 0 && <span style={{ opacity: 0.4 }}>›</span>}
-            <button
-              onClick={() => handleTreeSelect(n.id)}
-              style={{ background: "none", border: "none", cursor: "pointer", padding: "0 2px", font: "inherit", fontSize: "0.78rem", color: "var(--color-text, #000)" }}
-            >
+            <button onClick={() => handleTreeSelect(n.id)} style={{ background: "none", border: "none", cursor: "pointer", padding: "0 2px", font: "inherit", fontSize: "0.78rem", color: "var(--color-text, #000)" }}>
               {n.label}
             </button>
           </span>
@@ -251,17 +309,20 @@ function ExplorerDemo() {
         <div style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #999)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
           <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #999)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
           <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
-          <TreeView
-            nodes={TREE_NODES}
-            selected={selectedTree}
-            defaultExpanded={["docs", "downloads"]}
-            onSelect={handleTreeSelect}
-          />
+            <TreeView
+              nodes={treeNodes}
+              selected={selectedPath}
+              defaultExpanded={["/My Documents", "/Downloads"]}
+              onSelect={handleTreeSelect}
+            />
           </div>
         </div>
 
         {/* List panel */}
-        <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <div
+          style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
+          onContextMenu={onListContext}
+        >
           <div style={{ display: "flex", gap: "4px", padding: "3px 4px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
             <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Details</button>
             <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Icons</button>
@@ -275,6 +336,7 @@ function ExplorerDemo() {
             onOpen={handleListOpen}
             style={{ flex: 1 }}
           />
+          {listContextMenu}
         </div>
       </div>
     </div>
@@ -412,7 +474,7 @@ export default function App() {
         {/* Explorer — center */}
         <Window windowId="explorer" title="My Documents" width="600px" height="400px" defaultOpen={false}
           style={{ top: "80px", left: "calc(50vw - 300px)" }}
-          icon="/icons/folder.png"
+          icon="/icons/folder_open.png"
           bodyOverflow="hidden">
           <ExplorerDemo />
         </Window>

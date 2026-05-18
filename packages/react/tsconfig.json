@@ -12,7 +12,8 @@
     "outDir": "dist",
     "skipLibCheck": true,
     "paths": {
-      "@dreamdesk/core": ["../core/src/shared.ts"]
+      "@dreamdesk/core": ["../core/src/shared.ts"],
+      "@dreamdesk/os": ["../os/src/index.ts"]
     }
   },
   "include": ["src"]
