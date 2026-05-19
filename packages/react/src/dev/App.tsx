@@ -277,8 +277,10 @@ function WindowShortcuts() {
 
 // ── VirtualFS instance (singleton for the demo) ───────────────────────────────
 
-import { VirtualFS } from "@dreamdesk/os";
+import { VirtualFS, LocalStorageAdapter } from "@dreamdesk/os";
 import type { FSNode } from "@dreamdesk/os";
+
+const fsAdapter = new LocalStorageAdapter("dreamdesk-demo-fs");
 
 const demoFS = new VirtualFS();
 demoFS.mkdir("/Desktop");
@@ -504,7 +506,7 @@ export default function App() {
           { label: "Arrange Icons", disabled: true, onClick: () => {} },
           { label: "Properties", disabled: true, onClick: () => {} },
         ]}>
-        <OSProvider fs={demoFS} apps={OS_APPS}>
+        <OSProvider fs={demoFS} apps={OS_APPS} adapter={fsAdapter}>
 
         <WindowShortcuts />
 

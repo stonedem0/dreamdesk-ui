@@ -9,6 +9,7 @@ import {
 } from "react";
 import { VirtualFS } from "../fs/VirtualFS";
 import { ProcessManager, type ProcessArgs } from "../process/ProcessManager";
+import type { FSAdapter } from "../fs/FSAdapter";
 
 // ── App registry ──────────────────────────────────────────────────────────────
 
@@ -40,10 +41,11 @@ const OSContext = createContext<OSCtx | null>(null);
 export interface OSProviderProps {
   fs?: VirtualFS;
   apps: Record<string, AppDef>;
+  adapter?: FSAdapter;
   children?: ReactNode;
 }
 
-export function OSProvider({ fs: fsProp, apps, children }: OSProviderProps) {
+export function OSProvider({ fs: fsProp, apps, adapter, children }: OSProviderProps) {
   const [fs] = useState(() => fsProp ?? new VirtualFS());
   const [pm] = useState(() => {
     const manager = new ProcessManager();
@@ -56,6 +58,19 @@ export function OSProvider({ fs: fsProp, apps, children }: OSProviderProps) {
 
   const [, setTick] = useState(0);
   useEffect(() => pm.subscribe(() => setTick(t => t + 1)), [pm]);
+
+  // Load persisted FS on mount, then save on every change
+  useEffect(() => {
+    if (!adapter) return;
+    adapter.load().then(data => {
+      if (data) { fs.deserialize(data); fs.notify(); }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!adapter) return;
+    return fs.watch("/", () => adapter.save(fs.serialize()));
+  }, [fs, adapter]);
 
   const open = useCallback((filePath: string): string | null => {
     const appId = pm.resolveApp(filePath);

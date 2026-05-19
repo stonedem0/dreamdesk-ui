@@ -228,6 +228,10 @@ export class VirtualFS {
     return JSON.stringify(serializeNode(this.root));
   }
 
+  notify(): void {
+    this.emit({ type: "modified", path: "/" });
+  }
+
   deserialize(data: string): void {
     const deserializeNode = (s: SerializedNode): FSNode => {
       if (s.kind === "file") return { ...s };
