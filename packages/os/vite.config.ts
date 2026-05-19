@@ -3,12 +3,10 @@ import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 
-
 export default defineConfig({
   test: {
     environment: "happy-dom",
     globals: true,
-    setupFiles: ["./src/__tests__/setup.ts"],
   },
   plugins: [
     react(),
@@ -17,12 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@dreamdesk/core": resolve(__dirname, "../core/src/shared.ts"),
-      "@dreamdesk/os": resolve(__dirname, "../os/src/index.ts"),
-    },
-  },
-  server: {
-    fs: {
-      allow: ["../.."],
+      "@dreamdesk/react": resolve(__dirname, "../react/src/index.ts"),
     },
   },
   build: {
@@ -32,7 +25,7 @@ export default defineConfig({
       fileName: (format) => `index.${format === "es" ? "js" : "cjs"}`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      external: ["react", "react-dom", "react/jsx-runtime", "@dreamdesk/core", "@dreamdesk/react"],
       output: {
         globals: {
           react: "React",

@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "paths": {
       "@dreamdesk/core": ["../core/src/shared.ts"],
-      "@dreamdesk/os": ["../os/src/index.ts"]
+      "@dreamdesk/react": ["../react/src/index.ts"]
     }
   },
   "include": ["src"]
