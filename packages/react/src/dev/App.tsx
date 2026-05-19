@@ -40,7 +40,6 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
 
   return (
     <Window
-      windowId={pid}
       title={`${dirty ? "* " : ""}${fileName} — Notepad`}
       icon="/icons/notepad.png"
       width="480px"
@@ -57,11 +56,11 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
         </Menu>
       </MenuBar>
       <textarea
-        className="dd-scrollable dd-scrollable--fill"
         value={content}
         onChange={e => { setContent(e.target.value); setDirty(true); }}
+        onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); } }}
         spellCheck={false}
-        style={{ width: "100%", flex: 1, border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-window-body, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box" }}
+        style={{ flex: 1, minHeight: 0, width: "100%", border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-window-body, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box", overflow: "auto" }}
       />
     </Window>
   );
@@ -90,7 +89,6 @@ function OpenWithDialog({ pid, args }: { pid: string; args: ProcessArgs }) {
 
   return (
     <Window
-      windowId={pid}
       title="Open With"
       icon="/icons/tools.png"
       width="320px"
