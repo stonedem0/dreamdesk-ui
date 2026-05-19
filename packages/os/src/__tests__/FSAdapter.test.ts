@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { VirtualFS } from "../fs/VirtualFS";
 import { LocalStorageAdapter } from "../fs/FSAdapter";
 

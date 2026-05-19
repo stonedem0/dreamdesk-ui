@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -20,7 +20,7 @@ import { Radio, RadioGroup } from "../components/Radio";
 import { Select } from "../components/Select";
 import { Slider } from "../components/Slider";
 import { useContextMenu } from "../components/ContextMenu";
-import { OSProvider, useOS, type AppDef, type ProcessArgs } from "@dreamdesk/os";
+import { OSProvider, useOS, type AppDef, type ProcessArgs, executeCommand, toWinPath } from "@dreamdesk/os";
 
 // ── Notepad app ───────────────────────────────────────────────────────────────
 
@@ -128,6 +128,91 @@ function OpenWithDialog({ pid, args }: { pid: string; args: ProcessArgs }) {
   );
 }
 
+// ── Terminal app ──────────────────────────────────────────────────────────────
+
+const BANNER = ["DreamDesk Terminal", "Type 'help' for available commands.", ""];
+
+function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
+  const { fs, pm } = useOS();
+  const [cwd, setCwd] = useState("/");
+  const [lines, setLines] = useState<string[]>(BANNER);
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [histIdx, setHistIdx] = useState(-1);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const prompt = `${toWinPath(cwd)}>`;
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [lines]);
+
+  const run = (cmd: string) => {
+    const result = executeCommand(cmd, { fs, pm, cwd });
+    if (result.clear) {
+      setLines([]);
+    } else {
+      setLines(prev => [...prev, `${prompt} ${cmd}`, ...result.lines]);
+    }
+    if (result.newCwd) setCwd(result.newCwd);
+    if (cmd.trim()) setHistory(prev => [cmd, ...prev]);
+    setHistIdx(-1);
+    setInput("");
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") { run(input); return; }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const idx = Math.min(histIdx + 1, history.length - 1);
+      setHistIdx(idx);
+      setInput(history[idx] ?? "");
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const idx = histIdx - 1;
+      if (idx < 0) { setHistIdx(-1); setInput(""); }
+      else { setHistIdx(idx); setInput(history[idx] ?? ""); }
+    }
+  };
+
+  return (
+    <TerminalWindow
+      title="Terminal"
+      icon="/icons/script_file.png"
+      width="560px"
+      height="340px"
+      defaultOpen
+      onClose={() => pm.kill(pid)}
+    >
+      <div
+        style={{ display: "flex", flexDirection: "column", height: "100%", cursor: "text" }}
+        onClick={() => inputRef.current?.focus()}
+      >
+        {/* Output */}
+        <div style={{ flex: 1, overflow: "auto", padding: "6px 10px", fontFamily: "var(--font-mono, monospace)", fontSize: "0.82rem", lineHeight: 1.5 }}>
+          {lines.map((line, i) => (
+            <div key={i} style={{ whiteSpace: "pre-wrap", minHeight: "1.2em" }}>{line}</div>
+          ))}
+          <div ref={bottomRef} />
+        </div>
+        {/* Input row */}
+        <div style={{ display: "flex", alignItems: "center", padding: "2px 10px 6px", fontFamily: "var(--font-mono, monospace)", fontSize: "0.82rem", flexShrink: 0 }}>
+          <span style={{ userSelect: "none", marginRight: "4px" }}>{prompt}</span>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            autoFocus
+            spellCheck={false}
+            style={{ flex: 1, background: "none", border: "none", outline: "none", color: "inherit", fontFamily: "inherit", fontSize: "inherit" }}
+          />
+        </div>
+      </div>
+    </TerminalWindow>
+  );
+}
+
 const OS_APPS: Record<string, AppDef> = {
   notepad: {
     component: NotepadApp,
@@ -139,6 +224,11 @@ const OS_APPS: Record<string, AppDef> = {
     component: OpenWithDialog,
     title: "Open With",
     icon: "/icons/tools.png",
+  },
+  terminal: {
+    component: TerminalApp,
+    title: "Terminal",
+    icon: "/icons/script_file.png",
   },
 };
 
@@ -262,12 +352,13 @@ function DialogDemo() {
 
 function WindowShortcuts() {
   const wm = useWindowManager();
+  const os = useOS();
   const focus = (id: string) => wm.open(id);
   return (
     <div style={{ position: "absolute", top: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "1.5rem" }}>
       <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => focus("notes")} />
       <DesktopIcon label="Login" icon="/icons/password_manager.png" onClick={() => focus("login")} />
-      <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => focus("terminal")} />
+      <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => os.openWith("terminal")} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
       <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
       <DesktopIcon label="Explorer" icon="/icons/folder_open.png" onClick={() => focus("explorer")} />
@@ -374,12 +465,20 @@ function ExplorerDemo() {
   const dialog = useDialog();
   const os = useOS();
 
-  useEffect(() => demoFS.watch("/", () => setTick(t => t + 1)), []);
+  useEffect(() => demoFS.watch("/", () => {
+    setTick(t => t + 1);
+    // Reset selection if the selected path was deleted or never existed in the loaded FS
+    setSelectedPath(p => demoFS.exists(p) ? p : "/");
+    setSelectedList(prev => prev.filter(p => demoFS.exists(p)));
+  }), []);
 
   const treeNodes = fsToTreeNodes(demoFS);
   const isDir = demoFS.exists(selectedPath) && demoFS.stat(selectedPath).kind === "dir";
   const listItems = isDir ? fsToListItems(demoFS, selectedPath) : [];
   const breadcrumb = getTreePath(treeNodes, selectedPath) ?? [];
+
+  // The effective folder to create things in — fall back to "/" if selectedPath is gone
+  const cwdForCreate = isDir ? selectedPath : "/";
 
   const handleTreeSelect = (id: string) => { setSelectedPath(id); setSelectedList([]); };
   const handleListOpen = (id: string) => {
@@ -393,13 +492,13 @@ function ExplorerDemo() {
   const newFolder = async () => {
     const name = await dialog.prompt("Folder name:", { defaultValue: "New Folder" });
     if (!name) return;
-    try { demoFS.mkdir(`${selectedPath}/${name}`); } catch { dialog.alert(`Could not create "${name}"`); }
+    try { demoFS.mkdir(`${cwdForCreate}/${name}`); } catch { dialog.alert(`Could not create "${name}"`); }
   };
 
   const newFile = async () => {
     const name = await dialog.prompt("File name:", { defaultValue: "New Text Document.txt" });
     if (!name) return;
-    try { demoFS.writeFile(`${selectedPath}/${name}`, ""); } catch { dialog.alert(`Could not create "${name}"`); }
+    try { demoFS.writeFile(`${cwdForCreate}/${name}`, ""); } catch { dialog.alert(`Could not create "${name}"`); }
   };
 
   const deleteSelected = async () => {
@@ -418,6 +517,22 @@ function ExplorerDemo() {
     if (!singleFile) return;
     os.openWith("openwith", { filePath: selectedList[0] });
   };
+
+  const deleteFolder = async () => {
+    if (selectedPath === "/") return;
+    const ok = await dialog.confirm(`Delete "${selectedPath.split("/").pop()}"?`);
+    if (!ok) return;
+    try {
+      demoFS.rm(selectedPath);
+      setSelectedPath("/");
+    } catch { dialog.alert("Could not delete folder."); }
+  };
+
+  const { onContextMenu: onTreeContext, contextMenu: treeContextMenu } = useContextMenu([
+    { label: "New Folder",  onClick: newFolder },
+    { type: "separator" },
+    { label: "Delete", disabled: selectedPath === "/", onClick: deleteFolder },
+  ]);
 
   const { onContextMenu: onListContext, contextMenu: listContextMenu } = useContextMenu([
     { label: "New Folder",         onClick: newFolder },
@@ -444,7 +559,10 @@ function ExplorerDemo() {
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {/* Tree panel */}
-        <div style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #999)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+        <div
+          style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #999)", display: "flex", flexDirection: "column", flexShrink: 0 }}
+          onContextMenu={onTreeContext}
+        >
           <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #999)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
           <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
             <TreeView
@@ -454,6 +572,7 @@ function ExplorerDemo() {
               onSelect={handleTreeSelect}
             />
           </div>
+          {treeContextMenu}
         </div>
 
         {/* List panel */}
@@ -601,14 +720,6 @@ export default function App() {
             <Slider label="Brightness:" defaultValue={80} showValue />
           </div>
         </Window>
-
-        {/* Terminal — bottom-right */}
-        <TerminalWindow windowId="terminal" title="Terminal" width="500px" height="220px" defaultOpen={false}
-          style={{ top: "460px", left: "calc(100vw - 516px)" }}
-          icon="/icons/script_file.png">
-          <p>$ hello world</p>
-          <p>$ _</p>
-        </TerminalWindow>
 
         {/* Explorer — center */}
         <Window windowId="explorer" title="My Documents" width="600px" height="400px" defaultOpen={false}
