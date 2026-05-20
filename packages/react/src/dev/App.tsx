@@ -213,6 +213,88 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
   );
 }
 
+// ── Task Manager app ──────────────────────────────────────────────────────────
+
+function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
+  const { pm, apps } = useOS();
+  const [procs, setProcs] = useState(() => pm.list());
+  const [selected, setSelected] = useState<string | null>(null);
+
+  useEffect(() => pm.subscribe(() => {
+    const list = pm.list();
+    setProcs(list);
+    setSelected(s => list.find(p => p.pid === s) ? s : null);
+  }), [pm]);
+
+  const endProcess = () => {
+    if (!selected || selected === pid) return;
+    pm.kill(selected);
+  };
+
+  const thStyle: React.CSSProperties = { textAlign: "left", padding: "2px 8px", borderBottom: "1px solid var(--dd-border-color, #000)", fontWeight: "bold", fontSize: "0.75rem", userSelect: "none" };
+  const tdStyle: React.CSSProperties = { padding: "2px 8px", fontSize: "0.78rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
+
+  return (
+    <Window
+      title="Task Manager"
+      icon="/icons/tools.png"
+      width="400px"
+      height="280px"
+      defaultOpen
+      scrollContent
+      onClose={() => pm.kill(pid)}
+    >
+      <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "6px", boxSizing: "border-box" }}>
+        <div style={{ flex: 1, overflow: "auto", border: "1px solid var(--dd-border-color, #000)", background: "var(--color-window-body, #fff)" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "45%" }} />
+              <col style={{ width: "33%" }} />
+              <col style={{ width: "22%" }} />
+            </colgroup>
+            <thead>
+              <tr style={{ background: "var(--color-surface, #d4d0c8)" }}>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>PID</th>
+                <th style={thStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {procs.length === 0 && (
+                <tr><td colSpan={3} style={{ ...tdStyle, color: "var(--color-text-muted, #888)", textAlign: "center", padding: "12px" }}>No running processes</td></tr>
+              )}
+              {procs.map(proc => {
+                const def = apps[proc.appId];
+                const isSelf = proc.pid === pid;
+                const isSelected = proc.pid === selected;
+                return (
+                  <tr
+                    key={proc.pid}
+                    onClick={() => setSelected(proc.pid)}
+                    style={{ background: isSelected ? "var(--color-selection, #0078d7)" : "transparent", color: isSelected ? "#fff" : "inherit", cursor: "default" }}
+                  >
+                    <td style={{ ...tdStyle, display: "flex", alignItems: "center", gap: "6px" }}>
+                      {def?.icon && <img src={def.icon} alt="" width={14} height={14} style={{ imageRendering: "pixelated", flexShrink: 0 }} />}
+                      {def?.title ?? proc.appId}{isSelf ? " (this)" : ""}
+                    </td>
+                    <td style={tdStyle}>{proc.pid}</td>
+                    <td style={tdStyle}>{proc.status}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "6px" }}>
+          <Button variant="primary" size="sm" onClick={endProcess} disabled={!selected || selected === pid}>
+            End Process
+          </Button>
+        </div>
+      </div>
+    </Window>
+  );
+}
+
 const OS_APPS: Record<string, AppDef> = {
   notepad: {
     component: NotepadApp,
@@ -224,11 +306,17 @@ const OS_APPS: Record<string, AppDef> = {
     component: OpenWithDialog,
     title: "Open With",
     icon: "/icons/tools.png",
+    persistent: false,
   },
   terminal: {
     component: TerminalApp,
     title: "Terminal",
     icon: "/icons/script_file.png",
+  },
+  taskmanager: {
+    component: TaskManagerApp,
+    title: "Task Manager",
+    icon: "/icons/tools.png",
   },
 };
 
@@ -359,6 +447,7 @@ function WindowShortcuts() {
       <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => focus("notes")} />
       <DesktopIcon label="Login" icon="/icons/password_manager.png" onClick={() => focus("login")} />
       <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => os.openWith("terminal")} />
+      <DesktopIcon label="Task Manager" icon="/icons/tools.png" onClick={() => { if (!os.pm.list().find(p => p.appId === "taskmanager")) os.openWith("taskmanager"); }} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
       <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
       <DesktopIcon label="Explorer" icon="/icons/folder_open.png" onClick={() => focus("explorer")} />
@@ -545,7 +634,7 @@ function ExplorerDemo() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
       {/* Path bar */}
-      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
         <span style={{ opacity: 0.6, marginRight: "2px" }}>Address:</span>
         {breadcrumb.map((n, i) => (
           <span key={n.id} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
@@ -560,10 +649,10 @@ function ExplorerDemo() {
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {/* Tree panel */}
         <div
-          style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #999)", display: "flex", flexDirection: "column", flexShrink: 0 }}
+          style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #000)", display: "flex", flexDirection: "column", flexShrink: 0 }}
           onContextMenu={onTreeContext}
         >
-          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #999)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
+          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #000)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
           <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
             <TreeView
               nodes={treeNodes}
@@ -580,7 +669,7 @@ function ExplorerDemo() {
           style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
           onContextMenu={onListContext}
         >
-          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
             <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Details</button>
             <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Icons</button>
           </div>
@@ -732,7 +821,6 @@ export default function App() {
         {/* Browser — center */}
         <BrowserWindowDemo />
 
-        <DialogDemo />
         <Taskbar />
         </OSProvider>
       </Desktop>

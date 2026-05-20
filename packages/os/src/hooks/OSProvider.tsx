@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
   type ComponentType,
 } from "react";
@@ -18,6 +19,8 @@ export interface AppDef {
   title: string;
   icon?: string;
   extensions?: string[];
+  // false = don't restore this app after reload (e.g. transient dialogs)
+  persistent?: boolean;
 }
 
 // ── Context ───────────────────────────────────────────────────────────────────
@@ -71,6 +74,31 @@ export function OSProvider({ fs: fsProp, apps, adapter, children }: OSProviderPr
     if (!adapter) return;
     return fs.watch("/", () => adapter.save(fs.serialize()));
   }, [fs, adapter]);
+
+  // Restore running processes on mount, save on every change
+  const restoredRef = useRef(false);
+  const PROC_KEY = "dreamdesk:processes";
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    try {
+      const raw = localStorage.getItem(PROC_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as Array<{ appId: string; args: ProcessArgs }>;
+      saved.forEach(({ appId, args }) => {
+        if (apps[appId] && apps[appId].persistent !== false) pm.spawn(appId, { args });
+      });
+    } catch {}
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    return pm.subscribe(() => {
+      const snapshot = pm.list()
+        .filter(p => apps[p.appId]?.persistent !== false)
+        .map(p => ({ appId: p.appId, args: p.args }));
+      try { localStorage.setItem(PROC_KEY, JSON.stringify(snapshot)); } catch {}
+    });
+  }, [pm, apps]);
 
   const open = useCallback((filePath: string): string | null => {
     const appId = pm.resolveApp(filePath);
