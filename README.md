@@ -2,6 +2,8 @@
 
 Retro-style windowing system for the browser. Available as vanilla Web Components (CDN / no build tools) and as a React component library.
 
+![DreamDesk UI demo](demo.png)
+
 ---
 
 ## Architecture

@@ -306,6 +306,7 @@ const OS_APPS: Record<string, AppDef> = {
     component: OpenWithDialog,
     title: "Open With",
     icon: "/icons/tools.png",
+    persistent: false,
   },
   terminal: {
     component: TerminalApp,
@@ -820,7 +821,6 @@ export default function App() {
         {/* Browser — center */}
         <BrowserWindowDemo />
 
-        <DialogDemo />
         <Taskbar />
         </OSProvider>
       </Desktop>
