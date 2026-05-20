@@ -27,6 +27,15 @@ packages/react/       — React component shells consuming core
     TerminalWindow    Window styled as a terminal
     Taskbar           live window list + minimize/restore + clock
     DesktopIcon       icon + label shortcut
+    MenuBar / Menu / MenuItem  dropdown menu bar
+    Toolbar / ToolbarButton   icon-button toolbar row
+    StatusBar / StatusBarSection  bottom status strip
+    TreeView          expandable folder tree with keyboard navigation
+    ListView          icon grid + sortable detail list view
+    Dialog / DialogProvider  alert / confirm / prompt with Promise API
+    ContextMenu / useContextMenu  right-click menu
+    Checkbox / Radio / RadioGroup  retro form controls
+    Select / Slider   styled native dropdown and range input
     Button            themed button (primary / ghost / help)
     Input             text / password field
     Toggle            on/off switch
@@ -34,9 +43,18 @@ packages/react/       — React component shells consuming core
     ProgressBar       linear fill, blocky or gradient variant
     Toast             alert / notification / warning pill
     Icon              SVG or image icon primitive
+
+packages/os/          — OS platform layer (optional, @dreamdesk/os)
+  fs/VirtualFS        in-memory filesystem (read/write/watch/serialize)
+  fs/FSAdapter        pluggable persistence interface + LocalStorageAdapter
+  process/ProcessManager  spawn/kill processes, extension→app routing
+  shell/ShellEngine   command interpreter (ls/cd/cat/mkdir/rm/mv/ps/kill…)
+  hooks/OSProvider    React context wiring FS + PM + app registry
 ```
 
 **Rule:** all logic lives in `core`. React and Web Components are thin rendering shells. A fix in core lands in both renderers automatically.
+
+`@dreamdesk/os` is fully optional — use DreamDesk purely as a component library without it.
 
 ---
 
@@ -132,6 +150,112 @@ wm.restore('notes');
 
 ---
 
+## OS Platform (`@dreamdesk/os`)
+
+An optional package that turns DreamDesk into a running OS simulation with a virtual filesystem, process manager, and system apps. Use it if you want persistent files, spawnable app processes, and a terminal — skip it if you just need the component library.
+
+### Quick start
+
+```tsx
+import { OSProvider, useOS, VirtualFS, LocalStorageAdapter } from '@dreamdesk/os';
+
+const fs = new VirtualFS();
+fs.writeFile('/hello.txt', 'Hello world');
+
+const adapter = new LocalStorageAdapter('my-app-fs'); // persists across reloads
+
+function NotepadApp({ pid, args }) {
+  const { fs, pm } = useOS();
+  // read/write files, pm.kill(pid) to close
+}
+
+const APPS = {
+  notepad: { component: NotepadApp, title: 'Notepad', extensions: ['txt', 'md'] },
+};
+
+export function App() {
+  return (
+    <Desktop>
+      <OSProvider fs={fs} apps={APPS} adapter={adapter}>
+        {/* your windows here */}
+      </OSProvider>
+    </Desktop>
+  );
+}
+```
+
+### VirtualFS
+
+In-memory filesystem. All operations are synchronous and emit watch events.
+
+```ts
+fs.writeFile('/docs/readme.txt', 'hello');
+fs.readFile('/docs/readme.txt');        // → 'hello'
+fs.mkdir('/docs/archive');
+fs.mv('/docs/readme.txt', '/docs/archive/readme.txt');
+fs.rm('/docs/archive');
+fs.ls('/docs');                         // → FSNode[]
+fs.exists('/docs');                     // → boolean
+fs.stat('/docs');                       // → FSNode
+
+// React: re-render on any change
+useEffect(() => fs.watch('/', cb), []);
+```
+
+### FSAdapter — persistence
+
+```ts
+interface FSAdapter {
+  load(): Promise<string | null>;
+  save(data: string): Promise<void>;
+}
+```
+
+`LocalStorageAdapter` ships out of the box. Swap in IndexedDB, OPFS, or a remote API without touching VirtualFS or any app code:
+
+```ts
+// localStorage (default, ~5 MB limit)
+new LocalStorageAdapter('my-key')
+
+// bring your own:
+class MyAdapter implements FSAdapter {
+  async load() { /* fetch from server */ }
+  async save(data) { /* POST to server */ }
+}
+```
+
+### ProcessManager
+
+```ts
+const pid = pm.spawn('notepad', { args: { filePath: '/docs/readme.txt' } });
+pm.kill(pid);
+pm.list();           // running processes
+pm.resolveApp('/docs/readme.txt'); // → 'notepad' (by extension)
+```
+
+### useOS hook
+
+```tsx
+const { fs, pm, open, openWith, appsFor } = useOS();
+
+open('/docs/readme.txt');          // spawns registered app by extension
+openWith('notepad', { filePath }); // spawn specific app
+appsFor('txt');                    // all apps registered for .txt
+```
+
+### Shell engine
+
+```ts
+import { executeCommand, resolvePath, toWinPath } from '@dreamdesk/os';
+
+executeCommand('ls /docs', { fs, pm, cwd: '/' });
+// → { lines: ['  <DIR>  archive', '  5 B  readme.txt', ...] }
+```
+
+Built-in commands: `ls`, `cd`, `pwd`, `cat`, `touch`, `mkdir`, `rm`, `mv`, `echo`, `ps`, `kill`, `clear`, `help`.
+
+---
+
 ## Themes
 
 Set `data-theme` on `<html>`:
@@ -143,10 +267,6 @@ Set `data-theme` on `<html>`:
 | `dark` | Dark variant |
 
 ---
-
-## Known issues
-
-- **Fullscreen not persisted across reload** — window returns to normal state on reload when fullscreen. The FLIP unfullscreen animation needs a pre-fullscreen rect we can't reconstruct after a cold reload.
 
 ---
 

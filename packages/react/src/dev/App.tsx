@@ -580,9 +580,9 @@ function ExplorerDemo() {
           style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
           onContextMenu={onListContext}
         >
-          <div style={{ display: "flex", gap: "4px", padding: "3px 4px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
-            <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Details</button>
-            <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontSize: "0.75rem", padding: "1px 6px", background: "none", border: "1px solid transparent", cursor: "pointer", font: "inherit" }}>Icons</button>
+          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "1px solid var(--dd-border-color, #999)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
+            <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Details</button>
+            <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Icons</button>
           </div>
           <ListView
             items={listItems}
