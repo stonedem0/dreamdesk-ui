@@ -700,7 +700,7 @@ function ExplorerDemo() {
           onContextMenu={onTreeContext}
         >
           <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "var(--border, 1px solid #151820)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
-          <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
+          <div className="pc-scroll" style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
             <TreeView
               nodes={treeNodes}
               selected={selectedPath}
@@ -727,6 +727,7 @@ function ExplorerDemo() {
             multiSelect
             onSelect={setSelectedList}
             onOpen={handleListOpen}
+            className="pc-scroll"
             style={{ flex: 1, background: "var(--color-input-background, #fff)" }}
           />
           {listContextMenu}

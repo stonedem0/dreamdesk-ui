@@ -998,11 +998,14 @@ dreamdesk-tab-panel.active {
 }
 
 .dd-taskbar-btn:hover {
-  background: var(--color-taskbar-btn-bg-hover, var(--color-surface-hover, #e8e8e8));
+  background: var(
+    --color-taskbar-btn-bg-hover,
+    var(--color-surface-hover, #e8e8e8)
+  );
 }
 
 .dd-taskbar-btn--active {
-  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.3);
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .dd-taskbar-btn--minimized {
@@ -1056,7 +1059,7 @@ dreamdesk-tab-panel.active {
 
 .dd-desktop-icon:hover {
   border-color: var(--color-window-border, #000);
-  background: var(--color-surface-hover, rgba(255,255,255,0.3));
+  background: var(--color-surface-hover, rgba(255, 255, 255, 0.3));
 }
 
 .dd-desktop-icon-label {
