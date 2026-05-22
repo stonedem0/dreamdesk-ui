@@ -22,7 +22,7 @@
 
 .dd-tree-node--selected {
   background: var(--dd-tree-selected-bg, var(--color-active, #000080));
-  color: var(--dd-tree-selected-fg, #fff);
+  color: var(--dd-tree-selected-fg, #000);
 }
 
 .dd-tree-node--selected:hover {
