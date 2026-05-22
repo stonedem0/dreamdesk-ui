@@ -50,18 +50,33 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
     >
       <MenuBar>
         <Menu label="File">
+          <MenuItem shortcut="Ctrl+N" onClick={() => {}}>New</MenuItem>
+          <MenuItem shortcut="Ctrl+O" onClick={() => {}}>Open…</MenuItem>
           <MenuItem shortcut="Ctrl+S" onClick={save}>Save</MenuItem>
           <MenuSeparator />
           <MenuItem onClick={() => pm.kill(pid)}>Exit</MenuItem>
         </Menu>
+        <Menu label="Edit">
+          <MenuItem shortcut="Ctrl+Z" disabled>Undo</MenuItem>
+          <MenuSeparator />
+          <MenuItem shortcut="Ctrl+X" onClick={() => {}}>Cut</MenuItem>
+          <MenuItem shortcut="Ctrl+C" onClick={() => {}}>Copy</MenuItem>
+          <MenuItem shortcut="Ctrl+V" onClick={() => {}}>Paste</MenuItem>
+        </Menu>
+        <Menu label="Help">
+          <MenuItem onClick={() => {}}>About Notepad</MenuItem>
+        </Menu>
       </MenuBar>
-      <textarea
-        value={content}
-        onChange={e => { setContent(e.target.value); setDirty(true); }}
-        onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); } }}
-        spellCheck={false}
-        style={{ flex: 1, minHeight: 0, width: "100%", border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-window-body, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box", overflow: "auto" }}
-      />
+      <div style={{ flex: 1, minHeight: 0, margin: "4px 6px", border: "var(--border, 1px solid #151820)", display: "flex" }}>
+        <textarea
+          value={content}
+          onChange={e => { setContent(e.target.value); setDirty(true); }}
+          onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); } }}
+          spellCheck={false}
+          className="pc-scroll"
+          style={{ flex: 1, minHeight: 0, width: "100%", border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-input-background, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box", overflow: "auto" }}
+        />
+      </div>
     </Window>
   );
 }
