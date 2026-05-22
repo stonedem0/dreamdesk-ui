@@ -8,6 +8,7 @@ import {
   type CSSProperties,
 } from "react";
 import {
+  open as animOpen,
   minimize as animMinimize,
   unminimize as animUnminimize,
   fullscreen as animFullscreen,
@@ -202,6 +203,27 @@ export function Window({
     if (!shouldOpen) el.style.display = "none";
 
     if (shouldOpen) {
+      // Center on first open if no saved/explicit position
+      const hasSavedPos = !!(saved?.left || saved?.top);
+      const hasStylePos = !!(el.style.left || el.style.top);
+      if (!hasSavedPos && !hasStylePos) {
+        const container = desktopRef?.current;
+        if (container) {
+          const th = taskbarHeight;
+          const cw = container.offsetWidth;
+          const ch = container.offsetHeight - th;
+          const ww = el.offsetWidth;
+          const wh = el.offsetHeight;
+          const { dx, dy } = wm.getCascadeOffset();
+          el.style.left = `${Math.max(8, (cw - ww) / 2 + dx)}px`;
+          el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
+        }
+      }
+      // Play open animation for fresh spawns (no saved state to restore)
+      if (!saved) {
+        const inner = el.querySelector<HTMLElement>(".dd-win");
+        if (inner) animOpen(inner);
+      }
       // Restore minimized visual state
       if (saved?.isMinimized) {
         const inner = el.querySelector<HTMLElement>(".dd-win");
@@ -220,7 +242,8 @@ export function Window({
       if (!el || !document.contains(el)) return;
       el.style.display = "";
       const hasSavedPos = !!(saved?.left || saved?.top);
-      if (!hasSavedPos) {
+      const hasStylePos = !!(el.style.left || el.style.top);
+      if (!hasSavedPos && !hasStylePos) {
         const container = desktopRef?.current;
         if (container) {
           const th = taskbarHeight;
@@ -238,11 +261,11 @@ export function Window({
         inner.getAnimations().forEach((a) => a.cancel());
         inner.style.transform = "";
         inner.style.transformOrigin = "";
-        animUnminimize(inner);
+        animOpen(inner);
       }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
       wm.raise(windowId);
-      if (windowIdProp) saveWindowState(windowIdProp, { left: el.style.left, top: el.style.top, width: el.style.getPropertyValue("--ddw-w"), height: el.style.getPropertyValue("--ddw-h"), isOpen: true, isMinimized: false });
+      saveState({ isOpen: true, isMinimized: false });
     });
     return () => wm.unregister(windowId);
   }, [windowId, title, icon, wm]);
@@ -398,7 +421,7 @@ export function Window({
       cleanup();
       snapOverlay?.remove();
     };
-  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState]);
 
   // Resize
   useEffect(() => {

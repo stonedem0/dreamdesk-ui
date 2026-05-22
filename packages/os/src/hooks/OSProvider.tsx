@@ -63,16 +63,21 @@ export function OSProvider({ fs: fsProp, apps, adapter, children }: OSProviderPr
   useEffect(() => pm.subscribe(() => setTick(t => t + 1)), [pm]);
 
   // Load persisted FS on mount, then save on every change
+  const loadedRef = useRef(false);
   useEffect(() => {
     if (!adapter) return;
     adapter.load().then(data => {
-      if (data) { fs.deserialize(data); fs.notify(); }
+      if (data) { fs.deserialize(data); loadedRef.current = true; fs.notify(); }
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!adapter) return;
-    return fs.watch("/", () => adapter.save(fs.serialize()));
+    return fs.watch("/", () => {
+      // Skip the redundant save triggered by the initial load notify
+      if (loadedRef.current) { loadedRef.current = false; return; }
+      adapter.save(fs.serialize());
+    });
   }, [fs, adapter]);
 
   // Restore running processes on mount, save on every change

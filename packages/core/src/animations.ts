@@ -12,6 +12,15 @@ export function cancelRunningAnimations(el: Element): void {
   for (const a of anims) a.cancel();
 }
 
+export function open(win: HTMLElement): void {
+  cancelRunningAnimations(win);
+  win.style.transformOrigin = '50% 50%';
+  win.animate(
+    [{ transform: 'scale(0.85)', opacity: '0' }, { transform: 'scale(1)', opacity: '1' }],
+    { duration: 180, easing: 'ease-out' }
+  );
+}
+
 export function minimize(win: HTMLElement): void {
   cancelRunningAnimations(win);
   win.style.transformOrigin = '50% 100%';
