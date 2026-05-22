@@ -265,7 +265,7 @@ export function Window({
       }
       wm.register(windowId, el, title ?? "Window", { icon, toggle: () => toggleRef.current() });
       wm.raise(windowId);
-      if (windowIdProp) saveWindowState(windowIdProp, { left: el.style.left, top: el.style.top, width: el.style.getPropertyValue("--ddw-w"), height: el.style.getPropertyValue("--ddw-h"), isOpen: true, isMinimized: false });
+      saveState({ isOpen: true, isMinimized: false });
     });
     return () => wm.unregister(windowId);
   }, [windowId, title, icon, wm]);
@@ -421,7 +421,7 @@ export function Window({
       cleanup();
       snapOverlay?.remove();
     };
-  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState]);
 
   // Resize
   useEffect(() => {
