@@ -478,7 +478,7 @@ function WindowShortcuts() {
     <div style={{ position: "absolute", top: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "1.5rem" }}>
       <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => os.openWith("notepad")} />
       <DesktopIcon label="Login" icon="/icons/password_manager.png" onClick={() => focus("login")} />
-      <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => os.openWith("terminal")} />
+      <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => { if (!os.pm.list().find(p => p.appId === "terminal")) os.openWith("terminal"); }} />
       <DesktopIcon label="Task Manager" icon="/icons/tools.png" onClick={() => { if (!os.pm.list().find(p => p.appId === "taskmanager")) os.openWith("taskmanager"); }} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
       <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => openSingleton("browser", "browser")} />
