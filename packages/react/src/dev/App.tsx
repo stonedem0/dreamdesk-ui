@@ -217,14 +217,14 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
 
 function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
   const { pm, apps } = useOS();
-  const [procs, setProcs] = useState(() => pm.list());
+  const [procs, setProcs] = useState(() => pm.list().filter(p => apps[p.appId]?.persistent !== false));
   const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => pm.subscribe(() => {
-    const list = pm.list();
+    const list = pm.list().filter(p => apps[p.appId]?.persistent !== false);
     setProcs(list);
     setSelected(s => list.find(p => p.pid === s) ? s : null);
-  }), [pm]);
+  }), [pm, apps]);
 
   const endProcess = () => {
     if (!selected || selected === pid) return;
@@ -318,13 +318,24 @@ const OS_APPS: Record<string, AppDef> = {
     title: "Task Manager",
     icon: "/icons/tools.png",
   },
+  explorer: {
+    component: ExplorerApp,
+    title: "My Documents",
+    icon: "/icons/folder_open.png",
+  },
+  browser: {
+    component: BrowserApp,
+    title: "Internet Explorer",
+    icon: "/icons/world.png",
+  },
 };
 
 // ── Browser demo ─────────────────────────────────────────────────────────────
 
 const HOME = "https://en.m.wikipedia.org/wiki/Main_Page";
 
-function BrowserWindowDemo() {
+function BrowserApp({ pid }: { pid: string; args: ProcessArgs }) {
+  const { pm } = useOS();
   const [src, setSrc] = useState(HOME);
   const [refreshKey, setRefreshKey] = useState(0);
   const [navHistory, setNavHistory] = useState<string[]>([HOME]);
@@ -369,7 +380,8 @@ function BrowserWindowDemo() {
       windowId="browser"
       title="Internet Explorer"
       icon="/icons/world.png"
-      defaultOpen={false}
+      defaultOpen
+      onClose={() => pm.kill(pid)}
       url={src}
       width="640px"
       height="480px"
@@ -411,6 +423,22 @@ function BrowserWindowDemo() {
   );
 }
 
+
+// ── Explorer app ──────────────────────────────────────────────────────────────
+
+function ExplorerApp({ pid }: { pid: string; args: ProcessArgs }) {
+  const { pm } = useOS();
+  return (
+    <Window windowId="explorer" title="My Documents" width="600px" height="400px" defaultOpen
+      style={{ top: "80px", left: "calc(50vw - 300px)" }}
+      icon="/icons/folder_open.png"
+      bodyOverflow="hidden"
+      onClose={() => pm.kill(pid)}>
+      <ExplorerDemo />
+    </Window>
+  );
+}
+
 // ── Theme toggle ──────────────────────────────────────────────────────────────
 
 function ThemeToggle() {
@@ -442,15 +470,19 @@ function WindowShortcuts() {
   const wm = useWindowManager();
   const os = useOS();
   const focus = (id: string) => wm.open(id);
+  const openSingleton = (appId: string, windowId: string) => {
+    if (!os.pm.list().find(p => p.appId === appId)) os.openWith(appId);
+    else wm.open(windowId);
+  };
   return (
     <div style={{ position: "absolute", top: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "1.5rem" }}>
-      <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => focus("notes")} />
+      <DesktopIcon label="Notes" icon="/icons/notepad.png" onClick={() => os.openWith("notepad")} />
       <DesktopIcon label="Login" icon="/icons/password_manager.png" onClick={() => focus("login")} />
       <DesktopIcon label="Terminal" icon="/icons/script_file.png" onClick={() => os.openWith("terminal")} />
       <DesktopIcon label="Task Manager" icon="/icons/tools.png" onClick={() => { if (!os.pm.list().find(p => p.appId === "taskmanager")) os.openWith("taskmanager"); }} />
       <DesktopIcon label="Components" icon="/icons/tools.png" onClick={() => focus("components")} />
-      <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => focus("browser")} />
-      <DesktopIcon label="Explorer" icon="/icons/folder_open.png" onClick={() => focus("explorer")} />
+      <DesktopIcon label="Browser" icon="/icons/world.png" onClick={() => openSingleton("browser", "browser")} />
+      <DesktopIcon label="Explorer" icon="/icons/folder_open.png" onClick={() => openSingleton("explorer", "explorer")} />
     </div>
   );
 }
@@ -718,39 +750,6 @@ export default function App() {
 
         <WindowShortcuts />
 
-        {/* Notes — tabbed scrollable window, top-left */}
-        <Window windowId="notes" title="Notes" scrollContent width="560px" height="430px" defaultOpen={false}
-          style={{ top: "16px", left: "16px" }}
-          icon="/icons/notepad.png">
-          <MenuBar>
-            <Menu label="File">
-              <MenuItem shortcut="Ctrl+N" onClick={() => {}}>New</MenuItem>
-              <MenuItem shortcut="Ctrl+O" onClick={() => {}}>Open…</MenuItem>
-              <MenuItem shortcut="Ctrl+S" onClick={() => {}}>Save</MenuItem>
-              <MenuSeparator />
-              <MenuItem onClick={() => {}}>Exit</MenuItem>
-            </Menu>
-            <Menu label="Edit">
-              <MenuItem shortcut="Ctrl+Z" disabled>Undo</MenuItem>
-              <MenuSeparator />
-              <MenuItem shortcut="Ctrl+X" onClick={() => {}}>Cut</MenuItem>
-              <MenuItem shortcut="Ctrl+C" onClick={() => {}}>Copy</MenuItem>
-              <MenuItem shortcut="Ctrl+V" onClick={() => {}}>Paste</MenuItem>
-            </Menu>
-            <Menu label="Help">
-              <MenuItem onClick={() => {}}>About Notes</MenuItem>
-            </Menu>
-          </MenuBar>
-          <p className="win-content dd-scrollable dd-scrollable--fill">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contrary to popular belief,
-            Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
-            literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-            professor at Hampden-Sydney College in Virginia, looked up one of the more obscure
-            Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of
-            the word in classical literature, discovered the undoubtable source.
-          </p>
-        </Window>
-
         {/* Login — below Notes, left */}
         <Window windowId="login" title="Login" size="sm" resizable={false} bodyOverflow="hidden" defaultOpen={false}
           style={{ top: "462px", left: "16px" }}
@@ -810,16 +809,6 @@ export default function App() {
           </div>
         </Window>
 
-        {/* Explorer — center */}
-        <Window windowId="explorer" title="My Documents" width="600px" height="400px" defaultOpen={false}
-          style={{ top: "80px", left: "calc(50vw - 300px)" }}
-          icon="/icons/folder_open.png"
-          bodyOverflow="hidden">
-          <ExplorerDemo />
-        </Window>
-
-        {/* Browser — center */}
-        <BrowserWindowDemo />
 
         <Taskbar />
         </OSProvider>
