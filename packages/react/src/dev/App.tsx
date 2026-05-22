@@ -679,9 +679,9 @@ function ExplorerDemo() {
   ]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-      {/* Path bar */}
-      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", padding: "4px 6px", gap: "4px", boxSizing: "border-box" }}>
+      {/* Address bar */}
+      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "1px 6px", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)", fontSize: "0.78rem", flexShrink: 0 }}>
         <span style={{ opacity: 0.6, marginRight: "2px" }}>Address:</span>
         {breadcrumb.map((n, i) => (
           <span key={n.id} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
@@ -693,13 +693,13 @@ function ExplorerDemo() {
         ))}
       </div>
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, overflow: "hidden", gap: "4px" }}>
         {/* Tree panel */}
         <div
-          style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #000)", display: "flex", flexDirection: "column", flexShrink: 0 }}
+          style={{ width: "180px", border: "var(--border, 1px solid #151820)", display: "flex", flexDirection: "column", flexShrink: 0, background: "var(--color-input-background, #fff)", overflow: "hidden" }}
           onContextMenu={onTreeContext}
         >
-          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #000)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
+          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "var(--border, 1px solid #151820)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
           <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
             <TreeView
               nodes={treeNodes}
@@ -713,10 +713,10 @@ function ExplorerDemo() {
 
         {/* List panel */}
         <div
-          style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
+          style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)" }}
           onContextMenu={onListContext}
         >
-          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "var(--border, 1px solid #151820)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
             <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Details</button>
             <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Icons</button>
           </div>
@@ -727,7 +727,7 @@ function ExplorerDemo() {
             multiSelect
             onSelect={setSelectedList}
             onOpen={handleListOpen}
-            style={{ flex: 1 }}
+            style={{ flex: 1, background: "var(--color-input-background, #fff)" }}
           />
           {listContextMenu}
         </div>
