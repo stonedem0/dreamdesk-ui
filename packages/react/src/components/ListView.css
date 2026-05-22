@@ -50,6 +50,7 @@
 
 .dd-listview-table {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -75,6 +76,10 @@
 
 .dd-listview-th--name {
   width: 45%;
+}
+
+.dd-listview-th--date {
+  width: 120px;
 }
 
 .dd-listview-sort-arrow {
