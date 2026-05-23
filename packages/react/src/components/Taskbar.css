@@ -35,6 +35,7 @@
   background: var(--color-taskbar-btn-bg, var(--color-surface, #d4d0c8));
   border: 1px solid #000;
   cursor: pointer;
+  box-shadow: var(--window-controls-button-shadow, none);
   font-family: inherit;
   font-size: 0.8rem;
   text-align: left;
@@ -52,10 +53,10 @@
 }
 
 .dd-taskbar-btn:hover {
-  background: var(--color-taskbar-btn-bg-hover, var(--color-surface-hover, #e8e8e8));
+  box-shadow: var(--dd-hover-shadow);
 }
 
-.dd-taskbar-btn--active {
+.dd-taskbar-btn:active {
   box-shadow: var(--dd-active-shadow);
 }
 
