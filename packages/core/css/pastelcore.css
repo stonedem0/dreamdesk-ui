@@ -234,6 +234,11 @@ body {
   background-color: var(--pastel-orange);
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #f4b8a3;
 }
+
+.btn:hover:not(:disabled):not(.btn--disable),
+.btn:active:not(:disabled):not(.btn--disable) {
+  box-shadow: none;
+}
 .pc-btn--basic {
   background-color: rgb(255 181 183 / 40%);
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d0bdc5;

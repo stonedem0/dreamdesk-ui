@@ -246,7 +246,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
     pm.kill(selected);
   };
 
-  const thStyle: React.CSSProperties = { textAlign: "left", padding: "2px 8px", borderBottom: "1px solid var(--dd-border-color, #000)", fontWeight: "bold", fontSize: "0.75rem", userSelect: "none" };
+  const thStyle: React.CSSProperties = { textAlign: "left", padding: "2px 8px", borderBottom: "var(--border, 1px solid #151820)", borderRight: "var(--border, 1px solid #151820)", fontWeight: "bold", fontSize: "0.75rem", userSelect: "none" };
   const tdStyle: React.CSSProperties = { padding: "2px 8px", fontSize: "0.78rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
 
   return (
@@ -260,7 +260,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
       onClose={() => pm.kill(pid)}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "6px", boxSizing: "border-box" }}>
-        <div style={{ flex: 1, overflow: "auto", border: "1px solid var(--dd-border-color, #000)", background: "var(--color-window-body, #fff)" }}>
+        <div className="pc-scroll" style={{ flex: 1, overflow: "auto", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
             <colgroup>
               <col style={{ width: "45%" }} />
@@ -271,7 +271,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
               <tr style={{ background: "var(--color-surface, #d4d0c8)" }}>
                 <th style={thStyle}>Name</th>
                 <th style={thStyle}>PID</th>
-                <th style={thStyle}>Status</th>
+                <th style={{ ...thStyle, borderRight: "none" }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -286,7 +286,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
                   <tr
                     key={proc.pid}
                     onClick={() => setSelected(proc.pid)}
-                    style={{ background: isSelected ? "var(--color-selection, #0078d7)" : "transparent", color: isSelected ? "#fff" : "inherit", cursor: "default" }}
+                    style={{ background: isSelected ? "var(--color-active, var(--pastelcore-cyan, #a7fcfb))" : "transparent", color: isSelected ? "#000" : "inherit", cursor: "default" }}
                   >
                     <td style={{ ...tdStyle, display: "flex", alignItems: "center", gap: "6px" }}>
                       {def?.icon && <img src={def.icon} alt="" width={14} height={14} style={{ imageRendering: "pixelated", flexShrink: 0 }} />}
