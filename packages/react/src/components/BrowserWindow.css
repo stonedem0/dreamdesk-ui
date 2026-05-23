@@ -51,7 +51,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 4px;
+  padding: 4px 0 4px 6px;
   border: none;
   background: var(--color-surface, #d4d0c8);
   flex-shrink: 0;
@@ -91,17 +91,37 @@
 }
 
 .dd-browser-go-btn {
-  padding: 1px 8px;
-  border: var(--dd-border, 1px solid #000);
-  background: var(--color-surface, #d4d0c8);
+  width: 1.4rem;
+  height: 1.3rem;
+  padding: 0;
+  border: var(--dd-controls-border, var(--color-window-border, var(--border)));
+  background-color: var(--dd-controls-bg, var(--color-window-control-bg, var(--color-surface, #d4d0c8)));
+  border-radius: var(--dd-controls-radius, var(--controls-radius, 0));
+  box-shadow: var(--dd-controls-shadow, var(--window-controls-button-shadow, none));
   font-family: inherit;
   font-size: 0.75rem;
+  font-weight: bold;
   cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dd-controls-fg, var(--line-color, #3d2d33));
+  transition: box-shadow 0.08s ease, transform 0.08s ease, background-color 0.08s ease;
 }
 
 .dd-browser-go-btn:hover {
-  background: var(--color-surface-hover, #e8e8e8);
+  box-shadow: none;
 }
+
+.dd-browser-go-btn:active {
+  box-shadow: inset 2px -2px 1px var(--scroll-button-shadow-light, #ffffff),
+              inset -2px 2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+  transform: translateY(1px);
+}
+
+.dd-browser-go-btn:focus { outline: none; }
+.dd-browser-go-btn:focus-visible { outline: 2px solid var(--line-color, #3d2d33); outline-offset: 1px; }
 
 /* ── Content ── */
 .dd-browser-content {

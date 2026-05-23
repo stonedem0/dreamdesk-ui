@@ -221,6 +221,24 @@ body {
   border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
+.btn--size-sm {
+  min-width: 3rem;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.75rem;
+}
+
+.btn--size-md {
+  min-width: 5rem;
+  padding: 0.125rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.btn--size-lg {
+  min-width: 7rem;
+  padding: 0.25rem 1rem;
+  font-size: 1rem;
+}
+
 .btn--disable {
   filter: grayscale(0.8);
   cursor: not-allowed;
@@ -998,11 +1016,14 @@ dreamdesk-tab-panel.active {
 }
 
 .dd-taskbar-btn:hover {
-  background: var(--color-taskbar-btn-bg-hover, var(--color-surface-hover, #e8e8e8));
+  background: var(
+    --color-taskbar-btn-bg-hover,
+    var(--color-surface-hover, #e8e8e8)
+  );
 }
 
 .dd-taskbar-btn--active {
-  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.3);
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .dd-taskbar-btn--minimized {
@@ -1056,7 +1077,7 @@ dreamdesk-tab-panel.active {
 
 .dd-desktop-icon:hover {
   border-color: var(--color-window-border, #000);
-  background: var(--color-surface-hover, rgba(255,255,255,0.3));
+  background: var(--color-surface-hover, rgba(255, 255, 255, 0.3));
 }
 
 .dd-desktop-icon-label {

@@ -40,6 +40,7 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
 
   return (
     <Window
+      windowId="notepad"
       title={`${dirty ? "* " : ""}${fileName} — Notepad`}
       icon="/icons/notepad.png"
       width="480px"
@@ -50,18 +51,33 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
     >
       <MenuBar>
         <Menu label="File">
+          <MenuItem shortcut="Ctrl+N" onClick={() => {}}>New</MenuItem>
+          <MenuItem shortcut="Ctrl+O" onClick={() => {}}>Open…</MenuItem>
           <MenuItem shortcut="Ctrl+S" onClick={save}>Save</MenuItem>
           <MenuSeparator />
           <MenuItem onClick={() => pm.kill(pid)}>Exit</MenuItem>
         </Menu>
+        <Menu label="Edit">
+          <MenuItem shortcut="Ctrl+Z" disabled>Undo</MenuItem>
+          <MenuSeparator />
+          <MenuItem shortcut="Ctrl+X" onClick={() => {}}>Cut</MenuItem>
+          <MenuItem shortcut="Ctrl+C" onClick={() => {}}>Copy</MenuItem>
+          <MenuItem shortcut="Ctrl+V" onClick={() => {}}>Paste</MenuItem>
+        </Menu>
+        <Menu label="Help">
+          <MenuItem onClick={() => {}}>About Notepad</MenuItem>
+        </Menu>
       </MenuBar>
-      <textarea
-        value={content}
-        onChange={e => { setContent(e.target.value); setDirty(true); }}
-        onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); } }}
-        spellCheck={false}
-        style={{ flex: 1, minHeight: 0, width: "100%", border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-window-body, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box", overflow: "auto" }}
-      />
+      <div style={{ flex: 1, minHeight: 0, margin: "4px 6px", border: "var(--border, 1px solid #151820)", display: "flex" }}>
+        <textarea
+          value={content}
+          onChange={e => { setContent(e.target.value); setDirty(true); }}
+          onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); } }}
+          spellCheck={false}
+          className="pc-scroll"
+          style={{ flex: 1, minHeight: 0, width: "100%", border: "none", outline: "none", resize: "none", padding: "4px 6px", fontFamily: "monospace", fontSize: "0.85rem", background: "var(--color-input-background, #fff)", color: "var(--color-text, #000)", boxSizing: "border-box", overflow: "auto" }}
+        />
+      </div>
     </Window>
   );
 }
@@ -177,6 +193,7 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
 
   return (
     <TerminalWindow
+      windowId="terminal"
       title="Terminal"
       icon="/icons/script_file.png"
       width="560px"
@@ -231,11 +248,12 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
     pm.kill(selected);
   };
 
-  const thStyle: React.CSSProperties = { textAlign: "left", padding: "2px 8px", borderBottom: "1px solid var(--dd-border-color, #000)", fontWeight: "bold", fontSize: "0.75rem", userSelect: "none" };
+  const thStyle: React.CSSProperties = { textAlign: "left", padding: "2px 8px", borderBottom: "var(--border, 1px solid #151820)", borderRight: "var(--border, 1px solid #151820)", fontWeight: "bold", fontSize: "0.75rem", userSelect: "none" };
   const tdStyle: React.CSSProperties = { padding: "2px 8px", fontSize: "0.78rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
 
   return (
     <Window
+      windowId="taskmanager"
       title="Task Manager"
       icon="/icons/tools.png"
       width="400px"
@@ -245,7 +263,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
       onClose={() => pm.kill(pid)}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "6px", boxSizing: "border-box" }}>
-        <div style={{ flex: 1, overflow: "auto", border: "1px solid var(--dd-border-color, #000)", background: "var(--color-window-body, #fff)" }}>
+        <div className="pc-scroll" style={{ flex: 1, overflow: "auto", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
             <colgroup>
               <col style={{ width: "45%" }} />
@@ -256,7 +274,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
               <tr style={{ background: "var(--color-surface, #d4d0c8)" }}>
                 <th style={thStyle}>Name</th>
                 <th style={thStyle}>PID</th>
-                <th style={thStyle}>Status</th>
+                <th style={{ ...thStyle, borderRight: "none" }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -271,7 +289,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
                   <tr
                     key={proc.pid}
                     onClick={() => setSelected(proc.pid)}
-                    style={{ background: isSelected ? "var(--color-selection, #0078d7)" : "transparent", color: isSelected ? "#fff" : "inherit", cursor: "default" }}
+                    style={{ background: isSelected ? "var(--color-active, var(--pastelcore-cyan, #a7fcfb))" : "transparent", color: isSelected ? "#000" : "inherit", cursor: "default" }}
                   >
                     <td style={{ ...tdStyle, display: "flex", alignItems: "center", gap: "6px" }}>
                       {def?.icon && <img src={def.icon} alt="" width={14} height={14} style={{ imageRendering: "pixelated", flexShrink: 0 }} />}
@@ -286,7 +304,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
           </table>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "6px" }}>
-          <Button variant="primary" size="sm" onClick={endProcess} disabled={!selected || selected === pid}>
+          <Button variant="ghost" size="md" onClick={endProcess} disabled={!selected || selected === pid}>
             End Process
           </Button>
         </div>
@@ -390,11 +408,15 @@ function BrowserApp({ pid }: { pid: string; args: ProcessArgs }) {
       canGoForward={historyIndex < navHistory.length - 1}
       onNavigate={navigate}
       onBack={goBack}
+      backIcon="/icons/back.png"
       onForward={goForward}
+      forwardIcon="/icons/forward.png"
       onRefresh={refresh}
+      refreshIcon="/icons/refresh.png"
       onStop={stop}
+      stopIcon="/icons/stop.png"
       onHome={() => navigate(HOME)}
-      homeIcon="/icons/world.png"
+      homeIcon="/icons/home.png"
       historyIcon="/icons/clock.png"
       history={navHistory}
       status={loading ? `Opening page: ${src}…` : error ? "Page cannot be displayed" : "Done"}
@@ -664,9 +686,9 @@ function ExplorerDemo() {
   ]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-      {/* Path bar */}
-      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "2px 6px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", fontSize: "0.78rem", flexShrink: 0 }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", padding: "4px 6px", gap: "4px", boxSizing: "border-box" }}>
+      {/* Address bar */}
+      <div style={{ display: "flex", alignItems: "center", gap: "2px", padding: "1px 6px", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)", fontSize: "0.78rem", flexShrink: 0 }}>
         <span style={{ opacity: 0.6, marginRight: "2px" }}>Address:</span>
         {breadcrumb.map((n, i) => (
           <span key={n.id} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
@@ -678,14 +700,14 @@ function ExplorerDemo() {
         ))}
       </div>
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, overflow: "hidden", gap: "4px" }}>
         {/* Tree panel */}
         <div
-          style={{ width: "180px", borderRight: "1px solid var(--dd-border-color, #000)", display: "flex", flexDirection: "column", flexShrink: 0 }}
+          style={{ width: "180px", border: "var(--border, 1px solid #151820)", display: "flex", flexDirection: "column", flexShrink: 0, background: "var(--color-input-background, #fff)", overflow: "hidden" }}
           onContextMenu={onTreeContext}
         >
-          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "1px solid var(--dd-border-color, #000)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
-          <div style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
+          <div style={{ padding: "2px 6px", background: "var(--color-surface, #d4d0c8)", borderBottom: "var(--border, 1px solid #151820)", fontSize: "0.78rem", fontWeight: "bold", flexShrink: 0 }}>Folders</div>
+          <div className="pc-scroll" style={{ overflow: "auto", flex: 1, padding: "2px 0" }}>
             <TreeView
               nodes={treeNodes}
               selected={selectedPath}
@@ -698,10 +720,10 @@ function ExplorerDemo() {
 
         {/* List panel */}
         <div
-          style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}
+          style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", border: "var(--border, 1px solid #151820)", background: "var(--color-input-background, #fff)" }}
           onContextMenu={onListContext}
         >
-          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "1px solid var(--dd-border-color, #000)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: "1px", padding: "0 2px", borderBottom: "var(--border, 1px solid #151820)", background: "var(--color-surface, #d4d0c8)", flexShrink: 0 }}>
             <button onClick={() => setListMode("details")} style={{ fontWeight: listMode === "details" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Details</button>
             <button onClick={() => setListMode("icons")} style={{ fontWeight: listMode === "icons" ? "bold" : "normal", fontFamily: "inherit", fontSize: "0.65rem", padding: "0 3px", lineHeight: "1.6", background: "none", border: "1px solid transparent", cursor: "pointer" }}>Icons</button>
           </div>
@@ -712,7 +734,8 @@ function ExplorerDemo() {
             multiSelect
             onSelect={setSelectedList}
             onOpen={handleListOpen}
-            style={{ flex: 1 }}
+            className="pc-scroll"
+            style={{ flex: 1, background: "var(--color-input-background, #fff)" }}
           />
           {listContextMenu}
         </div>
@@ -806,6 +829,28 @@ export default function App() {
             />
             <Slider label="Volume:" defaultValue={60} showValue />
             <Slider label="Brightness:" defaultValue={80} showValue />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="primary" size="sm">Primary sm</Button>
+                <Button variant="primary" size="md">Primary md</Button>
+                <Button variant="primary" size="lg">Primary lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="ghost" size="sm">Ghost sm</Button>
+                <Button variant="ghost" size="md">Ghost md</Button>
+                <Button variant="ghost" size="lg">Ghost lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="help" size="sm">Help sm</Button>
+                <Button variant="help" size="md">Help md</Button>
+                <Button variant="help" size="lg">Help lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="primary" size="sm" disabled>Disabled sm</Button>
+                <Button variant="primary" size="md" disabled>Disabled md</Button>
+                <Button variant="primary" size="lg" disabled>Disabled lg</Button>
+              </div>
+            </div>
           </div>
         </Window>
 

@@ -198,8 +198,9 @@ body {
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
 }
 
-.pc-win-body {
-  background-color: var(--pastel-pink);
+.pc-win-body,
+html[data-theme="pastelcore"] .win-body {
+  background-color: var(--color-input-background, #fff5fa);
 }
 
 /* Button styles */
@@ -233,6 +234,11 @@ body {
 .pc-btn--disable {
   background-color: var(--pastel-orange);
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #f4b8a3;
+}
+
+.btn:hover:not(:disabled):not(.btn--disable),
+.btn:active:not(:disabled):not(.btn--disable) {
+  box-shadow: none;
 }
 .pc-btn--basic {
   background-color: rgb(255 181 183 / 40%);
@@ -371,62 +377,123 @@ body {
 /* scrollbar styles */
 
 .pc-scroll::-webkit-scrollbar-track,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-track,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-track {
-  background: #f1f1f1 ;
+html[data-theme="pastelcore"] *::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
 .pc-scroll::-webkit-scrollbar,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar {
+html[data-theme="pastelcore"] *::-webkit-scrollbar {
   width: 1.4rem;
+  height: 1.4rem;
+  background: #ccc;
 }
 
 .pc-scroll::-webkit-scrollbar-thumb,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-thumb,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-thumb {
+html[data-theme="pastelcore"] *::-webkit-scrollbar-thumb {
   background: var(--pastelcore-cyan);
-  background-size: 300% 300% ;
+  background-size: 300% 300%;
   box-shadow: inset -2px 2px 1px #ffffff,
     inset 2px -2px 1px var(--pasteclore-cyan-shadow);
 }
 
 .pc-scroll::-webkit-scrollbar-thumb:hover,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-thumb:hover,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-thumb:hover {
+html[data-theme="pastelcore"] *::-webkit-scrollbar-thumb:hover {
   box-shadow: inset -2px 2px 1px #ffffff,
-    inset 2px -2px 1px var(--pastel-pink-shadow)
-}
-
-.pc-scroll::-webkit-scrollbar-button:vertical:decrement,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-button:vertical:decrement,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-button:vertical:decrement {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>') !important;
-}
-
-.pc-scroll::-webkit-scrollbar-button:vertical:increment,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-button:vertical:increment,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-button:vertical:increment {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>') !important;
+    inset 2px -2px 1px var(--pastel-pink-shadow);
 }
 
 .pc-scroll::-webkit-scrollbar-button,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-button,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-button {
-  background-color: #ccc; 
-  border-right: var(--border);
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button {
+  background-color: #ccc;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a2a2a2;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:vertical {
   border-left: var(--border);
-  box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #a2a2a2 !important;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical:decrement,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 8l6 6H6z"/></svg>');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pc-scroll::-webkit-scrollbar-button:vertical:increment,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:vertical:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M12 16l-6-6h12z"/></svg>');
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .pc-scroll::-webkit-scrollbar-button:vertical:increment:start,
 .pc-scroll::-webkit-scrollbar-button:vertical:decrement:end,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-button:vertical:increment:start,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-button:vertical:increment:start,
-html[data-theme="pastelcore"] [scrollable]:not([scroll-style])::-webkit-scrollbar-button:vertical:decrement:end,
-html[data-theme="pastelcore"] [scroll-style="pastelcore"]::-webkit-scrollbar-button:vertical:decrement:end {
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:vertical:increment:start,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:vertical:decrement:end {
   display: none;
   border: none;
+}
+
+.pc-scroll::-webkit-scrollbar:vertical,
+html[data-theme="pastelcore"] *::-webkit-scrollbar:vertical {
+  border-right: none;
+}
+
+.pc-scroll::-webkit-scrollbar-track:vertical,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-track:vertical {
+  border-right: none;
+}
+
+.pc-scroll::-webkit-scrollbar-thumb:vertical,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-thumb:vertical {
+  border-right: none;
+}
+
+.pc-scroll::-webkit-scrollbar-button:horizontal,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:horizontal {
+  border-top: var(--border);
+  box-shadow: inset 0 2px 1px #ffffff, inset 0 -2px 1px #a2a2a2;
+}
+
+.pc-scroll::-webkit-scrollbar-button:horizontal:decrement,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:horizontal:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M16 12l-6-6v12z"/></svg>');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pc-scroll::-webkit-scrollbar-button:horizontal:increment,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:horizontal:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%231C1C1C" d="M8 12l6 6V6z"/></svg>');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pc-scroll::-webkit-scrollbar-button:horizontal:increment:start,
+.pc-scroll::-webkit-scrollbar-button:horizontal:decrement:end,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:horizontal:increment:start,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-button:horizontal:decrement:end {
+  display: none;
+  border: none;
+}
+
+.pc-scroll::-webkit-scrollbar:horizontal,
+html[data-theme="pastelcore"] *::-webkit-scrollbar:horizontal {
+  border-bottom: none;
+}
+
+.pc-scroll::-webkit-scrollbar-track:horizontal,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-track:horizontal {
+  border-bottom: none;
+}
+
+.pc-scroll::-webkit-scrollbar-thumb:horizontal,
+html[data-theme="pastelcore"] *::-webkit-scrollbar-thumb:horizontal {
+  border-bottom: none;
 }
 
 /* Firefox support */

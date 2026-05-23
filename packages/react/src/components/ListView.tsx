@@ -108,7 +108,7 @@ export function ListView({
             <th className="dd-listview-th" onClick={() => handleHeaderClick("type")}>
               Type<SortIndicator col="type" />
             </th>
-            <th className="dd-listview-th" onClick={() => handleHeaderClick("date")}>
+            <th className="dd-listview-th dd-listview-th--date" onClick={() => handleHeaderClick("date")}>
               Date Modified<SortIndicator col="date" />
             </th>
           </tr>
