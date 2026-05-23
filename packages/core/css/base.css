@@ -5,6 +5,11 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  --dd-hover-shadow: none;
+  --dd-active-shadow-light: #ffffff;
+  --dd-active-shadow-dark: #a2a2a2;
+  --dd-active-shadow: inset 2px -2px 1px var(--dd-active-shadow-light),
+                      inset -2px 2px 1px var(--dd-active-shadow-dark);
 }
 
 body {
@@ -298,7 +303,7 @@ body {
 }
 
 .win-controls button:hover {
-  box-shadow: none;
+  box-shadow: var(--dd-hover-shadow);
   background-color: var(
     --dd-controls-bg,
     var(--color-window-control-bg, var(--color-surface, #ffffff))
@@ -340,9 +345,7 @@ body {
   outline: none;
 }
 .win-controls button:active {
-  box-shadow:
-    inset 2px -2px 1px var(--scroll-button-shadow-light, #ffffff),
-    inset -2px 2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+  box-shadow: var(--dd-active-shadow);
   transform: translateY(1px);
   outline: none;
   background-color: var(

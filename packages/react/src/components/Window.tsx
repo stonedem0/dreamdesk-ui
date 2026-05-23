@@ -219,8 +219,8 @@ export function Window({
           el.style.top = `${Math.max(8, (ch - wh) / 2 + dy)}px`;
         }
       }
-      // Play open animation for fresh spawns (no saved state to restore)
-      if (!saved) {
+      // Play open animation unless this is a page-reload restoration (was already open)
+      if (!saved || saved.isOpen === false) {
         const inner = el.querySelector<HTMLElement>(".dd-win");
         if (inner) animOpen(inner);
       }

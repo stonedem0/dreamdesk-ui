@@ -6,6 +6,9 @@ export type { DesktopProps } from "./components/Desktop";
 export { Taskbar } from "./components/Taskbar";
 export type { TaskbarProps } from "./components/Taskbar";
 
+export { StartMenu } from "./components/StartMenu";
+export type { StartMenuProps, StartMenuItemDef } from "./components/StartMenu";
+
 export { DesktopIcon } from "./components/DesktopIcon";
 export type { DesktopIconProps } from "./components/DesktopIcon";
 

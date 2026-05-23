@@ -111,12 +111,11 @@
 }
 
 .dd-browser-go-btn:hover {
-  box-shadow: none;
+  box-shadow: var(--dd-hover-shadow);
 }
 
 .dd-browser-go-btn:active {
-  box-shadow: inset 2px -2px 1px var(--scroll-button-shadow-light, #ffffff),
-              inset -2px 2px 1px var(--scroll-button-shadow-dark, #a2a2a2);
+  box-shadow: var(--dd-active-shadow);
   transform: translateY(1px);
 }
 
