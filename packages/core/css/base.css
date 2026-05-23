@@ -1079,6 +1079,10 @@ dreamdesk-tab-panel.active {
   background: var(--color-surface-hover, rgba(255, 255, 255, 0.3));
 }
 
+.dd-desktop-icon img {
+  image-rendering: pixelated;
+}
+
 .dd-desktop-icon-label {
   overflow: hidden;
   text-overflow: ellipsis;
