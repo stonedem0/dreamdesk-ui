@@ -69,6 +69,17 @@ jobs:
             });
           "
 
+      - name: Remove unpublished workspace deps before install
+        run: |
+          node -e "
+            const fs = require('fs');
+            const p = 'packages/react/package.json';
+            const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
+            // @dreamdesk/core is aliased to local source in vite config — not needed installed
+            delete pkg.dependencies['@dreamdesk/core'];
+            fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
+          "
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile=false
 
