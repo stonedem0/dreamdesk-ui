@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { StartMenu } from "../components/StartMenu";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -488,6 +489,30 @@ function DialogDemo() {
   );
 }
 
+const SINGLETON_WINDOW_IDS: Record<string, string> = {
+  explorer: "explorer",
+  browser: "browser",
+};
+
+function AppStartMenu() {
+  const os = useOS();
+  const wm = useWindowManager();
+
+  const items = Object.entries(os.apps)
+    .filter(([, def]) => def.persistent !== false)
+    .map(([id, def]) => ({ id, label: def.title, icon: def.icon }));
+
+  const handleSelect = (appId: string) => {
+    const windowId = SINGLETON_WINDOW_IDS[appId];
+    const alreadyRunning = os.pm.list().find(p => p.appId === appId);
+    if (alreadyRunning && windowId) wm.open(windowId);
+    else if (alreadyRunning) wm.open(alreadyRunning.pid);
+    else os.openWith(appId);
+  };
+
+  return <StartMenu label="DreamDesk" items={items} onSelect={handleSelect} />;
+}
+
 function WindowShortcuts() {
   const wm = useWindowManager();
   const os = useOS();
@@ -855,7 +880,7 @@ export default function App() {
         </Window>
 
 
-        <Taskbar />
+        <Taskbar startMenu={<AppStartMenu />} />
         </OSProvider>
       </Desktop>
       </DialogProvider>

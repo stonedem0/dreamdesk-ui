@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { type WindowEntry } from "@dreamdesk/core";
 import { useWindowManager } from "./Desktop";
 import { Icon } from "./Icon";
@@ -24,9 +24,10 @@ function formatTime(d: Date) {
 export interface TaskbarProps {
   clock?: boolean;
   className?: string;
+  startMenu?: ReactNode;
 }
 
-export function Taskbar({ clock = true, className }: TaskbarProps) {
+export function Taskbar({ clock = true, className, startMenu }: TaskbarProps) {
   const wm = useWindowManager();
   const [displayed, setDisplayed] = useState<DisplayEntry[]>(() => wm.getWindows());
 
@@ -52,6 +53,7 @@ export function Taskbar({ clock = true, className }: TaskbarProps) {
 
   return (
     <div className={["dd-taskbar", className].filter(Boolean).join(" ")}>
+      {startMenu}
       <div className="dd-taskbar-windows">
         {displayed.map((w) => (
           <button
