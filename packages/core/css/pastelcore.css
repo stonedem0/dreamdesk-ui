@@ -198,8 +198,9 @@ body {
   box-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
 }
 
-.pc-win-body {
-  background-color: var(--pastel-pink);
+.pc-win-body,
+html[data-theme="pastelcore"] .win-body {
+  background-color: var(--color-input-background, #fff5fa);
 }
 
 /* Button styles */

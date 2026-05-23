@@ -199,7 +199,7 @@ export function Window({
       if (saved.width || saved.height) el.setAttribute("data-explicit", "");
     }
 
-    const shouldOpen = saved?.isOpen ?? defaultOpen;
+    const shouldOpen = defaultOpen || (saved?.isOpen ?? false);
     if (!shouldOpen) el.style.display = "none";
 
     if (shouldOpen) {
