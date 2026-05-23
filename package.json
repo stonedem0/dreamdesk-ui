@@ -1,7 +1,32 @@
 {
   "name": "dreamdesk-ui",
   "version": "3.0.0",
-  "description": "Dreamdesk UI — Web Components and React component library.",
+  "description": "Dreamdesk UI — React component library for retro-style desktop interfaces.",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css",
+    "./css/globals.css": "./css/globals.css",
+    "./css/base.css": "./css/base.css",
+    "./css/pastelcore.css": "./css/pastelcore.css",
+    "./css/dark.css": "./css/dark.css",
+    "./css/vista.css": "./css/vista.css"
+  },
+  "files": [
+    "dist",
+    "css"
+  ],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
   "scripts": {
     "dev:core": "pnpm --filter @dreamdesk/core dev",
     "dev:react": "pnpm --filter @dreamdesk/react dev",

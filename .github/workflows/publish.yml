@@ -55,7 +55,7 @@ jobs:
           echo "dist_tag=$DIST" >> $GITHUB_OUTPUT
           echo "Resolved: $TAG → npm tag=$DIST"
 
-      - name: Sync package versions to release tag
+      - name: Sync package versions and resolve workspace deps
         env:
           VER: ${{ steps.ver.outputs.version }}
         run: |
@@ -64,6 +64,13 @@ jobs:
             ['packages/core/package.json', 'packages/react/package.json'].forEach(p => {
               const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
               pkg.version = ver;
+              // replace workspace:* with the actual version so npm publish works
+              for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+                if (!pkg[section]) continue;
+                for (const [k, v] of Object.entries(pkg[section])) {
+                  if (v === 'workspace:*') pkg[section][k] = ver;
+                }
+              }
               fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
               console.log(pkg.name, '->', ver);
             });
@@ -75,12 +82,18 @@ jobs:
       - name: Build packages
         run: pnpm run build
 
-      - name: Publish @dreamdesk/core
-        run: pnpm --filter @dreamdesk/core publish --no-git-checks --access public --tag ${{ steps.ver.outputs.dist_tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Assemble root package for publish
+        run: |
+          # JS + types + style from react build
+          cp -r packages/react/dist dist
+          # Theme CSS files from core
+          mkdir -p css
+          cp packages/core/css/*.css css/
 
-      - name: Publish @dreamdesk/react
-        run: pnpm --filter @dreamdesk/react publish --no-git-checks --access public --tag ${{ steps.ver.outputs.dist_tag }}
+      - name: Preview tarball
+        run: npm pack --dry-run
+
+      - name: Publish dreamdesk-ui
+        run: npm publish --access public --tag ${{ steps.ver.outputs.dist_tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
