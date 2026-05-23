@@ -301,7 +301,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
           </table>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "6px" }}>
-          <Button variant="primary" size="sm" onClick={endProcess} disabled={!selected || selected === pid}>
+          <Button variant="ghost" size="md" onClick={endProcess} disabled={!selected || selected === pid}>
             End Process
           </Button>
         </div>
@@ -826,6 +826,28 @@ export default function App() {
             />
             <Slider label="Volume:" defaultValue={60} showValue />
             <Slider label="Brightness:" defaultValue={80} showValue />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="primary" size="sm">Primary sm</Button>
+                <Button variant="primary" size="md">Primary md</Button>
+                <Button variant="primary" size="lg">Primary lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="ghost" size="sm">Ghost sm</Button>
+                <Button variant="ghost" size="md">Ghost md</Button>
+                <Button variant="ghost" size="lg">Ghost lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="help" size="sm">Help sm</Button>
+                <Button variant="help" size="md">Help md</Button>
+                <Button variant="help" size="lg">Help lg</Button>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                <Button variant="primary" size="sm" disabled>Disabled sm</Button>
+                <Button variant="primary" size="md" disabled>Disabled md</Button>
+                <Button variant="primary" size="lg" disabled>Disabled lg</Button>
+              </div>
+            </div>
           </div>
         </Window>
 
