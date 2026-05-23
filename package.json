@@ -1,6 +1,6 @@
 {
   "name": "dreamdesk-ui",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Dreamdesk UI — React component library for retro-style desktop interfaces.",
   "type": "module",
   "main": "dist/index.cjs",
