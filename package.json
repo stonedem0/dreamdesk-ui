@@ -1,6 +1,6 @@
 {
   "name": "dreamdesk-ui",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Dreamdesk UI — Web Components and React component library.",
   "scripts": {
     "dev:core": "pnpm --filter @dreamdesk/core dev",
