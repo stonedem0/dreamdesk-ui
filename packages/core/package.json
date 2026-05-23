@@ -1,6 +1,6 @@
 {
   "name": "@dreamdesk/core",
-  "version": "0.1.9",
+  "version": "3.0.1",
   "description": "Vanilla JS Web Components for retro-style windows and UI.",
   "type": "module",
   "module": "js/dreamdesk.js",
