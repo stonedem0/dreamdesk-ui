@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { StartMenu } from "../components/StartMenu";
+import { Wallpaper } from "../components/Wallpaper";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -794,6 +795,7 @@ export default function App() {
           { label: "Arrange Icons", disabled: true, onClick: () => {} },
           { label: "Properties", disabled: true, onClick: () => {} },
         ]}>
+        <Wallpaper gradient="linear-gradient(135deg, #fff5fa 0%, #e8f8ff 100%)" />
         <OSProvider fs={demoFS} apps={OS_APPS} adapter={fsAdapter}>
 
         <WindowShortcuts />
