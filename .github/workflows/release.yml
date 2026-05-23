@@ -29,17 +29,34 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version
+      - name: Bump version and sync packages
         id: bump
         run: |
-          npm version ${{ github.event.inputs.releaseType }} -m "chore(release): v%s"
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          # Bump root without committing so we can amend package files into the same commit
+          NEW_VER=$(npm version ${{ github.event.inputs.releaseType }} --no-git-tag-version)
+          NEW_VER="${NEW_VER#v}"
+
+          # Sync to individual packages
+          node -e "
+            const fs = require('fs'), ver = '$NEW_VER';
+            ['packages/core/package.json', 'packages/react/package.json'].forEach(p => {
+              const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
+              pkg.version = ver;
+              fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
+              console.log(pkg.name, '->', ver);
+            });
+          "
+
+          # Single commit + annotated tag covering all three package.json files
+          git add package.json packages/core/package.json packages/react/package.json
+          git commit -m "chore(release): v${NEW_VER}"
+          git tag -a "v${NEW_VER}" -m "v${NEW_VER}"
+
+          echo "version=${NEW_VER}" >> $GITHUB_OUTPUT
+          echo "tag=v${NEW_VER}" >> $GITHUB_OUTPUT
 
       - name: Push commit and tag
-        run: |
-          git push --follow-tags
+        run: git push --follow-tags
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -47,4 +64,3 @@ jobs:
           tag: ${{ steps.bump.outputs.tag }}
           name: ${{ steps.bump.outputs.tag }}
           generateReleaseNotes: true
-

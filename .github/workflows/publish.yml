@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       distTag:
-        description: "Optional npm dist-tag (default: auto: next for 0.x, latest otherwise)"
+        description: "Optional npm dist-tag (default: auto — latest for >=1.x, next for 0.x)"
         required: false
         default: ""
 
 jobs:
   publish:
-    name: Publish package
+    name: Publish packages
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
     permissions:
@@ -31,56 +31,56 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
-      - name: Install (if needed)
-        run: |
-          npm ci --ignore-scripts || echo "No dependencies to install"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - name: Resolve release tag and sync version
+      - name: Resolve version and dist-tag
+        id: ver
         run: |
-          set -e
           git fetch --tags --force
           TAG=""
           if [ "${{ github.event_name }}" = "workflow_run" ]; then
             TAG=$(git tag --points-at "${{ github.event.workflow_run.head_sha }}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)
           fi
-          if [ -z "$TAG" ]; then
-            TAG=$(git describe --tags --exact-match 2>/dev/null || true)
-          fi
-          if [ -z "$TAG" ]; then
-            TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1 || true)
-          fi
-          if [ -n "$TAG" ]; then
-            echo "Using tag $TAG"
-            VER="${TAG#v}"
-            CUR=$(node -p "require('./package.json').version")
-            if [ "$CUR" != "$VER" ]; then
-              npm version "$VER" --no-git-tag-version
-              echo "package.json version set to $VER"
-            else
-              echo "package.json already $CUR; no change"
-            fi
-          else
-            echo "No v* tag found; leaving version as is"
-          fi
+          if [ -z "$TAG" ]; then TAG=$(git describe --tags --exact-match 2>/dev/null || true); fi
+          if [ -z "$TAG" ]; then TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1); fi
+          VER="${TAG#v}"
+          INPUT="${{ github.event.inputs.distTag }}"
+          if [ -n "$INPUT" ]; then DIST="$INPUT"
+          elif [[ "$VER" == 0.* ]]; then DIST="next"
+          else DIST="latest"; fi
+          echo "version=$VER" >> $GITHUB_OUTPUT
+          echo "dist_tag=$DIST" >> $GITHUB_OUTPUT
+          echo "Resolved: $TAG → npm tag=$DIST"
 
-      - name: Preview tarball (post-sync)
+      - name: Sync package versions to release tag
+        env:
+          VER: ${{ steps.ver.outputs.version }}
         run: |
-          node -p "require('./package.json').version"
-          npm pack --dry-run
+          node -e "
+            const fs = require('fs'), ver = process.env.VER;
+            ['packages/core/package.json', 'packages/react/package.json'].forEach(p => {
+              const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
+              pkg.version = ver;
+              fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
+              console.log(pkg.name, '->', ver);
+            });
+          "
 
-      - name: Resolve dist-tag
-        id: tag
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          INPUT_TAG="${{ github.event.inputs.distTag }}"
-          if [ -n "$INPUT_TAG" ]; then TAG="$INPUT_TAG";
-          elif [[ "$VERSION" == 0.* ]]; then TAG="next";
-          else TAG="latest"; fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
 
-      - name: Publish to npm
-        run: npm publish --access public --tag ${{ steps.tag.outputs.tag }}
+      - name: Build packages
+        run: pnpm run build
+
+      - name: Publish @dreamdesk/core
+        run: pnpm --filter @dreamdesk/core publish --no-git-checks --access public --tag ${{ steps.ver.outputs.dist_tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Publish @dreamdesk/react
+        run: pnpm --filter @dreamdesk/react publish --no-git-checks --access public --tag ${{ steps.ver.outputs.dist_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
