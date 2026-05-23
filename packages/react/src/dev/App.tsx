@@ -40,6 +40,7 @@ function NotepadApp({ pid, args }: { pid: string; args: ProcessArgs }) {
 
   return (
     <Window
+      windowId="notepad"
       title={`${dirty ? "* " : ""}${fileName} — Notepad`}
       icon="/icons/notepad.png"
       width="480px"
@@ -192,6 +193,7 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
 
   return (
     <TerminalWindow
+      windowId="terminal"
       title="Terminal"
       icon="/icons/script_file.png"
       width="560px"
@@ -251,6 +253,7 @@ function TaskManagerApp({ pid }: { pid: string; args: ProcessArgs }) {
 
   return (
     <Window
+      windowId="taskmanager"
       title="Task Manager"
       icon="/icons/tools.png"
       width="400px"
