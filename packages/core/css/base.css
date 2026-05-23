@@ -1019,10 +1019,7 @@ dreamdesk-tab-panel.active {
 }
 
 .dd-taskbar-btn:hover {
-  background: var(
-    --color-taskbar-btn-bg-hover,
-    var(--color-surface-hover, #e8e8e8)
-  );
+  box-shadow: var(--dd-hover-shadow);
 }
 
 .dd-taskbar-btn--active {
