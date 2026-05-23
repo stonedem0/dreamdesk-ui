@@ -6,5 +6,6 @@ export * from './snap';
 export * from './persistence';
 export * from './windowManager';
 export * from './progressBar';
+export * from './notificationManager';
 export * from './dreamdesk';
 

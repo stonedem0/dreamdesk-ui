@@ -1,0 +1,36 @@
+.dd-toast-container {
+  position: fixed;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.dd-toast-container > * {
+  pointer-events: all;
+}
+
+.dd-toast-container--bottom-right {
+  bottom: calc(var(--dd-taskbar-h, 36px) + 8px);
+  right: 12px;
+  align-items: flex-end;
+}
+
+.dd-toast-container--bottom-left {
+  bottom: calc(var(--dd-taskbar-h, 36px) + 8px);
+  left: 12px;
+  align-items: flex-start;
+}
+
+.dd-toast-container--top-right {
+  top: 12px;
+  right: 12px;
+  align-items: flex-end;
+}
+
+.dd-toast-container--top-left {
+  top: 12px;
+  left: 12px;
+  align-items: flex-start;
+}

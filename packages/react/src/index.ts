@@ -12,6 +12,9 @@ export type { StartMenuProps, StartMenuItemDef } from "./components/StartMenu";
 export { Wallpaper } from "./components/Wallpaper";
 export type { WallpaperProps } from "./components/Wallpaper";
 
+export { ToastContainer } from "./components/ToastContainer";
+export type { ToastContainerProps, ToastPosition } from "./components/ToastContainer";
+
 export { DesktopIcon } from "./components/DesktopIcon";
 export type { DesktopIconProps } from "./components/DesktopIcon";
 
