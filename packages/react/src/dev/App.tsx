@@ -405,11 +405,15 @@ function BrowserApp({ pid }: { pid: string; args: ProcessArgs }) {
       canGoForward={historyIndex < navHistory.length - 1}
       onNavigate={navigate}
       onBack={goBack}
+      backIcon="/icons/back.png"
       onForward={goForward}
+      forwardIcon="/icons/forward.png"
       onRefresh={refresh}
+      refreshIcon="/icons/refresh.png"
       onStop={stop}
+      stopIcon="/icons/stop.png"
       onHome={() => navigate(HOME)}
-      homeIcon="/icons/world.png"
+      homeIcon="/icons/home.png"
       historyIcon="/icons/clock.png"
       history={navHistory}
       status={loading ? `Opening page: ${src}…` : error ? "Page cannot be displayed" : "Done"}
