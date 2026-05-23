@@ -56,6 +56,7 @@ html[data-theme="pastelcore"] {
   /* Interactive States */
   --color-hover: var(--pastelcore-blue);
   --color-active: var(--pastelcore-cyan);
+  --dd-list-selected-fg: #000;
   --color-disabled: var(--pastel-orange);
   --color-error: var(--pastelcore-red);
   --color-success: var(--pastel-jade);

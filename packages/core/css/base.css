@@ -1076,7 +1076,6 @@ dreamdesk-tab-panel.active {
 }
 
 .dd-desktop-icon:hover {
-  border-color: var(--color-window-border, #000);
   background: var(--color-surface-hover, rgba(255, 255, 255, 0.3));
 }
 
