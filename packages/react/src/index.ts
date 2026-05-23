@@ -40,6 +40,12 @@ export type { ToggleProps } from "./components/Toggle";
 export { TerminalWindow } from "./components/TerminalWindow";
 export type { TerminalWindowProps } from "./components/TerminalWindow";
 
+export { NotepadWindow } from "./components/NotepadWindow";
+export type { NotepadWindowProps } from "./components/NotepadWindow";
+
+export { ExplorerWindow } from "./components/ExplorerWindow";
+export type { ExplorerWindowProps } from "./components/ExplorerWindow";
+
 export { BrowserWindow, BrowserErrorPage } from "./components/BrowserWindow";
 export type { BrowserWindowProps, BrowserErrorPageProps } from "./components/BrowserWindow";
 
