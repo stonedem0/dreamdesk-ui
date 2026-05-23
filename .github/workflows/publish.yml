@@ -55,7 +55,7 @@ jobs:
           echo "dist_tag=$DIST" >> $GITHUB_OUTPUT
           echo "Resolved: $TAG → npm tag=$DIST"
 
-      - name: Sync package versions and resolve workspace deps
+      - name: Sync package versions
         env:
           VER: ${{ steps.ver.outputs.version }}
         run: |
@@ -64,13 +64,6 @@ jobs:
             ['packages/core/package.json', 'packages/react/package.json'].forEach(p => {
               const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
               pkg.version = ver;
-              // replace workspace:* with the actual version so npm publish works
-              for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
-                if (!pkg[section]) continue;
-                for (const [k, v] of Object.entries(pkg[section])) {
-                  if (v === 'workspace:*') pkg[section][k] = ver;
-                }
-              }
               fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
               console.log(pkg.name, '->', ver);
             });
