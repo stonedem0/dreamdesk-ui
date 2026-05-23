@@ -7,3 +7,4 @@ export * from './persistence';
 export * from './windowManager';
 export * from './progressBar';
 export * from './appRegistry';
+export * from './notificationManager';

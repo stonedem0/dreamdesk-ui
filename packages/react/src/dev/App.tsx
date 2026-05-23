@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { StartMenu } from "../components/StartMenu";
 import { Wallpaper } from "../components/Wallpaper";
+import { ToastContainer } from "../components/ToastContainer";
+import { notify } from "@dreamdesk/core";
 import { Window } from "../components/Window";
 import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
@@ -831,6 +833,11 @@ export default function App() {
               <Toast type="notification" message="This is a notification." />
               <Toast type="warning" message="This is a warning." />
             </div>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <Button variant="ghost" size="sm" onClick={() => notify({ message: "File saved successfully", type: "notification" })}>Notify</Button>
+              <Button variant="ghost" size="sm" onClick={() => notify({ message: "Something went wrong", type: "alert" })}>Alert</Button>
+              <Button variant="ghost" size="sm" onClick={() => notify({ message: "Low disk space", type: "warning", persistent: true })}>Warning (persistent)</Button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
               <Checkbox label="Enable notifications" defaultChecked />
               <Checkbox label="Show in taskbar" />
@@ -882,6 +889,7 @@ export default function App() {
         </Window>
 
 
+        <ToastContainer position="bottom-right" />
         <Taskbar startMenu={<AppStartMenu />} />
         </OSProvider>
       </Desktop>
