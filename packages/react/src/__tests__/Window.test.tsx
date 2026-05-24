@@ -99,6 +99,36 @@ describe("Window — title", () => {
   });
 });
 
+describe("Window — onMove", () => {
+  it("calls onMove with position after drag ends", () => {
+    const onMove = vi.fn();
+    setup({ onMove });
+
+    const host = getHost();
+    const header = host.querySelector(".dd-win-header") as HTMLElement;
+
+    host.getBoundingClientRect = () =>
+      ({ left: 120, top: 80, width: 400, height: 300, right: 520, bottom: 380, x: 120, y: 80, toJSON: () => {} } as DOMRect);
+
+    header.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 150, clientY: 100 }));
+    document.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: 200, clientY: 140 }));
+    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+
+    expect(onMove).toHaveBeenCalledWith(120, 80);
+  });
+
+  it("does not call onMove if prop is not provided", () => {
+    setup();
+    const host = getHost();
+    const header = host.querySelector(".dd-win-header") as HTMLElement;
+
+    header.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 150, clientY: 100 }));
+    document.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: 200, clientY: 140 }));
+    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    // no error thrown — onMove is optional
+  });
+});
+
 describe("Window — re-open", () => {
   it("re-shows host after close when display is cleared", async () => {
     setup();
