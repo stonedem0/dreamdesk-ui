@@ -45,6 +45,7 @@ export interface WindowProps {
   fullscreenMode?: "expand";
   bodyOverflow?: "auto" | "hidden" | "scroll";
   scrollContent?: boolean;
+  onMove?: (x: number, y: number) => void;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
@@ -133,6 +134,7 @@ export function Window({
   fullscreenMode,
   bodyOverflow,
   scrollContent,
+  onMove,
   onMinimize,
   onFullscreen,
   fullscreenAnimation,
@@ -414,14 +416,20 @@ export function Window({
         host.style.setProperty("--ddw-h", `${rect.height}px`);
         host.setAttribute("data-explicit", "");
       },
-      onEnd: () => saveState(),
+      onEnd: () => {
+        saveState();
+        if (onMove && hostRef.current) {
+          const { left, top } = hostRef.current.getBoundingClientRect();
+          onMove(left, top);
+        }
+      },
     });
 
     return () => {
       cleanup();
       snapOverlay?.remove();
     };
-  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState, onMove]);
 
   // Resize
   useEffect(() => {
