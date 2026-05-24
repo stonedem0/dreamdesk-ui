@@ -46,6 +46,7 @@ export interface WindowProps {
   bodyOverflow?: "auto" | "hidden" | "scroll";
   scrollContent?: boolean;
   onMove?: (x: number, y: number) => void;
+  disableSnap?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
@@ -135,6 +136,7 @@ export function Window({
   bodyOverflow,
   scrollContent,
   onMove,
+  disableSnap = false,
   onMinimize,
   onFullscreen,
   fullscreenAnimation,
@@ -356,7 +358,7 @@ export function Window({
     const container = desktopRef?.current ?? null;
 
     let snapOverlay: HTMLElement | null = null;
-    if (container) {
+    if (container && !disableSnap) {
       snapOverlay = document.createElement("div");
       snapOverlay.style.cssText =
         "position:absolute;pointer-events:none;background:rgba(100,150,255,0.18);border:2px solid rgba(100,150,255,0.45);border-radius:4px;z-index:9998;transition:top 0.08s,left 0.08s,width 0.08s,height 0.08s;display:none;box-sizing:border-box";
@@ -386,7 +388,7 @@ export function Window({
         }
         raise();
       },
-      onSnap: (zone) => {
+      onSnap: disableSnap ? undefined : (zone) => {
         if (!snapOverlay || !container) return;
         if (zone === "none") { snapOverlay.style.display = "none"; return; }
         const cr = container.getBoundingClientRect();
@@ -398,7 +400,7 @@ export function Window({
         snapOverlay.style.width = `${rect.width}px`;
         snapOverlay.style.height = `${rect.height}px`;
       },
-      onSnapCommit: (zone) => {
+      onSnapCommit: disableSnap ? undefined : (zone) => {
         if (snapOverlay) snapOverlay.style.display = "none";
         if (!container) return;
         const cr = container.getBoundingClientRect();
@@ -429,7 +431,7 @@ export function Window({
       cleanup();
       snapOverlay?.remove();
     };
-  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState, onMove]);
+  }, [movable, isFullscreen, fullscreenMode, raise, desktopRef, taskbarHeight, saveState, onMove, disableSnap]);
 
   // Resize
   useEffect(() => {

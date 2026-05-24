@@ -201,6 +201,12 @@
   padding: 0;
 }
 
+.dd-notepad-window .dd-win-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
 .terminal-win-body {
   flex: 1;
   background-color: var(--color-terminal-bg, #000);
