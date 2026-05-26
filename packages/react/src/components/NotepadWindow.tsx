@@ -7,6 +7,7 @@ export interface NotepadWindowProps extends Omit<WindowProps, "children" | "scro
   defaultValue?: string;
   value?: string;
   onChange?: (value: string) => void;
+  hideTabs?: boolean;
   style?: CSSProperties;
 }
 
@@ -20,7 +21,7 @@ function nextId() { return String(++_tid); }
 
 interface NoteTab { id: string; title: string; text: string; }
 
-export function NotepadWindow({ defaultValue = "", value, onChange, className, onClose, ...props }: NotepadWindowProps) {
+export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = false, className, onClose, ...props }: NotepadWindowProps) {
   const controlled = value !== undefined;
 
   const [tabs, setTabs] = useState<NoteTab[]>(() => [{ id: nextId(), title: "Untitled", text: controlled ? value! : defaultValue }]);
@@ -77,8 +78,8 @@ export function NotepadWindow({ defaultValue = "", value, onChange, className, o
     >
       <MenuBar>
         <Menu label="File">
-          <MenuItem onClick={addTab}>New Tab</MenuItem>
-          <MenuSeparator />
+          {!hideTabs && <MenuItem onClick={addTab}>New Tab</MenuItem>}
+          {!hideTabs && <MenuSeparator />}
           <MenuItem onClick={onClose}>Exit</MenuItem>
         </Menu>
         <Menu label="Edit">
@@ -88,10 +89,13 @@ export function NotepadWindow({ defaultValue = "", value, onChange, className, o
             onChange?.("");
           }}>Select All &amp; Delete</MenuItem>
         </Menu>
+        <Menu label="Help">
+          <MenuItem onClick={() => {}}>About Notepad</MenuItem>
+        </Menu>
       </MenuBar>
 
       {/* tab strip */}
-      <div style={{ display: "flex", alignItems: "stretch", background: surface, borderBottom: border, flexShrink: 0, fontSize: "0.875rem", userSelect: "none" }}>
+      {!hideTabs && <div style={{ display: "flex", alignItems: "stretch", background: surface, borderBottom: border, flexShrink: 0, fontSize: "0.875rem", userSelect: "none" }}>
         {tabs.map((tab) => {
           const active = tab.id === activeId;
           return (
@@ -130,7 +134,7 @@ export function NotepadWindow({ defaultValue = "", value, onChange, className, o
           onClick={addTab}
           style={{ background: "none", border: "none", borderRight: border, cursor: "pointer", padding: "0.15rem 0.5rem", font: "inherit", fontSize: "0.875rem", opacity: 0.7 }}
         >+</button>
-      </div>
+      </div>}
 
       <div style={{ flex: 1, minHeight: 0, margin: "4px 6px", border, display: "flex" }}>
         <textarea
