@@ -845,6 +845,17 @@ dreamdesk-tab-panel.active {
   box-shadow: none;
 }
 
+/* opt-out: apply to any scrollable element to suppress the global dreamdesk scrollbar theme */
+.dd-scroll-native::-webkit-scrollbar,
+.dd-scroll-native ::-webkit-scrollbar { width: 8px; height: 8px; }
+.dd-scroll-native::-webkit-scrollbar-track,
+.dd-scroll-native ::-webkit-scrollbar-track { background: transparent; border: none; box-shadow: none; }
+.dd-scroll-native::-webkit-scrollbar-thumb,
+.dd-scroll-native ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.4); border: none; box-shadow: none; background-image: none; border-radius: 4px; }
+.dd-scroll-native::-webkit-scrollbar-button,
+.dd-scroll-native ::-webkit-scrollbar-button { display: none; }
+.dd-scroll-native { scrollbar-width: thin; scrollbar-color: rgba(128,128,128,0.4) transparent; }
+
 /* enhance gradient bar appearance */
 .progress-bar--gradient {
   background: var(--color-progress-gradient, none);
