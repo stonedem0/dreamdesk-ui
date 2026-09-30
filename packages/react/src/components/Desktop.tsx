@@ -10,7 +10,7 @@ import {
   type CSSProperties,
   type RefObject,
 } from "react";
-import { WindowManager, defaultWindowManager, AppDef } from "@dreamdesk/core";
+import { WindowManager, defaultWindowManager, type AppDef } from "@dreamdesk/core";
 import { Window } from "./Window";
 import { useContextMenu, type ContextMenuItem } from "./ContextMenu";
 import "./Desktop.css";
