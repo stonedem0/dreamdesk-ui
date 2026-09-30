@@ -35,6 +35,14 @@ export interface DialogAPI {
   alert: (message: string, opts?: { title?: string; ok?: string }) => Promise<void>;
   confirm: (message: string, opts?: { title?: string; ok?: string; cancel?: string }) => Promise<boolean>;
   prompt: (message: string, opts?: { title?: string; ok?: string; cancel?: string; defaultValue?: string; placeholder?: string }) => Promise<string | null>;
+  /** Shows one button per choice and resolves to its value, or null if the dialog is dismissed. */
+  choose: <T extends string>(message: string, opts: { title?: string; choices: DialogChoice<T>[] }) => Promise<T | null>;
+}
+
+export interface DialogChoice<T extends string = string> {
+  label: string;
+  value: T;
+  primary?: boolean;
 }
 
 // ── Controlled Dialog ─────────────────────────────────────────────────────────
@@ -120,7 +128,8 @@ export function useDialog(): DialogAPI {
 type PendingState =
   | { type: "alert"; title: string; message: string; resolve: () => void }
   | { type: "confirm"; title: string; message: string; ok: string; cancel: string; resolve: (v: boolean) => void }
-  | { type: "prompt"; title: string; message: string; ok: string; cancel: string; placeholder: string; defaultValue: string; resolve: (v: string | null) => void };
+  | { type: "prompt"; title: string; message: string; ok: string; cancel: string; placeholder: string; defaultValue: string; resolve: (v: string | null) => void }
+  | { type: "choose"; title: string; message: string; choices: DialogChoice[]; resolve: (v: string | null) => void };
 
 export function DialogProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<PendingState | null>(null);
@@ -150,6 +159,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         setPending({ type: "prompt", message, title: opts.title ?? "Input", ok: opts.ok ?? "OK", cancel: opts.cancel ?? "Cancel", placeholder: opts.placeholder ?? "", defaultValue: opts.defaultValue ?? "", resolve })
       );
     },
+    choose: <T extends string>(message: string, opts: { title?: string; choices: DialogChoice<T>[] }) =>
+      new Promise<T | null>((resolve) =>
+        setPending({ type: "choose", message, title: opts.title ?? "Choose", choices: opts.choices, resolve: resolve as (v: string | null) => void })
+      ),
   };
 
   const actions: DialogAction[] = [];
@@ -161,6 +174,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   } else if (displayPending?.type === "prompt") {
     actions.push({ label: displayPending.cancel, variant: "ghost", onClick: () => dismiss(null) });
     actions.push({ label: displayPending.ok, variant: "primary", onClick: () => dismiss(promptValue) });
+  } else if (displayPending?.type === "choose") {
+    for (const c of displayPending.choices) {
+      actions.push({ label: c.label, variant: c.primary ? "primary" : "ghost", onClick: () => dismiss(c.value) });
+    }
   }
 
   const handlePromptKey = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -175,7 +192,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
         isOpen={!!pending}
         onClose={() => {
           if (pending?.type === "confirm") dismiss(false);
-          else if (pending?.type === "prompt") dismiss(null);
+          else if (pending?.type === "prompt" || pending?.type === "choose") dismiss(null);
           else dismiss(undefined);
         }}
         actions={actions}

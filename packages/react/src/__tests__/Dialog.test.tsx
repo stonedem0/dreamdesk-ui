@@ -95,3 +95,34 @@ describe("DialogProvider — prompt", () => {
     expect(result).toBe("Enter me");
   });
 });
+
+function ChooseButton({ onResult }: { onResult: (v: "save" | "discard" | null) => void }) {
+  const dialog = useDialog();
+  return (
+    <button onClick={() => dialog.choose("Save changes?", {
+      choices: [
+        { label: "Save", value: "save", primary: true },
+        { label: "Don't Save", value: "discard" },
+      ],
+    }).then(onResult)}>choose</button>
+  );
+}
+
+describe("DialogProvider — choose", () => {
+  it("resolves to the value of the clicked choice", async () => {
+    let result: string | null | undefined;
+    wrap(<ChooseButton onResult={(v) => { result = v; }} />);
+    await act(async () => { fireEvent.click(screen.getByText("choose")); });
+    expect(screen.getByText("Save changes?")).toBeInTheDocument();
+    await act(async () => { fireEvent.click(screen.getByText("Don't Save")); });
+    expect(result).toBe("discard");
+  });
+
+  it("resolves to null when dismissed with Escape", async () => {
+    let result: string | null | undefined;
+    wrap(<ChooseButton onResult={(v) => { result = v; }} />);
+    await act(async () => { fireEvent.click(screen.getByText("choose")); });
+    await act(async () => { fireEvent.keyDown(window, { key: "Escape" }); });
+    expect(result).toBeNull();
+  });
+});

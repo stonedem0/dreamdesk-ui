@@ -62,7 +62,7 @@ export { StatusBar, StatusBarSection } from "./components/StatusBar";
 export type { StatusBarProps, StatusBarSectionProps } from "./components/StatusBar";
 
 export { Dialog, DialogProvider, useDialog } from "./components/Dialog";
-export type { DialogProps, DialogAction, DialogAPI } from "./components/Dialog";
+export type { DialogProps, DialogAction, DialogAPI, DialogChoice } from "./components/Dialog";
 
 export { TreeView } from "./components/TreeView";
 export type { TreeViewProps, TreeNode } from "./components/TreeView";

@@ -48,6 +48,24 @@ describe("Window — open/close", () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
+  it("stays open when onBeforeClose resolves false", async () => {
+    const onClose = vi.fn();
+    setup({ onClose, onBeforeClose: async () => false });
+    const host = getHost();
+    fireEvent.click(screen.getByLabelText("close"));
+    await act(async () => {});
+    expect(onClose).not.toHaveBeenCalled();
+    expect(host.style.display).not.toBe("none");
+  });
+
+  it("closes when onBeforeClose resolves true", async () => {
+    const onClose = vi.fn();
+    setup({ onClose, onBeforeClose: () => true });
+    fireEvent.click(screen.getByLabelText("close"));
+    await act(async () => {});
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
   it("hides the host when close button is clicked", async () => {
     setup();
     const host = getHost();
