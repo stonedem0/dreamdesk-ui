@@ -51,6 +51,8 @@ export interface WindowProps {
   onFullscreen?: (isFullscreen: boolean) => void;
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
   defaultOpen?: boolean;
+  /** Runs before the window closes; resolve false to keep it open (e.g. unsaved changes). */
+  onBeforeClose?: () => boolean | Promise<boolean>;
   onClose?: () => void;
   children?: ReactNode;
   style?: CSSProperties;
@@ -141,6 +143,7 @@ export function Window({
   onFullscreen,
   fullscreenAnimation,
   defaultOpen = true,
+  onBeforeClose,
   onClose,
   children,
   style,
@@ -335,7 +338,8 @@ export function Window({
     onFullscreen?.(goingFull);
   }, [isFullscreen, onFullscreen, fullscreenAnimation]);
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback(async () => {
+    if (onBeforeClose && !(await onBeforeClose())) return;
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
     const host = hostRef.current;
     if (!win || !host) return;
@@ -345,7 +349,7 @@ export function Window({
       if (windowIdProp) saveWindowState(windowIdProp, { isOpen: false });
       onClose?.();
     });
-  }, [onClose, wm, windowId, windowIdProp]);
+  }, [onBeforeClose, onClose, wm, windowId, windowIdProp]);
 
   closeRef.current = handleClose;
 

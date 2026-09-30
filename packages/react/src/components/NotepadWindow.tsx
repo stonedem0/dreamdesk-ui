@@ -7,6 +7,8 @@ export interface NotepadWindowProps extends Omit<WindowProps, "children" | "scro
   defaultValue?: string;
   value?: string;
   onChange?: (value: string) => void;
+  /** Adds File > Save (and Ctrl/Cmd+S), called with the current text. */
+  onSave?: (value: string) => void;
   hideTabs?: boolean;
   style?: CSSProperties;
 }
@@ -21,7 +23,7 @@ function nextId() { return String(++_tid); }
 
 interface NoteTab { id: string; title: string; text: string; }
 
-export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = false, className, onClose, ...props }: NotepadWindowProps) {
+export function NotepadWindow({ defaultValue = "", value, onChange, onSave, hideTabs = false, className, onBeforeClose, onClose, ...props }: NotepadWindowProps) {
   const controlled = value !== undefined;
 
   const [tabs, setTabs] = useState<NoteTab[]>(() => [{ id: nextId(), title: "Untitled", text: controlled ? value! : defaultValue }]);
@@ -37,6 +39,13 @@ export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = f
     if (!controlled) setTabs((ts) => ts.map((t) => t.id === activeId ? { ...t, text: val } : t));
     onChange?.(val);
   }, [controlled, onChange, activeId]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (onSave && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+      e.preventDefault();
+      onSave(e.currentTarget.value);
+    }
+  }, [onSave]);
 
   const handleSelect = useCallback((e: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const el = e.currentTarget;
@@ -73,6 +82,7 @@ export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = f
     <Window
       {...props}
       className={["dd-notepad-window", className].filter(Boolean).join(" ")}
+      onBeforeClose={onBeforeClose}
       onClose={onClose}
       bodyOverflow="hidden"
     >
@@ -80,7 +90,9 @@ export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = f
         <Menu label="File">
           {!hideTabs && <MenuItem onClick={addTab}>New Tab</MenuItem>}
           {!hideTabs && <MenuSeparator />}
-          <MenuItem onClick={onClose}>Exit</MenuItem>
+          {onSave && <MenuItem shortcut="Ctrl+S" onClick={() => onSave(text)}>Save</MenuItem>}
+          {onSave && <MenuSeparator />}
+          <MenuItem onClick={async () => { if (!onBeforeClose || await onBeforeClose()) onClose?.(); }}>Exit</MenuItem>
         </Menu>
         <Menu label="Edit">
           <MenuItem onClick={() => { navigator.clipboard?.writeText(text); }}>Copy All</MenuItem>
@@ -141,6 +153,7 @@ export function NotepadWindow({ defaultValue = "", value, onChange, hideTabs = f
           key={activeId}
           value={text}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           onSelect={handleSelect}
           onClick={handleSelect}
           onKeyUp={handleSelect}
