@@ -1,5 +1,5 @@
 import { cancelRunningAnimations } from './animations';
-import { detectSnapZone, snapRect, type SnapZone } from './snap';
+import { detectSnapZone, type SnapZone } from './snap';
 
 export interface DragOptions {
   handle: HTMLElement;
@@ -51,7 +51,7 @@ export function setupDrag({ handle, host, container, reservedBottom = 0, signal,
     });
   };
 
-  const onPointerUp = (e: PointerEvent) => {
+  const onPointerUp = () => {
     isDragging = false;
     document.removeEventListener('pointermove', onPointerMove, { capture: true });
     document.removeEventListener('pointerup', onPointerUp, { capture: true });
