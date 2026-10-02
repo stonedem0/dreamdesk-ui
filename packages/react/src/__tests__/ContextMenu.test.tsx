@@ -88,6 +88,15 @@ describe("useContextMenu", () => {
     expect(screen.queryByText("Action")).not.toBeInTheDocument();
   });
 
+  it("leaves right-clicks alone when it has no items", () => {
+    function Empty() {
+      const { onContextMenu, contextMenu } = useContextMenu([]);
+      return <div onContextMenu={onContextMenu} data-testid="empty">{contextMenu}</div>;
+    }
+    render(<Empty />);
+    expect(fireEvent.contextMenu(screen.getByTestId("empty"))).toBe(true);
+  });
+
   it("replaces the browser menu on a plain right-click", () => {
     render(<Host />);
     expect(fireEvent.contextMenu(screen.getByTestId("host"), { clientX: 50, clientY: 50 })).toBe(false);
