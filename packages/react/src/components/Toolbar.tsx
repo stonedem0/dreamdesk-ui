@@ -8,9 +8,10 @@ export interface ToolbarButtonProps {
   disabled?: boolean;
   active?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
-export function ToolbarButton({ icon, label, disabled, active, onClick }: ToolbarButtonProps) {
+export function ToolbarButton({ icon, label, disabled, active, onClick, className }: ToolbarButtonProps) {
   const isImage = icon && (icon.startsWith("/") || icon.startsWith("http") || icon.startsWith("<svg"));
   return (
     <button
@@ -18,6 +19,7 @@ export function ToolbarButton({ icon, label, disabled, active, onClick }: Toolba
         "dd-toolbar-btn",
         disabled && "dd-toolbar-btn--disabled",
         active && "dd-toolbar-btn--active",
+        className,
       ].filter(Boolean).join(" ")}
       onClick={disabled ? undefined : onClick}
       tabIndex={disabled ? -1 : undefined}

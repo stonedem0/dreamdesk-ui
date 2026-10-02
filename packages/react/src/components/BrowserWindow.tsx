@@ -59,6 +59,9 @@ export function BrowserWindow({
   useEffect(() => {
     if (!showHistory) return;
     const handler = (e: MouseEvent) => {
+      // The toggle buttons handle their own clicks; closing here first would
+      // make their toggle reopen the list
+      if ((e.target as Element).closest?.(".dd-browser-history-toggle")) return;
       if (historyRef.current && !historyRef.current.contains(e.target as Node)) {
         setShowHistory(false);
       }
@@ -92,7 +95,7 @@ export function BrowserWindow({
           <ToolbarButton icon={refreshIcon} label="Refresh" onClick={onRefresh} />
           <ToolbarButton icon={homeIcon}    label="Home"    onClick={onHome} />
           <ToolbarSeparator />
-          <ToolbarButton icon={historyIcon} label="History" active={showHistory} onClick={() => setShowHistory(v => !v)} />
+          <ToolbarButton icon={historyIcon} label="History" active={showHistory} onClick={() => setShowHistory(v => !v)} className="dd-browser-history-toggle" />
 
           {/* History dropdown */}
           {showHistory && history.length > 0 && (
@@ -122,7 +125,13 @@ export function BrowserWindow({
               onKeyDown={handleKeyDown}
               spellCheck={false}
             />
-            <button className="dd-browser-address-dropdown" tabIndex={-1}>▾</button>
+            <button
+              className="dd-browser-address-dropdown dd-browser-history-toggle"
+              tabIndex={-1}
+              aria-label="Visited addresses"
+              aria-expanded={showHistory}
+              onClick={() => setShowHistory(v => !v)}
+            >▾</button>
           </div>
           <button className="dd-browser-go-btn" onClick={handleGo}>Go</button>
         </div>

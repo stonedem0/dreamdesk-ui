@@ -91,6 +91,27 @@ describe("BrowserWindow — history", () => {
     expect(onNavigate).toHaveBeenCalledWith("https://a.com");
   });
 
+  // A real click is mousedown then click; the outside-click handler sees the mousedown
+  const realClick = (el: Element) => { fireEvent.mouseDown(el); fireEvent.click(el); };
+
+  it("closes history dropdown when History is clicked again", () => {
+    setup({ history: ["https://a.com"] });
+    const button = screen.getByText("History").closest("button")!;
+    realClick(button);
+    expect(screen.getByText("https://a.com")).toBeInTheDocument();
+    realClick(button);
+    expect(screen.queryByText("https://a.com")).not.toBeInTheDocument();
+  });
+
+  it("opens and closes history from the address bar's dropdown button", () => {
+    setup({ history: ["https://a.com"] });
+    const arrow = screen.getByLabelText("Visited addresses");
+    realClick(arrow);
+    expect(screen.getByText("https://a.com")).toBeInTheDocument();
+    realClick(arrow);
+    expect(screen.queryByText("https://a.com")).not.toBeInTheDocument();
+  });
+
   it("closes history dropdown after selecting an item", () => {
     setup({ history: ["https://a.com"] });
     fireEvent.click(screen.getByText("History").closest("button")!);
