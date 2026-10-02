@@ -88,6 +88,8 @@ export function useContextMenu(items: ContextMenuItem[]) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
   const onContextMenu = useCallback((e: MouseEvent) => {
+    // Shift + right-click keeps the browser's own menu (Inspect, Copy, etc.)
+    if (e.shiftKey) return;
     e.preventDefault();
     e.stopPropagation();
     setPos({ x: e.clientX, y: e.clientY });

@@ -80,6 +80,19 @@ describe("useContextMenu", () => {
     expect(screen.getByText("Action")).toBeInTheDocument();
   });
 
+  it("leaves Shift + right-click to the browser's own menu", () => {
+    render(<Host />);
+    // fireEvent returns false when the default (the browser menu) was prevented
+    const allowed = fireEvent.contextMenu(screen.getByTestId("host"), { clientX: 50, clientY: 50, shiftKey: true });
+    expect(allowed).toBe(true);
+    expect(screen.queryByText("Action")).not.toBeInTheDocument();
+  });
+
+  it("replaces the browser menu on a plain right-click", () => {
+    render(<Host />);
+    expect(fireEvent.contextMenu(screen.getByTestId("host"), { clientX: 50, clientY: 50 })).toBe(false);
+  });
+
   it("closes on Escape after opening", () => {
     render(<Host />);
     fireEvent.contextMenu(screen.getByTestId("host"), { clientX: 50, clientY: 50 });
