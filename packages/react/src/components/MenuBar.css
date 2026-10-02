@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-menubar {
   display: flex;
   align-items: stretch;
@@ -112,3 +117,5 @@
   margin: 0.15rem 0;
   background: var(--dd-cm-separator, var(--color-window-border, var(--border, #ccc)));
 }
+
+} /* @layer dreamdesk */

@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -37,3 +42,4 @@ dreamdesk-progress-bar { display: block; }
   --win-width-lg: 54rem;
 }
 
+} /* @layer dreamdesk */

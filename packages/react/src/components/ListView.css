@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-listview {
   font-size: 0.82rem;
   user-select: none;
@@ -115,3 +120,5 @@
   background: var(--dd-list-selected-bg, var(--color-active, #000080)) !important;
   color: var(--dd-list-selected-fg, #fff);
 }
+
+} /* @layer dreamdesk */

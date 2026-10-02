@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-slider-container {
   display: flex;
   flex-direction: column;
@@ -95,3 +100,5 @@
   text-align: right;
   color: var(--color-text, inherit);
 }
+
+} /* @layer dreamdesk */

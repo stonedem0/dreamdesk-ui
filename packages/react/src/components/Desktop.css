@@ -1,6 +1,13 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-desktop {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
   padding-bottom: var(--dd-taskbar-h, 36px);
 }
+
+} /* @layer dreamdesk */

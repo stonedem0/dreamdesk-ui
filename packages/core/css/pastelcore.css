@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 /* PastelCore CSS */
 
 html[data-theme="pastelcore"] {
@@ -512,3 +517,4 @@ html[data-theme="pastelcore"] *::-webkit-scrollbar-thumb:horizontal {
   }
 }
 
+} /* @layer dreamdesk */

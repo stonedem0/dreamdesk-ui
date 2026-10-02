@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-checkbox {
   display: inline-flex;
   align-items: center;
@@ -85,3 +90,5 @@
 .dd-checkbox-label {
   line-height: 1;
 }
+
+} /* @layer dreamdesk */

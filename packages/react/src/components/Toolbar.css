@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-toolbar {
   display: flex;
   align-items: center;
@@ -59,3 +64,5 @@
   opacity: 0.4;
   flex-shrink: 0;
 }
+
+} /* @layer dreamdesk */

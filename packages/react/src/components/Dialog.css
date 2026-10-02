@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-dialog-backdrop {
   position: fixed;
   inset: 0;
@@ -57,3 +62,5 @@
   gap: 0.4rem;
   padding: 0.5rem 0.5rem 0.6rem;
 }
+
+} /* @layer dreamdesk */
