@@ -162,3 +162,21 @@ describe("Window — re-open", () => {
     expect(host.style.display).toBe("");
   });
 });
+
+describe("Window — defaultFullscreen", () => {
+  it("starts fullscreen when it has a fullscreenAnimation, so the next toggle leaves it", () => {
+    const onFullscreen = vi.fn();
+    const fullscreenAnimation = vi.fn();
+    setup({ defaultFullscreen: true, fullscreenAnimation, onFullscreen, fullscreenMode: "expand" });
+    fireEvent.click(screen.getByLabelText("fullscreen"));
+    expect(onFullscreen).toHaveBeenCalledWith(false);
+    expect(fullscreenAnimation).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ isFullscreen: false }));
+  });
+
+  it("is ignored without a fullscreenAnimation", () => {
+    const onFullscreen = vi.fn();
+    setup({ defaultFullscreen: true, onFullscreen });
+    fireEvent.click(screen.getByLabelText("fullscreen"));
+    expect(onFullscreen).toHaveBeenCalledWith(true);
+  });
+});
