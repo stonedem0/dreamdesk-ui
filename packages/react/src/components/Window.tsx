@@ -49,6 +49,12 @@ export interface WindowProps {
   disableSnap?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
+  /**
+   * Start in fullscreen. Only applies with `fullscreenAnimation`, which owns the
+   * fullscreen layout (e.g. `fullscreenMode="expand"`); a plain window would need
+   * its pre-fullscreen size to restore, which isn't known on first render.
+   */
+  defaultFullscreen?: boolean;
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
   defaultOpen?: boolean;
   /** Runs before the window closes; resolve false to keep it open (e.g. unsaved changes). */
@@ -141,6 +147,7 @@ export function Window({
   disableSnap = false,
   onMinimize,
   onFullscreen,
+  defaultFullscreen,
   fullscreenAnimation,
   defaultOpen = true,
   onBeforeClose,
@@ -160,7 +167,7 @@ export function Window({
 
   const persisted = windowIdProp ? loadWindowState(windowIdProp) : null;
   const [isMinimized, setIsMinimized] = useState(persisted?.isMinimized ?? false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(() => !!defaultFullscreen && !!fullscreenAnimation);
   const previousStateRef = useRef<PreviousState | null>(null);
   const preSnapStateRef = useRef<{ left: string; top: string; width: string; height: string } | null>(null);
 
@@ -424,9 +431,13 @@ export function Window({
       },
       onEnd: () => {
         saveState();
-        if (onMove && hostRef.current) {
-          const { left, top } = hostRef.current.getBoundingClientRect();
-          onMove(left, top);
+        // Report the left/top the drag wrote (relative to the desktop), which is
+        // what a host passes back to restore the window. The on-screen rect also
+        // includes margins and the desktop's offset, so restoring it drifts.
+        const h = hostRef.current;
+        if (onMove && h) {
+          const left = parseFloat(h.style.left), top = parseFloat(h.style.top);
+          if (Number.isFinite(left) && Number.isFinite(top)) onMove(left, top);
         }
       },
     });

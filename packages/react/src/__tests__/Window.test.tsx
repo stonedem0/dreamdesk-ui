@@ -118,21 +118,25 @@ describe("Window — title", () => {
 });
 
 describe("Window — onMove", () => {
-  it("calls onMove with position after drag ends", () => {
+  it("calls onMove with the left/top the drag set, not the on-screen rect", () => {
     const onMove = vi.fn();
     setup({ onMove });
 
     const host = getHost();
     const header = host.querySelector(".dd-win-header") as HTMLElement;
 
+    // On screen the window sits 14px right/down of its CSS position (e.g. a margin)
     host.getBoundingClientRect = () =>
-      ({ left: 120, top: 80, width: 400, height: 300, right: 520, bottom: 380, x: 120, y: 80, toJSON: () => {} } as DOMRect);
+      ({ left: 134, top: 94, width: 400, height: 300, right: 534, bottom: 394, x: 134, y: 94, toJSON: () => {} } as DOMRect);
 
     header.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 150, clientY: 100 }));
     document.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: 200, clientY: 140 }));
     document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
 
-    expect(onMove).toHaveBeenCalledWith(120, 80);
+    const left = parseFloat(host.style.left), top = parseFloat(host.style.top);
+    expect(Number.isFinite(left) && Number.isFinite(top)).toBe(true);
+    expect(onMove).toHaveBeenCalledWith(left, top);
+    expect(onMove).not.toHaveBeenCalledWith(134, 94);
   });
 
   it("does not call onMove if prop is not provided", () => {
@@ -156,5 +160,23 @@ describe("Window — re-open", () => {
     expect(host.style.display).toBe("none");
     act(() => { host.style.display = ""; });
     expect(host.style.display).toBe("");
+  });
+});
+
+describe("Window — defaultFullscreen", () => {
+  it("starts fullscreen when it has a fullscreenAnimation, so the next toggle leaves it", () => {
+    const onFullscreen = vi.fn();
+    const fullscreenAnimation = vi.fn();
+    setup({ defaultFullscreen: true, fullscreenAnimation, onFullscreen, fullscreenMode: "expand" });
+    fireEvent.click(screen.getByLabelText("fullscreen"));
+    expect(onFullscreen).toHaveBeenCalledWith(false);
+    expect(fullscreenAnimation).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ isFullscreen: false }));
+  });
+
+  it("is ignored without a fullscreenAnimation", () => {
+    const onFullscreen = vi.fn();
+    setup({ defaultFullscreen: true, onFullscreen });
+    fireEvent.click(screen.getByLabelText("fullscreen"));
+    expect(onFullscreen).toHaveBeenCalledWith(true);
   });
 });

@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 :host([data-dd-role="button"]) {
   font-size: var(--dd-btn-fs, inherit);
 }
@@ -1106,3 +1111,5 @@ dreamdesk-tab-panel.active {
   height: 100%;
   display: block;
 }
+
+} /* @layer dreamdesk */

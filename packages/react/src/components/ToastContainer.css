@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-toast-container {
   position: fixed;
   z-index: 99999;
@@ -34,3 +39,5 @@
   left: 12px;
   align-items: flex-start;
 }
+
+} /* @layer dreamdesk */

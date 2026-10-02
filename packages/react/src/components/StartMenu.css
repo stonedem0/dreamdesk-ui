@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 /* ── Wrapper (relative anchor for the panel) ── */
 .dd-startmenu-wrap {
   position: relative;
@@ -100,3 +105,5 @@
   flex-shrink: 0;
   image-rendering: pixelated;
 }
+
+} /* @layer dreamdesk */

@@ -1,6 +1,13 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-wallpaper {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
+
+} /* @layer dreamdesk */

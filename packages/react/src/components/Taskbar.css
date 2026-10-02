@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-taskbar {
   position: absolute;
   bottom: 0;
@@ -84,3 +89,5 @@
   box-sizing: border-box;
   box-shadow: var(--window-controls-button-shadow, none);
 }
+
+} /* @layer dreamdesk */

@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 .dd-browser-window .dd-win-body {
   padding: 6px 8px 0 8px;
   display: flex;
@@ -196,3 +201,5 @@
   color: #555;
   font-size: 0.78rem;
 }
+
+} /* @layer dreamdesk */

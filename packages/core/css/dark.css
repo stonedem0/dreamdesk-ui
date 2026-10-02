@@ -1,3 +1,8 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
 /* Dark Theme Semantic Color Overrides */
 html[data-theme="dark"] {
   background-color: var(--black);
@@ -385,3 +390,4 @@ border: 1px solid var(--dark-toxic-green);
   color: var(--dark-toxic-green);
 }
 
+} /* @layer dreamdesk */
