@@ -87,11 +87,14 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
 export function useContextMenu(items: ContextMenuItem[]) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
+  const hasItems = items.length > 0;
   const onContextMenu = useCallback((e: MouseEvent) => {
+    // With nothing to show, or Shift held, keep the browser's own menu (Inspect, Copy, etc.)
+    if (!hasItems || e.shiftKey) return;
     e.preventDefault();
     e.stopPropagation();
     setPos({ x: e.clientX, y: e.clientY });
-  }, []);
+  }, [hasItems]);
 
   const contextMenu = pos ? (
     <ContextMenu x={pos.x} y={pos.y} items={items} onClose={() => setPos(null)} />
