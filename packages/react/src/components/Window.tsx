@@ -424,9 +424,13 @@ export function Window({
       },
       onEnd: () => {
         saveState();
-        if (onMove && hostRef.current) {
-          const { left, top } = hostRef.current.getBoundingClientRect();
-          onMove(left, top);
+        // Report the left/top the drag wrote (relative to the desktop), which is
+        // what a host passes back to restore the window. The on-screen rect also
+        // includes margins and the desktop's offset, so restoring it drifts.
+        const h = hostRef.current;
+        if (onMove && h) {
+          const left = parseFloat(h.style.left), top = parseFloat(h.style.top);
+          if (Number.isFinite(left) && Number.isFinite(top)) onMove(left, top);
         }
       },
     });
