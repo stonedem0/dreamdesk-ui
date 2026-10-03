@@ -416,6 +416,10 @@
   translate: -50% -50%;
   max-inline-size: calc(100% - 16px) !important;
   max-block-size: calc(100% - var(--dd-taskbar-h, 0px) - 16px) !important;
+  /* Tint the desktop behind it, like an app opened over a phone's home
+     screen. A huge shadow spread needs no extra element; the taskbar stays
+     above it, and the desktop clips it. Override with --dd-compact-scrim. */
+  box-shadow: 0 0 0 100vmax var(--dd-compact-scrim, color-mix(in srgb, var(--color-surface, #fde2e4) 65%, transparent));
 }
 
 } /* @layer dreamdesk */
