@@ -90,4 +90,21 @@
   box-shadow: var(--window-controls-button-shadow, none);
 }
 
+
+/* Compact (phone) desktops: narrower buttons, and the strip scrolls instead of
+   hiding windows that don't fit */
+.dd-desktop--compact .dd-taskbar-windows {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dd-desktop--compact .dd-taskbar-windows::-webkit-scrollbar {
+  display: none;
+}
+
+.dd-desktop--compact .dd-taskbar-btn {
+  min-width: 88px;
+  flex-shrink: 0;
+}
+
 } /* @layer dreamdesk */

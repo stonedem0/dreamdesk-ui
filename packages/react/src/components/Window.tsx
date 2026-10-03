@@ -22,7 +22,7 @@ import {
   loadWindowState,
   type PreviousState,
 } from "@dreamdesk/core";
-import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight } from "./Desktop";
+import { useWindowManager, useDesktopContainer, useDesktopTaskbarHeight, useDesktopCompact } from "./Desktop";
 import { sanitizeSvg } from "../utils/svg";
 import { Icon } from "./Icon";
 import "./Window.css";
@@ -130,8 +130,8 @@ export function Window({
   title = "Window",
   icon,
   size,
-  resizable = true,
-  movable = true,
+  resizable: resizableProp = true,
+  movable: movableProp = true,
   width,
   height,
   minimizeIcon,
@@ -144,7 +144,7 @@ export function Window({
   bodyOverflow,
   scrollContent,
   onMove,
-  disableSnap = false,
+  disableSnap: disableSnapProp = false,
   onMinimize,
   onFullscreen,
   defaultFullscreen,
@@ -164,6 +164,11 @@ export function Window({
   const wm = useWindowManager();
   const desktopRef = useDesktopContainer();
   const taskbarHeight = useDesktopTaskbarHeight();
+  // Compact (phone) desktops show every window maximized and fixed in place
+  const compact = useDesktopCompact();
+  const movable = movableProp && !compact;
+  const resizable = resizableProp && !compact;
+  const disableSnap = disableSnapProp || compact;
 
   const persisted = windowIdProp ? loadWindowState(windowIdProp) : null;
   const [isMinimized, setIsMinimized] = useState(persisted?.isMinimized ?? false);
@@ -468,7 +473,7 @@ export function Window({
   return (
     <div
       ref={hostRef}
-      className={["dd-window", className].filter(Boolean).join(" ")}
+      className={["dd-window", compact && "dd-window--maximized", className].filter(Boolean).join(" ")}
       data-size={size}
       data-explicit={hasExplicitSize ? "" : undefined}
       style={cssVars}

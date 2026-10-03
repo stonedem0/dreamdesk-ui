@@ -35,6 +35,7 @@ interface DesktopContextValue {
   wm: WindowManager;
   containerRef: RefObject<HTMLDivElement | null>;
   taskbarHeight: number;
+  compact: boolean;
   registerApp: (def: ReactAppDef) => void;
   launch: (appId: string) => string | null;
   closeApp: (instanceId: string) => void;
@@ -48,9 +49,15 @@ export interface DesktopProps {
   style?: CSSProperties;
   taskbarHeight?: number;
   contextMenuItems?: ContextMenuItem[];
+  /**
+   * Phone-style layout: every window fills the desktop above the taskbar, one
+   * in front at a time, and can't be dragged or resized. Turn it on for small
+   * screens.
+   */
+  compact?: boolean;
 }
 
-export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_DEFAULT, contextMenuItems = [] }: DesktopProps) {
+export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_DEFAULT, contextMenuItems = [], compact = false }: DesktopProps) {
   const wm = useMemo(() => new WindowManager(), []);
   const containerRef = useRef<HTMLDivElement>(null);
   const { onContextMenu, contextMenu } = useContextMenu(contextMenuItems);
@@ -79,10 +86,10 @@ export function Desktop({ children, className, style, taskbarHeight = TASKBAR_H_
   }, []);
 
   return (
-    <DesktopContext.Provider value={{ wm, containerRef, taskbarHeight, registerApp, launch, closeApp }}>
+    <DesktopContext.Provider value={{ wm, containerRef, taskbarHeight, compact, registerApp, launch, closeApp }}>
       <div
         ref={containerRef}
-        className={["dd-desktop", className].filter(Boolean).join(" ")}
+        className={["dd-desktop", compact && "dd-desktop--compact", className].filter(Boolean).join(" ")}
         style={{
           "--dd-taskbar-h": `${taskbarHeight}px`,
           ...style,
@@ -119,6 +126,11 @@ export function useDesktopContainer(): RefObject<HTMLDivElement | null> | null {
 
 export function useDesktopTaskbarHeight(): number {
   return useContext(DesktopContext)?.taskbarHeight ?? 0;
+}
+
+/** Whether the surrounding Desktop is in compact (phone) mode. */
+export function useDesktopCompact(): boolean {
+  return useContext(DesktopContext)?.compact ?? false;
 }
 
 export function useDesktop() {
