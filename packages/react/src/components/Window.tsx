@@ -55,6 +55,12 @@ export interface WindowProps {
    * its pre-fullscreen size to restore, which isn't known on first render.
    */
   defaultFullscreen?: boolean;
+  /**
+   * How this window looks on a compact (phone) Desktop: "maximize" fills the
+   * screen above the taskbar (default); "fit" keeps the window's own size,
+   * centred, for small fixed-size windows like a media player.
+   */
+  compactLayout?: "maximize" | "fit";
   fullscreenAnimation?: (el: HTMLElement, opts: { isFullscreen: boolean; defaultFn: () => void }) => void;
   defaultOpen?: boolean;
   /** Runs before the window closes; resolve false to keep it open (e.g. unsaved changes). */
@@ -148,6 +154,7 @@ export function Window({
   onMinimize,
   onFullscreen,
   defaultFullscreen,
+  compactLayout = "maximize",
   fullscreenAnimation,
   defaultOpen = true,
   onBeforeClose,
@@ -473,7 +480,7 @@ export function Window({
   return (
     <div
       ref={hostRef}
-      className={["dd-window", compact && "dd-window--maximized", className].filter(Boolean).join(" ")}
+      className={["dd-window", compact && (compactLayout === "fit" ? "dd-window--fit" : "dd-window--maximized"), className].filter(Boolean).join(" ")}
       data-size={size}
       data-explicit={hasExplicitSize ? "" : undefined}
       style={cssVars}

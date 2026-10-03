@@ -406,4 +406,16 @@
   transform: none !important;
 }
 
+/* Compact desktops, compactLayout="fit": the window keeps its own size,
+   centred above the taskbar and never larger than the screen. `translate`
+   rather than `transform`, so it can't clash with window animations. */
+.dd-window.dd-window--fit {
+  position: absolute !important;
+  left: 50% !important;
+  top: calc((100% - var(--dd-taskbar-h, 0px)) / 2) !important;
+  translate: -50% -50%;
+  max-inline-size: calc(100% - 16px) !important;
+  max-block-size: calc(100% - var(--dd-taskbar-h, 0px) - 16px) !important;
+}
+
 } /* @layer dreamdesk */
