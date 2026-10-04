@@ -175,3 +175,18 @@ describe('cancelRunningAnimations', () => {
     expect(() => cancelRunningAnimations(el)).not.toThrow();
   });
 });
+
+describe("cancelRunningAnimations", () => {
+  it("handles the AbortError that cancelling gives `finished`", async () => {
+    // Like happy-dom: cancel() rejects `finished`, and nothing marks it handled
+    let reject!: (e: unknown) => void;
+    const finished = new Promise<void>((_, r) => { reject = r; });
+    const anim = { finished, cancel: () => reject(new DOMException("The animation was canceled.", "AbortError")) };
+    const el = { getAnimations: () => [anim] } as unknown as Element;
+
+    cancelRunningAnimations(el);
+    // Vitest fails the run on an unhandled rejection, so reaching here cleanly is the test
+    await new Promise((r) => setTimeout(r, 0));
+    await expect(finished).rejects.toThrow("canceled");
+  });
+});

@@ -9,7 +9,13 @@ export interface PreviousState {
 
 export function cancelRunningAnimations(el: Element): void {
   const anims = el?.getAnimations?.() ?? [];
-  for (const a of anims) a.cancel();
+  for (const a of anims) {
+    // Cancelling rejects `finished` with an AbortError. Browsers mark that
+    // rejection as handled (per the Web Animations spec); some environments,
+    // like happy-dom in tests, don't, and report it as an unhandled error.
+    a.finished?.catch(() => {});
+    a.cancel();
+  }
 }
 
 export function open(win: HTMLElement): void {
