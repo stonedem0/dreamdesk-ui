@@ -772,9 +772,27 @@ function ExplorerDemo() {
   );
 }
 
+// ── Compact mode ──────────────────────────────────────────────────────────────
+
+const SMALL_SCREEN = "(max-width: 767px)";
+
+/** Phone-style compact mode: on small screens, or anywhere with ?compact in the URL. */
+function useCompactMode() {
+  const forced = new URLSearchParams(window.location.search).has("compact");
+  const [small, setSmall] = useState(() => window.matchMedia(SMALL_SCREEN).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(SMALL_SCREEN);
+    const onChange = () => setSmall(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return forced || small;
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const compact = useCompactMode();
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     let val = 0;
@@ -791,7 +809,7 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="pastelcore">
       <DialogProvider>
-      <Desktop style={{ width: "100vw", height: "100vh" }} contextMenuItems={[
+      <Desktop compact={compact} style={{ width: "100vw", height: "100vh" }} contextMenuItems={[
           { label: "Refresh", shortcut: "F5", onClick: () => window.location.reload() },
           { type: "separator" },
           { label: "Arrange Icons", disabled: true, onClick: () => {} },

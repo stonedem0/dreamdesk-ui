@@ -180,3 +180,58 @@ describe("Window — defaultFullscreen", () => {
     expect(onFullscreen).toHaveBeenCalledWith(true);
   });
 });
+
+describe("Window — compact desktop", () => {
+  function compactSetup(props: Partial<React.ComponentProps<typeof Window>> = {}) {
+    return render(
+      <Desktop compact style={{ width: "400px", height: "700px" }}>
+        <Window title="Test Window" width="400px" height="300px" defaultOpen {...props}>
+          <p>Window content</p>
+        </Window>
+      </Desktop>
+    );
+  }
+
+  it("marks the desktop and its windows as compact/maximized", () => {
+    compactSetup();
+    expect(document.querySelector(".dd-desktop")!.classList.contains("dd-desktop--compact")).toBe(true);
+    expect(getHost().classList.contains("dd-window--maximized")).toBe(true);
+  });
+
+  it("can't be dragged or resized", () => {
+    const onMove = vi.fn();
+    compactSetup({ onMove });
+    const host = getHost();
+    const header = host.querySelector(".dd-win-header") as HTMLElement;
+    expect(header.classList.contains("dd-win-header--no-move")).toBe(true);
+    header.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 150, clientY: 100 }));
+    document.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: 200, clientY: 140 }));
+    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    expect(onMove).not.toHaveBeenCalled();
+    expect(host.querySelector(".dd-win-resize-handle")).toBeNull();
+  });
+
+  it('keeps its own size, centred, with compactLayout="fit"', () => {
+    const onMove = vi.fn();
+    compactSetup({ compactLayout: "fit", onMove });
+    const host = getHost();
+    expect(host.classList.contains("dd-window--fit")).toBe(true);
+    expect(host.classList.contains("dd-window--maximized")).toBe(false);
+    const header = host.querySelector(".dd-win-header") as HTMLElement;
+    header.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 150, clientY: 100 }));
+    document.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: 200, clientY: 140 }));
+    document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    expect(onMove).not.toHaveBeenCalled();
+  });
+
+  it("ignores compactLayout on a regular desktop", () => {
+    setup({ compactLayout: "fit" });
+    expect(getHost().classList.contains("dd-window--fit")).toBe(false);
+  });
+
+  it("is a normal window on a regular desktop", () => {
+    setup();
+    expect(getHost().classList.contains("dd-window--maximized")).toBe(false);
+    expect(getHost().querySelector(".dd-win-resize-handle")).not.toBeNull();
+  });
+});

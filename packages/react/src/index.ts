@@ -1,6 +1,6 @@
 export { ThemeProvider, useTheme } from "./context/ThemeContext";
 
-export { Desktop, useWindowManager } from "./components/Desktop";
+export { Desktop, useWindowManager, useDesktopCompact } from "./components/Desktop";
 export type { DesktopProps } from "./components/Desktop";
 
 export { Taskbar } from "./components/Taskbar";
