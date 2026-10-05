@@ -26,6 +26,12 @@ describe("ProcessManager — extension registry", () => {
     expect(make().resolveApp("/docs/readme.txt")).toBe("notepad");
   });
 
+  it("resolveApp returns null for a name without an extension", () => {
+    // Not "txt" for a file named txt, or "txt/notes" for a dot in a folder name
+    expect(make().resolveApp("/docs/txt")).toBeNull();
+    expect(make().resolveApp("/my.txt/notes")).toBeNull();
+  });
+
   it("resolveApp returns null for unregistered extension", () => {
     expect(make().resolveApp("/docs/archive.zip")).toBeNull();
   });

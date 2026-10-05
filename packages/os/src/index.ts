@@ -8,6 +8,7 @@ export { useFSVersion } from "./fs/useFSVersion";
 // L3.2 — Process manager
 export { ProcessManager } from "./process/ProcessManager";
 export type { Process, ProcessStatus, ProcessArgs, SpawnOptions } from "./process/ProcessManager";
+export { appsForFile, fileExtension } from "./process/fileAssociations";
 export { useProcessState, forgetProcessState, forgetAllProcessState } from "./process/processState";
 
 // L3.3 — Shell engine
