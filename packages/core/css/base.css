@@ -231,6 +231,29 @@ body {
   border: var(--dd-btn-border, var(--color-window-border, var(--border)));
 }
 
+/* Iridescent: the theme's --dd-iridescent surface (a thin-film shimmer in
+   Pastelcore). Themes without it get a primary-looking button. */
+.btn--iridescent {
+  color: var(--color-text, var(--black));
+  background: var(--dd-iridescent, var(--color-button-primary, #e6e6e6));
+  background-size: var(--dd-iridescent-size, 100% 100%);
+  animation: var(--dd-iridescent-animation, none);
+  border: var(--dd-btn-border, var(--color-window-border, var(--border)));
+  box-shadow: var(
+    --dd-iridescent-shadow,
+    var(--button-shadow-primary, var(--button-shadow, inset -2px 2px 1px #ffffff, inset 2px -2px 1px #cbbcc4))
+  );
+}
+
+/* No shimmer for people who've asked for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn--iridescent,
+  .toggle .slider,
+  .toggle .knob {
+    animation: none !important;
+  }
+}
+
 .btn--size-sm {
   min-width: 3rem;
   padding: 0.05rem 0.4rem;

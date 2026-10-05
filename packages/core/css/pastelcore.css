@@ -117,7 +117,8 @@ html[data-theme="pastelcore"] {
   --scroll-button-shadow-dark: #a2a2a2;
   --scroll-arrow-color: #1c1c1c;
   
-  --toggle-knob-gradient: linear-gradient(
+  /* Iridescent (thin-film) surface: the toggle, iridescent buttons and tags */
+  --dd-iridescent: linear-gradient(
     to top right,
     #e2e2ffff 0%,
     #e4fbffff 25%,
@@ -125,6 +126,11 @@ html[data-theme="pastelcore"] {
     #fcfcffff 75%,
     #e5e5ffff 100%
   );
+  --dd-iridescent-size: 260% 260%;
+  --dd-iridescent-animation: shimmer 5s infinite linear;
+  --dd-iridescent-shadow: inset -2px 2px 0.55px #ffffff, inset 2px -2px 0.55px #c5c6d1;
+
+  --toggle-knob-gradient: var(--dd-iridescent);
 
   /* Control button icons */
   --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='7' y1='30' x2='27' y2='30' style='stroke:rgb(61,45,51);stroke-width:7' /></svg>");
@@ -132,8 +138,8 @@ html[data-theme="pastelcore"] {
   --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewBox='0 0 40 40'><path d='M10,10 L30,30 M30,10 L10,30' stroke='rgb(61,45,51)' stroke-width='5' stroke-linecap='butt'/></svg>");
 
   /* Switch visuals */
-  --toggle-slider-animation: shimmer 5s infinite linear;
-  --toggle-knob-animation: shimmer 5s infinite linear;
+  --toggle-slider-animation: var(--dd-iridescent-animation);
+  --toggle-knob-animation: var(--dd-iridescent-animation);
 
   /* Buttons and toasts depth */
   --window-controls-button-shadow: inset -2px 2px 1px #ffffff, inset 2px -2px 1px #d9c4cc;
@@ -158,8 +164,8 @@ html[data-theme="pastelcore"] {
 
   /* switch shadows */
   --toggle-slider-shadow: inset -2px 2px 0.6px rgba(104,52,52,0.16), inset 2px -2px 0.6px rgba(255,255,255,0.66);
-  --toggle-knob-shadow: inset -2px 2px 0.55px #ffffff, inset 2px -2px 0.55px #c5c6d1;
-  --toggle-slider-bg-size: 260% 260%;
+  --toggle-knob-shadow: var(--dd-iridescent-shadow);
+  --toggle-slider-bg-size: var(--dd-iridescent-size);
   --toggle-knob-bg-size: 260% 260%;
 
   --color-window-control-bg: #ffffff;
@@ -376,14 +382,7 @@ html[data-theme="pastelcore"] .dd-startmenu-btn {
   animation: shimmer 5s infinite linear;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
-}
+/* @keyframes shimmer is defined near the top of this file */
 
 
 

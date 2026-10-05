@@ -1,0 +1,31 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
+/* Flat on purpose: in this style raised (bevelled) means pressable, like a
+   button, while a flat frame reads as information */
+.dd-tag {
+  display: inline-block;
+  padding: 0 0.4rem;
+  border: var(--color-window-border, var(--border));
+  background: var(--color-input-background, #fff);
+  color: var(--color-text, var(--black));
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* The theme's iridescent surface; plain where a theme doesn't define it */
+.dd-tag--iridescent {
+  background: var(--dd-iridescent, var(--color-input-background, #fff));
+  background-size: var(--dd-iridescent-size, 100% 100%);
+  animation: var(--dd-iridescent-animation, none);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-tag--iridescent {
+    animation: none;
+  }
+}
+
+} /* @layer dreamdesk */
