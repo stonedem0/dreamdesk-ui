@@ -88,20 +88,13 @@ export function OSProvider({ fs: fsProp, apps, adapter, children }: OSProviderPr
     restoredRef.current = true;
     try {
       const raw = localStorage.getItem(PROC_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw) as Array<{ appId: string; args: ProcessArgs }>;
-      saved.forEach(({ appId, args }) => {
-        if (apps[appId] && apps[appId].persistent !== false) pm.spawn(appId, { args });
-      });
+      if (raw) pm.restore(raw, p => !!apps[p.appId] && apps[p.appId].persistent !== false);
     } catch {}
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     return pm.subscribe(() => {
-      const snapshot = pm.list()
-        .filter(p => apps[p.appId]?.persistent !== false)
-        .map(p => ({ appId: p.appId, args: p.args }));
-      try { localStorage.setItem(PROC_KEY, JSON.stringify(snapshot)); } catch {}
+      try { localStorage.setItem(PROC_KEY, pm.serialize(p => apps[p.appId]?.persistent !== false)); } catch {}
     });
   }, [pm, apps]);
 
