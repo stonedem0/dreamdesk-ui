@@ -3,13 +3,12 @@
    @layer reset, dreamdesk; */
 @layer dreamdesk {
 
-/* Flat and rounded on purpose: buttons are square and bevelled, so a tag
-   shouldn't look pressable */
+/* Flat on purpose: in this style raised (bevelled) means pressable, like a
+   button, while a flat frame reads as information */
 .dd-tag {
   display: inline-block;
-  padding: 0 0.55rem;
-  border: 1px solid color-mix(in srgb, var(--color-text, #000) 35%, transparent);
-  border-radius: 999px;
+  padding: 0 0.4rem;
+  border: var(--color-window-border, var(--border));
   background: var(--color-input-background, #fff);
   color: var(--color-text, var(--black));
   font-size: 0.75rem;
