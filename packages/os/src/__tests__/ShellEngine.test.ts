@@ -1,307 +1,249 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { VirtualFS } from "../fs/VirtualFS";
-import { ProcessManager } from "../process/ProcessManager";
-import { executeCommand, resolvePath, toWinPath } from "../shell/ShellEngine";
+import { dosPrompt, executeCommand, resolveDosPath, toDosPath } from "../shell/ShellEngine";
 import type { ShellContext } from "../shell/ShellEngine";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function makeCtx(cwd = "/"): ShellContext {
+function makeCtx(cwd = "/", open?: ShellContext["open"]): ShellContext {
   const fs = new VirtualFS();
   fs.mkdir("/docs");
-  fs.mkdir("/docs/work");
+  fs.mkdir("/docs/Work Notes");
   fs.writeFile("/docs/readme.txt", "hello\nworld");
-  fs.writeFile("/docs/work/report.txt", "q1");
-  const pm = new ProcessManager();
-  pm.registerExtension("txt", "notepad");
-  return { fs, pm, cwd };
+  fs.writeFile("/docs/todo.txt", "milk");
+  fs.writeFile("/docs/photo.png", "");
+  return { fs, cwd, open };
 }
 
 const run = (cmd: string, ctx: ShellContext) => executeCommand(cmd, ctx);
+const fromEnd = (lines: string[], n: number) => lines[lines.length - n];
 
-// ── resolvePath ───────────────────────────────────────────────────────────────
-
-describe("resolvePath", () => {
-  it("absolute path is returned as-is", () => {
-    expect(resolvePath("/docs/work", "/")).toBe("/docs/work");
+describe("DOS paths", () => {
+  it("shows VirtualFS paths as C:\\ paths, long names and all", () => {
+    expect(toDosPath("/")).toBe("C:\\");
+    expect(toDosPath("/docs/Work Notes")).toBe("C:\\docs\\Work Notes");
+    expect(dosPrompt("/docs")).toBe("C:\\docs>");
   });
 
-  it("relative path joins with cwd", () => {
-    expect(resolvePath("work", "/docs")).toBe("/docs/work");
+  it("resolves what's typed, without regard to case, to names as stored", () => {
+    const { fs } = makeCtx();
+    expect(resolveDosPath("DOCS\\README.TXT", "/", fs)).toBe("/docs/readme.txt");
+    expect(resolveDosPath("..\\docs", "/docs", fs)).toBe("/docs");
+    expect(resolveDosPath("\\", "/docs", fs)).toBe("/");
+    expect(resolveDosPath("C:\\docs\\.", "/", fs)).toBe("/docs");
+    expect(resolveDosPath("work notes", "/docs", fs)).toBe("/docs/Work Notes");
   });
 
-  it(".. goes up one level", () => {
-    expect(resolvePath("..", "/docs/work")).toBe("/docs");
-  });
-
-  it(".. from root stays at root", () => {
-    expect(resolvePath("..", "/")).toBe("/");
-  });
-
-  it(". stays in cwd", () => {
-    expect(resolvePath(".", "/docs")).toBe("/docs");
-  });
-
-  it("empty string resolves to root", () => {
-    expect(resolvePath("", "/docs")).toBe("/");
-  });
-
-  it("~ resolves to root", () => {
-    expect(resolvePath("~", "/docs")).toBe("/");
-  });
-
-  it("multi-segment relative path", () => {
-    expect(resolvePath("work/sub", "/docs")).toBe("/docs/work/sub");
-  });
-
-  it("normalizes double slashes", () => {
-    expect(resolvePath("/docs//work", "/")).toBe("/docs/work");
+  it("keeps a new last name as typed, and refuses other drives and missing folders", () => {
+    const { fs } = makeCtx();
+    expect(resolveDosPath("New", "/docs", fs)).toBe("/docs/New");
+    expect(resolveDosPath("D:\\docs", "/", fs)).toBeNull();
+    expect(resolveDosPath("nope\\file.txt", "/", fs)).toBeNull();
+    expect(resolveDosPath("readme.txt\\x", "/docs", fs)).toBeNull();
   });
 });
 
-// ── toWinPath ─────────────────────────────────────────────────────────────────
-
-describe("toWinPath", () => {
-  it("root → C:\\", () => {
-    expect(toWinPath("/")).toBe("C:\\");
+describe("the prompt", () => {
+  it("answers anything it doesn't know the DOS way, Unix commands included", () => {
+    const ctx = makeCtx();
+    for (const cmd of ["ls", "cat readme.txt", "pwd", "readme.txt", "constructor", "dirx"]) {
+      expect(run(cmd, ctx).lines).toEqual(["Bad command or file name"]);
+    }
   });
 
-  it("unix path → windows path", () => {
-    expect(toWinPath("/docs/work")).toBe("C:\\docs\\work");
-  });
-});
-
-// ── ls ────────────────────────────────────────────────────────────────────────
-
-describe("ls", () => {
-  it("lists cwd by default", () => {
+  it("takes commands in any case, and ignores blank lines", () => {
     const ctx = makeCtx("/docs");
-    const { lines } = run("ls", ctx);
-    expect(lines.join("\n")).toContain("readme.txt");
-    expect(lines.join("\n")).toContain("<DIR>");
+    expect(run("TYPE todo.txt", ctx).lines).toEqual(["milk"]);
+    expect(run("Type TODO.TXT", ctx).lines).toEqual(["milk"]);
+    expect(run("   ", ctx).lines).toEqual([]);
   });
 
-  it("lists given path", () => {
-    const ctx = makeCtx("/");
-    const { lines } = run("ls /docs", ctx);
-    expect(lines.join("\n")).toContain("readme.txt");
-  });
-
-  it("shows (empty) for empty dir", () => {
-    const ctx = makeCtx("/");
-    ctx.fs.mkdir("/empty");
-    expect(run("ls /empty", ctx).lines).toContain("(empty)");
-  });
-
-  it("errors on missing path", () => {
-    const { lines } = run("ls /nope", makeCtx());
-    expect(lines[0]).toMatch(/No such directory/);
-  });
-});
-
-// ── cd ────────────────────────────────────────────────────────────────────────
-
-describe("cd", () => {
-  it("changes cwd", () => {
-    const result = run("cd /docs", makeCtx("/"));
-    expect(result.newCwd).toBe("/docs");
-    expect(result.lines).toEqual([]);
-  });
-
-  it("cd with no args goes to root", () => {
-    expect(run("cd", makeCtx("/docs")).newCwd).toBe("/");
-  });
-
-  it("relative path", () => {
-    expect(run("cd docs", makeCtx("/")).newCwd).toBe("/docs");
-  });
-
-  it("errors on missing path", () => {
-    expect(run("cd /nope", makeCtx()).lines[0]).toMatch(/No such directory/);
-  });
-
-  it("errors on file path", () => {
-    expect(run("cd /docs/readme.txt", makeCtx()).lines[0]).toMatch(/Not a directory/);
-  });
-});
-
-// ── pwd ───────────────────────────────────────────────────────────────────────
-
-describe("pwd", () => {
-  it("prints cwd", () => {
-    expect(run("pwd", makeCtx("/docs")).lines).toEqual(["/docs"]);
-  });
-});
-
-// ── cat ───────────────────────────────────────────────────────────────────────
-
-describe("cat", () => {
-  it("prints file contents line by line", () => {
-    const { lines } = run("cat /docs/readme.txt", makeCtx());
-    expect(lines).toEqual(["hello", "world"]);
-  });
-
-  it("errors on missing file", () => {
-    expect(run("cat /nope.txt", makeCtx()).lines[0]).toMatch(/No such file/);
-  });
-
-  it("errors with no args", () => {
-    expect(run("cat", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── touch ─────────────────────────────────────────────────────────────────────
-
-describe("touch", () => {
-  it("creates an empty file", () => {
-    const ctx = makeCtx("/");
-    run("touch /docs/new.txt", ctx);
-    expect(ctx.fs.exists("/docs/new.txt")).toBe(true);
-    expect(ctx.fs.readFile("/docs/new.txt")).toBe("");
-  });
-
-  it("is a no-op on existing file", () => {
-    const ctx = makeCtx("/");
-    expect(() => run("touch /docs/readme.txt", ctx)).not.toThrow();
-  });
-
-  it("errors with no args", () => {
-    expect(run("touch", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── mkdir ─────────────────────────────────────────────────────────────────────
-
-describe("mkdir", () => {
-  it("creates a directory", () => {
-    const ctx = makeCtx("/");
-    run("mkdir /docs/archive", ctx);
-    expect(ctx.fs.exists("/docs/archive")).toBe(true);
-  });
-
-  it("errors with no args", () => {
-    expect(run("mkdir", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── rm ────────────────────────────────────────────────────────────────────────
-
-describe("rm", () => {
-  it("removes a file", () => {
-    const ctx = makeCtx("/");
-    run("rm /docs/readme.txt", ctx);
-    expect(ctx.fs.exists("/docs/readme.txt")).toBe(false);
-  });
-
-  it("removes a directory", () => {
-    const ctx = makeCtx("/");
-    run("rm /docs/work", ctx);
-    expect(ctx.fs.exists("/docs/work")).toBe(false);
-  });
-
-  it("errors on missing path", () => {
-    expect(run("rm /nope", makeCtx()).lines[0]).toMatch(/rm:/);
-  });
-
-  it("errors with no args", () => {
-    expect(run("rm", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── mv ────────────────────────────────────────────────────────────────────────
-
-describe("mv", () => {
-  it("moves a file", () => {
-    const ctx = makeCtx("/");
-    run("mv /docs/readme.txt /docs/work/readme.txt", ctx);
-    expect(ctx.fs.exists("/docs/readme.txt")).toBe(false);
-    expect(ctx.fs.readFile("/docs/work/readme.txt")).toBe("hello\nworld");
-  });
-
-  it("renames a file", () => {
-    const ctx = makeCtx("/");
-    run("mv /docs/readme.txt /docs/README.md", ctx);
-    expect(ctx.fs.exists("/docs/README.md")).toBe(true);
-  });
-
-  it("errors with one arg", () => {
-    expect(run("mv /docs/readme.txt", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── echo ──────────────────────────────────────────────────────────────────────
-
-describe("echo", () => {
-  it("prints the arguments", () => {
-    expect(run("echo hello world", makeCtx()).lines).toEqual(["hello world"]);
-  });
-
-  it("empty echo returns empty string", () => {
-    expect(run("echo", makeCtx()).lines).toEqual([""]);
-  });
-});
-
-// ── ps / kill ─────────────────────────────────────────────────────────────────
-
-describe("ps", () => {
-  it("shows no processes when empty", () => {
-    expect(run("ps", makeCtx()).lines[0]).toMatch(/no running processes/);
-  });
-
-  it("lists spawned processes", () => {
+  it("only has drive C", () => {
     const ctx = makeCtx();
-    ctx.pm.spawn("notepad", { args: { filePath: "/docs/readme.txt" } });
-    const { lines } = run("ps", ctx);
-    expect(lines.join("\n")).toContain("notepad");
+    expect(run("c:", ctx).lines).toEqual([]);
+    expect(run("A:", ctx).lines).toEqual(["Invalid drive specification"]);
   });
 });
 
-describe("kill", () => {
-  it("kills a running process", () => {
+describe("DIR", () => {
+  it("lists folders and files with dates, sizes and long names, plus . and ..", () => {
+    const lines = run("dir", makeCtx("/docs")).lines;
+    expect(lines).toContain(" Directory of C:\\docs");
+    expect(lines.some((l) => /<DIR>\s+\.$/.test(l))).toBe(true);
+    expect(lines.some((l) => /<DIR>\s+Work Notes$/.test(l))).toBe(true);
+    expect(lines.some((l) => /^\d\d-\d\d-\d\d  \d\d:\d\d[ap]\s+11 readme\.txt$/.test(l))).toBe(true);
+    expect(fromEnd(lines, 2)).toMatch(/^\s+3 File\(s\)\s+15 bytes$/);
+    expect(fromEnd(lines, 1)).toMatch(/^\s+3 Dir\(s\)$/);
+  });
+
+  it("has no . and .. at the root", () => {
+    const lines = run("dir", makeCtx()).lines;
+    expect(lines.some((l) => /<DIR>\s+\.\.?$/.test(l))).toBe(false);
+    expect(fromEnd(lines, 1)).toMatch(/^\s+1 Dir\(s\)$/);
+  });
+
+  it("lists another folder, or files by wildcard", () => {
     const ctx = makeCtx();
-    const pid = ctx.pm.spawn("notepad");
-    run(`kill ${pid}`, ctx);
-    expect(ctx.pm.get(pid)).toBeNull();
+    expect(run("dir docs", ctx).lines).toContain(" Directory of C:\\docs");
+    const txt = run("dir docs\\*.TXT", ctx).lines;
+    expect(txt.filter((l) => l.endsWith(".txt"))).toHaveLength(2);
+    expect(txt.some((l) => l.endsWith("photo.png"))).toBe(false);
   });
 
-  it("errors on unknown pid", () => {
-    expect(run("kill ghost-99", makeCtx()).lines[0]).toMatch(/no process/);
-  });
-
-  it("errors with no args", () => {
-    expect(run("kill", makeCtx()).lines[0]).toMatch(/Usage/);
-  });
-});
-
-// ── clear / help / unknown ────────────────────────────────────────────────────
-
-describe("clear", () => {
-  it("returns clear flag", () => {
-    expect(run("clear", makeCtx()).clear).toBe(true);
+  it("says when nothing matches, and refuses switches it doesn't have", () => {
+    const ctx = makeCtx("/docs");
+    expect(fromEnd(run("dir *.doc", ctx).lines, 1)).toBe("File not found");
+    expect(run("dir /w", ctx).lines).toEqual(["Invalid switch - /w"]);
   });
 });
 
-describe("help", () => {
-  it("lists available commands", () => {
-    const { lines } = run("help", makeCtx());
-    expect(lines.join("\n")).toContain("ls");
-    expect(lines.join("\n")).toContain("cd");
-    expect(lines.join("\n")).toContain("kill");
+describe("CD", () => {
+  it("shows the current directory without an argument", () => {
+    expect(run("cd", makeCtx("/docs")).lines).toEqual(["C:\\docs"]);
+  });
+
+  it("changes directory, the DOS ways included", () => {
+    expect(run("cd docs", makeCtx()).newCwd).toBe("/docs");
+    expect(run("cd..", makeCtx("/docs")).newCwd).toBe("/");
+    expect(run("cd\\", makeCtx("/docs/Work Notes")).newCwd).toBe("/");
+    expect(run("chdir C:\\DOCS", makeCtx()).newCwd).toBe("/docs");
+  });
+
+  it("takes names with spaces, quoted or not", () => {
+    expect(run("cd Work Notes", makeCtx("/docs")).newCwd).toBe("/docs/Work Notes");
+    expect(run('cd "work notes"', makeCtx("/docs")).newCwd).toBe("/docs/Work Notes");
+  });
+
+  it("refuses files and folders that don't exist", () => {
+    expect(run("cd nope", makeCtx()).lines).toEqual(["Invalid directory"]);
+    expect(run("cd readme.txt", makeCtx("/docs")).lines).toEqual(["Invalid directory"]);
   });
 });
 
-describe("unknown command", () => {
-  it("returns error message", () => {
-    expect(run("foobar", makeCtx()).lines[0]).toMatch(/not recognized/);
+describe("TYPE", () => {
+  it("shows a file line by line", () => {
+    expect(run("type readme.txt", makeCtx("/docs")).lines).toEqual(["hello", "world"]);
+  });
+
+  it("refuses folders and missing files", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("type nope.txt", ctx).lines).toEqual(["File not found - nope.txt"]);
+    expect(run('type "Work Notes"', ctx).lines).toEqual(["Access denied"]);
+    expect(run("type", ctx).lines).toEqual(["Required parameter missing"]);
   });
 });
 
-describe("empty input", () => {
-  it("returns empty lines", () => {
-    expect(run("", makeCtx()).lines).toEqual([]);
+describe("MD and RD", () => {
+  it("makes a directory, even with spaces in its name", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("md Old Stuff", ctx).lines).toEqual([]);
+    expect(ctx.fs.stat("/docs/Old Stuff").kind).toBe("dir");
   });
 
-  it("whitespace-only returns empty lines", () => {
-    expect(run("   ", makeCtx()).lines).toEqual([]);
+  it("won't make one that exists (in any case) or whose parent doesn't", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("mkdir WORK NOTES", ctx).lines).toEqual(["Unable to create directory"]);
+    expect(run("md nope\\new", ctx).lines).toEqual(["Unable to create directory"]);
+  });
+
+  it("removes only empty directories, and not the current one", () => {
+    const ctx = makeCtx("/");
+    expect(run("rd docs", ctx).lines).toEqual(["Invalid path, not directory,", "or directory not empty"]);
+    expect(run("rd docs\\work notes", ctx).lines).toEqual([]);
+    expect(ctx.fs.exists("/docs/Work Notes")).toBe(false);
+    expect(run("rd .", makeCtx("/docs")).lines).toEqual(["Attempt to remove current directory"]);
+  });
+});
+
+describe("DEL", () => {
+  it("deletes a file, or files by wildcard", () => {
+    const ctx = makeCtx("/docs");
+    run("del README.TXT", ctx);
+    expect(ctx.fs.exists("/docs/readme.txt")).toBe(false);
+    run("erase *.txt", ctx);
+    expect(ctx.fs.ls("/docs").map((n) => n.name)).toEqual(["Work Notes", "photo.png"]);
+  });
+
+  it("doesn't delete folders, or what isn't there", () => {
+    const ctx = makeCtx("/docs");
+    expect(run('del "Work Notes"', ctx).lines).toEqual(["Access denied"]);
+    expect(run("del *.doc", ctx).lines).toEqual(["File not found"]);
+  });
+});
+
+describe("REN", () => {
+  it("renames, including just changing the case", () => {
+    const ctx = makeCtx("/docs");
+    run("ren todo.txt shopping.txt", ctx);
+    expect(ctx.fs.readFile("/docs/shopping.txt")).toBe("milk");
+    run("rename shopping.txt Shopping.txt", ctx);
+    expect(ctx.fs.exists("/docs/Shopping.txt")).toBe(true);
+  });
+
+  it("won't take another file's name, rename into another folder, or find what isn't there", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("ren todo.txt README.txt", ctx).lines).toEqual(["Duplicate file name or file not found"]);
+    expect(run("ren nope.txt x.txt", ctx).lines).toEqual(["Duplicate file name or file not found"]);
+    expect(run("ren todo.txt \\todo.txt", ctx).lines).toEqual(["Invalid parameter"]);
+  });
+});
+
+describe("COPY and MOVE", () => {
+  it("copies a file to a new name, or into a folder", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("copy todo.txt list.txt", ctx).lines).toEqual(["        1 file(s) copied"]);
+    expect(ctx.fs.readFile("/docs/list.txt")).toBe("milk");
+    run('copy *.txt "work notes"', ctx);
+    expect(ctx.fs.ls("/docs/Work Notes").map((n) => n.name)).toEqual(["readme.txt", "todo.txt", "list.txt"]);
+  });
+
+  it("won't copy a file onto itself, or what isn't there", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("copy todo.txt TODO.TXT", ctx).lines[0]).toBe("File cannot be copied onto itself");
+    expect(run("copy nope.txt x.txt", ctx).lines).toEqual(["File not found - nope.txt"]);
+    expect(run("copy *.txt one.txt", ctx).lines).toEqual(["Invalid directory"]);
+  });
+
+  it("moves files into a folder", () => {
+    const ctx = makeCtx("/docs");
+    expect(run("move *.txt \\", ctx).lines).toEqual(["        2 file(s) moved"]);
+    expect(ctx.fs.ls("/").map((n) => n.name)).toEqual(["docs", "readme.txt", "todo.txt"]);
+    expect(ctx.fs.exists("/docs/todo.txt")).toBe(false);
+  });
+});
+
+describe("START", () => {
+  it("opens a file in its program", () => {
+    const opened: string[] = [];
+    const ctx = makeCtx("/docs", (path) => { opened.push(path); return true; });
+    expect(run("start README.TXT", ctx).lines).toEqual([]);
+    expect(opened).toEqual(["/docs/readme.txt"]);
+  });
+
+  it("says when nothing can open it, or it isn't there", () => {
+    const ctx = makeCtx("/docs", () => false);
+    expect(run("start photo.png", ctx).lines).toEqual(["No program is associated with 'photo.png'."]);
+    expect(run("start nope.txt", ctx).lines[0]).toMatch(/^Cannot find the file 'nope.txt'/);
+  });
+});
+
+describe("other commands", () => {
+  it("ECHO shows a message, its state, or an empty line", () => {
+    const ctx = makeCtx();
+    expect(run("echo Hello there", ctx).lines).toEqual(["Hello there"]);
+    expect(run("echo", ctx).lines).toEqual(["ECHO is on"]);
+    expect(run("echo.", ctx).lines).toEqual([""]);
+  });
+
+  it("CLS clears, EXIT closes", () => {
+    const ctx = makeCtx();
+    expect(run("cls", ctx).clear).toBe(true);
+    expect(run("exit", ctx).exit).toBe(true);
+  });
+
+  it("VER, DATE, TIME and HELP answer", () => {
+    const ctx = makeCtx();
+    expect(run("ver", ctx).lines).toContain("DreamDesk DOS [Version 1.0]");
+    expect(run("date", ctx).lines[0]).toMatch(/^Current date is \w{3} \d\d-\d\d-\d{4}$/);
+    expect(run("time", ctx).lines[0]).toMatch(/^Current time is \d{1,2}:\d\d:\d\d\.\d\d[ap]$/);
+    expect(run("help", ctx).lines.some((l) => l.startsWith("DIR"))).toBe(true);
   });
 });

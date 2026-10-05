@@ -13,7 +13,7 @@ export { appsForFile, fileExtension } from "./process/fileAssociations";
 export { useProcessState, forgetProcessState, forgetAllProcessState } from "./process/processState";
 
 // L3.3 — Shell engine
-export { executeCommand, resolvePath, toWinPath } from "./shell/ShellEngine";
+export { executeCommand, resolveDosPath, toDosPath, dosPrompt, SHELL_BANNER, SHELL_NAME, SHELL_VERSION } from "./shell/ShellEngine";
 export type { ShellContext, ShellResult } from "./shell/ShellEngine";
 
 // React integration

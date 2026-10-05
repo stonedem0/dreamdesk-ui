@@ -24,7 +24,7 @@ import { Radio, RadioGroup } from "../components/Radio";
 import { Select } from "../components/Select";
 import { Slider } from "../components/Slider";
 import { useContextMenu } from "../components/ContextMenu";
-import { OSProvider, useOS, type AppDef, type ProcessArgs, executeCommand, toWinPath } from "@dreamdesk/os";
+import { OSProvider, useOS, type AppDef, type ProcessArgs, executeCommand, dosPrompt, SHELL_BANNER } from "@dreamdesk/os";
 
 // ── Notepad app ───────────────────────────────────────────────────────────────
 
@@ -150,28 +150,27 @@ function OpenWithDialog({ pid, args }: { pid: string; args: ProcessArgs }) {
 
 // ── Terminal app ──────────────────────────────────────────────────────────────
 
-const BANNER = ["DreamDesk Terminal", "Type 'help' for available commands.", ""];
-
 function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
-  const { fs, pm } = useOS();
+  const { fs, pm, open } = useOS();
   const [cwd, setCwd] = useState("/");
-  const [lines, setLines] = useState<string[]>(BANNER);
+  const [lines, setLines] = useState<string[]>(SHELL_BANNER);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [histIdx, setHistIdx] = useState(-1);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const prompt = `${toWinPath(cwd)}>`;
+  const prompt = dosPrompt(cwd);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [lines]);
 
   const run = (cmd: string) => {
-    const result = executeCommand(cmd, { fs, pm, cwd });
+    const result = executeCommand(cmd, { fs, cwd, open: (path) => open(path) !== null });
+    if (result.exit) { pm.kill(pid); return; }
     if (result.clear) {
       setLines([]);
     } else {
-      setLines(prev => [...prev, `${prompt} ${cmd}`, ...result.lines]);
+      setLines(prev => [...prev, `${prompt}${cmd}`, ...result.lines]);
     }
     if (result.newCwd) setCwd(result.newCwd);
     if (cmd.trim()) setHistory(prev => [cmd, ...prev]);
@@ -198,7 +197,7 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
   return (
     <TerminalWindow
       windowId="terminal"
-      title="Terminal"
+      title="DOS Prompt"
       icon="/icons/script_file.png"
       width="560px"
       height="340px"
@@ -218,7 +217,7 @@ function TerminalApp({ pid }: { pid: string; args: ProcessArgs }) {
         </div>
         {/* Input row */}
         <div style={{ display: "flex", alignItems: "center", padding: "2px 10px 6px", fontFamily: "var(--font-mono, monospace)", fontSize: "0.82rem", flexShrink: 0 }}>
-          <span style={{ userSelect: "none", marginRight: "4px" }}>{prompt}</span>
+          <span style={{ userSelect: "none" }}>{prompt}</span>
           <input
             ref={inputRef}
             value={input}
