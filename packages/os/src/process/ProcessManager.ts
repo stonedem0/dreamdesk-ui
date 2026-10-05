@@ -1,3 +1,5 @@
+import { fileExtension } from "./fileAssociations";
+
 export type ProcessArgs = Record<string, string>;
 export type ProcessStatus = "running" | "closed";
 
@@ -62,8 +64,8 @@ export class ProcessManager {
   // Returns the appId that would handle this file, or null if none registered.
   // The React layer decides whether to spawn directly or show an "Open with" dialog.
   resolveApp(filePath: string): string | null {
-    const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
-    return this.defaultAppFor(ext);
+    const ext = fileExtension(filePath);
+    return ext ? this.defaultAppFor(ext) : null;
   }
 
   // ── Subscriptions (for React integration) ───────────────────────────────────
