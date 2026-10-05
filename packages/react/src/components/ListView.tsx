@@ -23,6 +23,12 @@ export interface ListViewProps {
   multiSelect?: boolean;
   onSelect?: (ids: string[]) => void;
   onOpen?: (id: string) => void;
+  /**
+   * Right-click on an item. An item that isn't already selected becomes the
+   * selection first (like Windows). Call e.preventDefault() to show your own
+   * menu, and e.stopPropagation() to keep a surrounding menu from opening.
+   */
+  onItemContextMenu?: (id: string, e: React.MouseEvent) => void;
   className?: string;
   style?: CSSProperties;
 }
@@ -44,6 +50,7 @@ export function ListView({
   multiSelect = false,
   onSelect,
   onOpen,
+  onItemContextMenu,
   className,
   style,
 }: ListViewProps) {
@@ -71,6 +78,12 @@ export function ListView({
     }
   }, [selected, multiSelect, onSelect]);
 
+  const handleContextMenu = useCallback((id: string, e: React.MouseEvent) => {
+    if (!onItemContextMenu) return;
+    if (!selected.includes(id)) onSelect?.([id]);
+    onItemContextMenu(id, e);
+  }, [selected, onSelect, onItemContextMenu]);
+
   const SortIndicator = ({ col }: { col: SortKey }) =>
     sortKey === col ? <span className="dd-listview-sort-arrow">{sortDir === "asc" ? " ▲" : " ▼"}</span> : null;
 
@@ -85,6 +98,7 @@ export function ListView({
             aria-selected={selected.includes(item.id)}
             onClick={e => handleSelect(item.id, e)}
             onDoubleClick={() => onOpen?.(item.id)}
+            onContextMenu={e => handleContextMenu(item.id, e)}
           >
             <ItemIcon icon={item.icon} size={32} />
             <span className="dd-listview-icon-label">{item.name}</span>
@@ -122,6 +136,7 @@ export function ListView({
               aria-selected={selected.includes(item.id)}
               onClick={e => handleSelect(item.id, e)}
               onDoubleClick={() => onOpen?.(item.id)}
+              onContextMenu={e => handleContextMenu(item.id, e)}
             >
               <td className="dd-listview-td dd-listview-td--name">
                 <ItemIcon icon={item.icon} size={16} />

@@ -139,3 +139,28 @@ describe("ListView (icons)", () => {
     expect(onSelect).toHaveBeenCalledWith(["a"]);
   });
 });
+
+describe("ListView — item context menu", () => {
+  it.each(["details", "icons"] as const)("reports the right-clicked item and selects it (%s)", (mode) => {
+    const onItemContextMenu = vi.fn();
+    const onSelect = vi.fn();
+    render(<ListView items={ITEMS} mode={mode} onSelect={onSelect} onItemContextMenu={onItemContextMenu} />);
+    fireEvent.contextMenu(screen.getByText(ITEMS[1].name));
+    expect(onItemContextMenu).toHaveBeenCalledWith(ITEMS[1].id, expect.anything());
+    expect(onSelect).toHaveBeenCalledWith([ITEMS[1].id]);
+  });
+
+  it("keeps an existing multi-selection when one of its items is right-clicked", () => {
+    const onSelect = vi.fn();
+    render(<ListView items={ITEMS} multiSelect selected={[ITEMS[0].id, ITEMS[1].id]} onSelect={onSelect} onItemContextMenu={vi.fn()} />);
+    fireEvent.contextMenu(screen.getByText(ITEMS[1].name));
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("leaves right-clicks alone without onItemContextMenu", () => {
+    const onSelect = vi.fn();
+    render(<ListView items={ITEMS} onSelect={onSelect} />);
+    expect(fireEvent.contextMenu(screen.getByText(ITEMS[1].name))).toBe(true);
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+});
