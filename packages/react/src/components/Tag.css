@@ -3,10 +3,13 @@
    @layer reset, dreamdesk; */
 @layer dreamdesk {
 
+/* Flat and rounded on purpose: buttons are square and bevelled, so a tag
+   shouldn't look pressable */
 .dd-tag {
   display: inline-block;
-  padding: 0 0.4rem;
-  border: var(--color-window-border, var(--border));
+  padding: 0 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--color-text, #000) 35%, transparent);
+  border-radius: 999px;
   background: var(--color-input-background, #fff);
   color: var(--color-text, var(--black));
   font-size: 0.75rem;
@@ -17,7 +20,6 @@
 .dd-tag--iridescent {
   background: var(--dd-iridescent, var(--color-input-background, #fff));
   background-size: var(--dd-iridescent-size, 100% 100%);
-  box-shadow: var(--dd-iridescent-shadow, none);
   animation: var(--dd-iridescent-animation, none);
 }
 
