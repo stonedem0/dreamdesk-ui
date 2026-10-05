@@ -26,6 +26,8 @@ export { Window } from "./components/Window";
 export type { WindowProps } from "./components/Window";
 
 export { Button } from "./components/Button";
+export { Tag } from "./components/Tag";
+export type { TagProps } from "./components/Tag";
 export type { ButtonProps } from "./components/Button";
 export { Toast } from "./components/Toast";
 export type { ToastProps } from "./components/Toast";

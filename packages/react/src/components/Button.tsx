@@ -1,7 +1,7 @@
 import { type ReactNode, type CSSProperties } from "react";
 
 export interface ButtonProps {
-  variant?: "primary" | "ghost" | "help" | "basic";
+  variant?: "primary" | "ghost" | "help" | "basic" | "iridescent";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   action?: string;
