@@ -39,3 +39,11 @@ jobs:
       - name: Build react
         working-directory: packages/react
         run: pnpm build
+
+      - name: Typecheck os
+        working-directory: packages/os
+        run: pnpm typecheck
+
+      - name: Test os
+        working-directory: packages/os
+        run: pnpm test
