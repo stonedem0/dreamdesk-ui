@@ -12,6 +12,8 @@ export interface ShellContext {
   cwd: string;
   /** Opens a file in its app, for START; returns false if nothing can open it. */
   open?: (path: string) => boolean;
+  /** Paths that can't be created, changed or deleted (ACCESS_DENIED). */
+  readOnly?: (path: string) => boolean;
 }
 
 export interface ShellResult {
@@ -119,6 +121,7 @@ const fileLine = (time: number, size: number, name: string) => `${stamp(time)}  
 // ── Commands ──────────────────────────────────────────────────────────────────
 
 const BAD_COMMAND = "Bad command or file name";
+const ACCESS_DENIED = "Access denied";
 const FILE_NOT_FOUND = "File not found";
 const REQUIRED_PARAMETER = "Required parameter missing";
 const INVALID_DIRECTORY = "Invalid directory";
@@ -126,6 +129,7 @@ const INVALID_DIRECTORY = "Invalid directory";
 /** A command gets its arguments, and the rest of the line as typed (for names with spaces). */
 type Command = (args: string[], ctx: ShellContext, line: string) => ShellResult;
 const out = (...lines: string[]): ShellResult => ({ lines });
+const locked = (ctx: ShellContext, ...paths: string[]) => paths.some((p) => ctx.readOnly?.(p));
 const unquote = (s: string) => s.trim().replace(/^"(.*)"$/, "$1").trim();
 
 const dir: Command = (args, ctx) => {
@@ -176,6 +180,7 @@ const md: Command = (_args, ctx, line) => {
   if (!name) return out(REQUIRED_PARAMETER);
   const path = resolveDosPath(name, ctx.cwd, ctx.fs);
   if (!path || path === "/" || ctx.fs.exists(path)) return out("Unable to create directory");
+  if (locked(ctx, path)) return out(ACCESS_DENIED);
   ctx.fs.mkdir(path);
   return out();
 };
@@ -188,6 +193,7 @@ const rd: Command = (_args, ctx, line) => {
   if (!path || path === "/" || !isDir(ctx.fs, path) || ctx.fs.ls(path).length > 0) {
     return out("Invalid path, not directory,", "or directory not empty");
   }
+  if (locked(ctx, path)) return out(ACCESS_DENIED);
   ctx.fs.rm(path);
   return out();
 };
@@ -197,7 +203,7 @@ const del: Command = (args, ctx) => {
   const found = match(args[0], ctx);
   if (!found) return out(FILE_NOT_FOUND);
   const paths = found.names.map((n) => join(found.dir, n));
-  if (paths.some((p) => isDir(ctx.fs, p))) return out("Access denied");
+  if (paths.some((p) => isDir(ctx.fs, p)) || locked(ctx, ...paths)) return out(ACCESS_DENIED);
   paths.forEach((p) => ctx.fs.rm(p));
   return out();
 };
@@ -206,7 +212,7 @@ const type: Command = (args, ctx) => {
   if (!args[0]) return out(REQUIRED_PARAMETER);
   const path = resolveDosPath(args[0], ctx.cwd, ctx.fs);
   if (!path || !ctx.fs.exists(path)) return out(`File not found - ${args[0]}`);
-  if (isDir(ctx.fs, path)) return out("Access denied");
+  if (isDir(ctx.fs, path)) return out(ACCESS_DENIED);
   return out(...ctx.fs.readFile(path).split(/\r?\n/));
 };
 
@@ -218,6 +224,7 @@ const ren: Command = (args, ctx) => {
   // Changing only the case of a name is fine; taking another one's name isn't
   const taken = findChild(ctx.fs, parentOf(path), args[1]);
   if (taken && taken !== baseName(path)) return out("Duplicate file name or file not found");
+  if (locked(ctx, path)) return out(ACCESS_DENIED);
   ctx.fs.mv(path, join(parentOf(path), args[1]));
   return out();
 };
@@ -236,6 +243,7 @@ const transfer = (move: boolean): Command => (args, ctx) => {
     const from = join(found.dir, name);
     const to = intoFolder ? join(dest, findChild(ctx.fs, dest, name) ?? name) : dest;
     if (to === from) return out("File cannot be copied onto itself", `${String(done).padStart(9)} file(s) ${move ? "moved" : "copied"}`);
+    if (locked(ctx, to) || (move && locked(ctx, from))) return out(ACCESS_DENIED);
     if (move) {
       if (ctx.fs.exists(to)) ctx.fs.rm(to);
       ctx.fs.mv(from, to);
@@ -249,7 +257,7 @@ const start: Command = (args, ctx) => {
   if (!args[0]) return out(REQUIRED_PARAMETER);
   const path = resolveDosPath(args[0], ctx.cwd, ctx.fs);
   if (!path || !ctx.fs.exists(path)) return out(`Cannot find the file '${args[0]}' (or one of its components).`);
-  if (isDir(ctx.fs, path)) return out("Access denied");
+  if (isDir(ctx.fs, path)) return out(ACCESS_DENIED);
   if (!ctx.open?.(path)) return out(`No program is associated with '${baseName(path)}'.`);
   return out();
 };

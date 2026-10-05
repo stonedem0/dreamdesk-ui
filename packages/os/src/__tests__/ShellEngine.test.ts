@@ -225,6 +225,20 @@ describe("START", () => {
   });
 });
 
+describe("read-only paths", () => {
+  it("can be listed and read, but not changed", () => {
+    const ctx = { ...makeCtx("/docs"), readOnly: (p: string) => p.startsWith("/docs/Work Notes") || p === "/docs/Empty" };
+    ctx.fs.writeFile("/docs/Work Notes/plan.txt", "x");
+    ctx.fs.mkdir("/docs/Empty");
+    expect(run('dir "Work Notes"', ctx).lines.some((l) => l.endsWith("plan.txt"))).toBe(true);
+    expect(run('type "Work Notes\\plan.txt"', ctx).lines).toEqual(["x"]);
+    for (const cmd of ['md "Work Notes\\new"', "rd Empty", 'del "Work Notes\\plan.txt"', 'ren "Work Notes" Old', 'copy todo.txt "Work Notes"', 'move "Work Notes\\plan.txt" .']) {
+      expect(run(cmd, ctx).lines, cmd).toEqual(["Access denied"]);
+    }
+    expect(ctx.fs.ls("/docs/Work Notes").map((n) => n.name)).toEqual(["plan.txt"]);
+  });
+});
+
 describe("other commands", () => {
   it("ECHO shows a message, its state, or an empty line", () => {
     const ctx = makeCtx();
