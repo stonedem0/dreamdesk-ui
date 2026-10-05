@@ -4,7 +4,11 @@ export interface FSAdapter {
 }
 
 export class LocalStorageAdapter implements FSAdapter {
-  constructor(private key = "dreamdesk-fs") {}
+  private key: string;
+
+  constructor(key = "dreamdesk-fs") {
+    this.key = key;
+  }
 
   async load(): Promise<string | null> {
     try { return localStorage.getItem(this.key); } catch { return null; }
