@@ -36,6 +36,10 @@ jobs:
         working-directory: packages/core
         run: pnpm build
 
+      - name: Test react
+        working-directory: packages/react
+        run: pnpm test
+
       - name: Build react
         working-directory: packages/react
         run: pnpm build
