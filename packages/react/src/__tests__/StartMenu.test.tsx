@@ -19,6 +19,19 @@ describe("StartMenu", () => {
     expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
   });
 
+  it("shows an icon before the button's label when given one", () => {
+    render(<StartMenu items={ITEMS} onSelect={vi.fn()} buttonIcon="/logo.png" />);
+    const button = screen.getByRole("button", { name: /start/i });
+    const icon = button.querySelector(".dd-startmenu-btn-icon");
+    expect(icon).toBeInTheDocument();
+    expect(button.firstElementChild).toBe(icon);
+  });
+
+  it("has no icon by default", () => {
+    setup();
+    expect(screen.getByRole("button", { name: /start/i }).querySelector(".dd-startmenu-btn-icon")).toBeNull();
+  });
+
   it("panel is not visible initially", () => {
     setup();
     expect(screen.queryByText("Notepad")).not.toBeInTheDocument();
