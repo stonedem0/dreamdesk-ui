@@ -4,6 +4,8 @@ export type { FSNode, FSFile, FSDir, FSEvent, WatchCallback } from "./fs/Virtual
 export { LocalStorageAdapter } from "./fs/FSAdapter";
 export type { FSAdapter } from "./fs/FSAdapter";
 export { useFSVersion } from "./fs/useFSVersion";
+export { RecycleBin } from "./fs/RecycleBin";
+export type { BinItem } from "./fs/RecycleBin";
 
 // L3.2 — Process manager
 export { ProcessManager } from "./process/ProcessManager";
