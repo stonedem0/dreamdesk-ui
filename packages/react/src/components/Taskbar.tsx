@@ -67,6 +67,8 @@ export function Taskbar({ clock = true, className, startMenu }: TaskbarProps) {
             ].join(" ")}
             onClick={() => w.toggle()}
             title={w.title}
+            // Lets the window find its button, to minimize into it
+            data-window-id={w.id}
           >
             {w.icon && <Icon src={w.icon} size={16} />}
             <span className="dd-taskbar-btn-label">{w.title}</span>

@@ -305,3 +305,24 @@ describe("Window — keeps itself on screen when it grows", () => {
     expect(onMove).not.toHaveBeenCalled();
   });
 });
+
+describe("Window — minimizes into its taskbar button", () => {
+  it("shrinks toward its button on the taskbar and fades out", async () => {
+    const { Taskbar } = await import("../components/Taskbar");
+    render(
+      <Desktop style={{ width: "800px", height: "600px" }}>
+        <Window title="Into Taskbar" width="400px" height="300px" defaultOpen windowId="into-taskbar">
+          <p>content</p>
+        </Window>
+        <Taskbar clock={false} />
+      </Desktop>
+    );
+    await act(async () => { vi.runAllTimers(); });
+    const win = document.querySelector<HTMLElement>(".dd-window .dd-win")!;
+    const animate = vi.spyOn(win, "animate");
+    fireEvent.click(screen.getByLabelText(/minimize/i));
+    const frames = animate.mock.calls[animate.mock.calls.length - 1][0] as Keyframe[];
+    expect(frames[1]).toMatchObject({ opacity: 0 });
+    expect(String(frames[1].transform)).toMatch(/^translate\(/);
+  });
+});

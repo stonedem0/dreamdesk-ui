@@ -64,7 +64,7 @@
 }
 
 .dd-menu-dropdown {
-  animation: dd-menu-in 0.12s cubic-bezier(0.2, 0, 0, 1);
+  animation: dd-menu-in calc(120ms * var(--dd-motion-pace, 1)) cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ── Menu items ── */

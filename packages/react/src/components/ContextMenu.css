@@ -23,7 +23,7 @@
 }
 
 .dd-context-menu {
-  animation: dd-cm-in 0.14s cubic-bezier(0.2, 0, 0, 1);
+  animation: dd-cm-in calc(140ms * var(--dd-motion-pace, 1)) cubic-bezier(0.2, 0, 0, 1);
 }
 
 .dd-cm-item {

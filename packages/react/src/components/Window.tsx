@@ -315,14 +315,18 @@ export function Window({
     const host = hostRef.current;
     if (!win || !host) return;
     const next = !isMinimized;
+    // This window's taskbar button, to shrink into and grow out of
+    const desktop = host.closest(".dd-desktop") ?? document;
+    const button = desktop.querySelector<HTMLElement>(`.dd-taskbar-btn[data-window-id="${CSS.escape(windowId)}"]`);
+    const target = button?.getBoundingClientRect() ?? null;
     if (next) {
-      animMinimize(win);
+      animMinimize(win, target);
       wm.minimize(windowId);
       host.style.pointerEvents = "none";
     } else {
       win.style.transform = "";
       win.style.transformOrigin = "";
-      animUnminimize(win);
+      animUnminimize(win, target);
       wm.restore(windowId);
       host.style.pointerEvents = "";
     }
