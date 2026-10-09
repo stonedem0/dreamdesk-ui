@@ -585,7 +585,7 @@ dreamdesk-tab-panel.active {
   font-size: 18px;
   line-height: 13px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: color 0.3s ease;
   width: 11px;
 }
 
@@ -832,26 +832,6 @@ dreamdesk-tab-panel.active {
   border-right: none;
   scrollbar-gutter: stable;
   background: var(--dd-content-bg, var(--color-input-background, #fff));
-}
-
-/* ===== Window Controls ===== */
-.win.minimized {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.3s ease;
-}
-.win.fullscreen-animating {
-  box-shadow: 0 0 24px 4px rgba(0, 0, 0, 0.18);
-  transition: all 0.4s ease;
-}
-.win.in-fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  transition: all 0.4s ease;
 }
 
 /* Terminal window layout */
