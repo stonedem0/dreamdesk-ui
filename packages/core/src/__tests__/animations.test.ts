@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest';
 import { open, close, minimize, unminimize, fullscreen, unfullscreen, unsnap, cancelRunningAnimations } from '../animations';
 
 const PREV = { top: 50, left: 80, width: 400, height: 300, position: 'absolute', zIndex: '1002' };
@@ -188,5 +188,71 @@ describe("cancelRunningAnimations", () => {
     // Vitest fails the run on an unhandled rejection, so reaching here cleanly is the test
     await new Promise((r) => setTimeout(r, 0));
     await expect(finished).rejects.toThrow("canceled");
+  });
+});
+
+describe('fullscreen with View Transitions', () => {
+  let names: string[];
+  let finish: () => void;
+  function stubViewTransitions() {
+    names = [];
+    (document as any).startViewTransition = vi.fn((update: () => void) => {
+      // What the browser does: snapshot, run the update, snapshot again
+      names.push(document.querySelector<HTMLElement>('[data-test-win]')!.style.getPropertyValue('view-transition-name'));
+      update();
+      return { finished: new Promise<void>((r) => { finish = r; }) };
+    });
+  }
+  function makeMountedWin() {
+    const win = makeWin();
+    win.setAttribute('data-test-win', '');
+    document.body.appendChild(win);
+    return win;
+  }
+  afterEach(() => {
+    delete (document as any).startViewTransition;
+    document.body.innerHTML = '';
+    document.documentElement.removeAttribute('style');
+  });
+
+  it('switches at once inside a transition named dd-window, without scaling the window', async () => {
+    stubViewTransitions();
+    const win = makeMountedWin();
+    const animate = vi.spyOn(win, 'animate');
+    fullscreen(win, PREV);
+    expect(names).toEqual(['dd-window']);
+    expect(win.style.position).toBe('fixed');
+    expect(win.style.width).toBe('100vw');
+    expect(animate).not.toHaveBeenCalled();
+    expect(document.documentElement.style.getPropertyValue('--dd-vt-duration')).toBe('450ms');
+    finish();
+    await Promise.resolve(); await Promise.resolve();
+    expect(win.style.getPropertyValue('view-transition-name')).toBe('');
+  });
+
+  it('goes back to the window it was the same way', async () => {
+    stubViewTransitions();
+    const win = makeMountedWin();
+    fullscreen(win, PREV);
+    unfullscreen(win, PREV);
+    expect(win.style.position).toBe('absolute');
+    expect(win.style.top).toBe('50px');
+    expect(win.style.getPropertyValue('--ddw-w')).toBe('400px');
+    expect(win.style.zIndex).toBe('1002');
+  });
+
+  it('scales the window instead for people who ask for less motion', () => {
+    stubViewTransitions();
+    const matchMedia = window.matchMedia;
+    window.matchMedia = ((q: string) => ({ matches: q.includes('reduce') })) as any;
+    try {
+      const win = makeMountedWin();
+      const animate = vi.spyOn(win, 'animate');
+      fullscreen(win, PREV);
+      expect(document.startViewTransition).not.toHaveBeenCalled();
+      expect(animate).toHaveBeenCalled();
+    } finally {
+      window.matchMedia = matchMedia;
+    }
   });
 });

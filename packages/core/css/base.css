@@ -834,6 +834,32 @@ dreamdesk-tab-panel.active {
   background: var(--dd-content-bg, var(--color-input-background, #fff));
 }
 
+/* ===== Fullscreen (View Transitions) =====
+   A window going in or out of fullscreen is named dd-window for the moment.
+   Its before and after snapshots are shown at their real size, pinned
+   top-left, cross-fading in a frame that grows or shrinks between the two:
+   it looks like the window resizing, and nothing in it is scaled. Timing
+   comes from --dd-vt-duration / --dd-vt-easing, set by core's animations. */
+::view-transition-group(dd-window) {
+  animation-duration: var(--dd-vt-duration, 400ms);
+  animation-timing-function: var(--dd-vt-easing, ease);
+}
+::view-transition-image-pair(dd-window) {
+  overflow: hidden;
+}
+::view-transition-old(dd-window),
+::view-transition-new(dd-window) {
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+  animation-duration: var(--dd-vt-duration, 400ms);
+}
+/* The rest of the page doesn't change, so it doesn't need to fade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
 /* Terminal window layout */
 .terminal-win {
   display: flex;

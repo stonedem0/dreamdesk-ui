@@ -69,15 +69,37 @@ export function unminimize(win: HTMLElement): void {
   );
 }
 
-export function fullscreen(win: HTMLElement, previousState: PreviousState): void {
-  cancelRunningAnimations(win);
-  const fsW = window.innerWidth;
-  const fsH = window.innerHeight;
-  const fromTop = previousState.top - (window.scrollY || 0);
-  const fromLeft = previousState.left - (window.scrollX || 0);
-  const fromW = previousState.width;
-  const fromH = previousState.height;
+// ── Fullscreen ──────────────────────────────────────────────────────────────
+// Where the browser has View Transitions, the window changes size at once and
+// the browser animates between snapshots of before and after: each shown at
+// its real size, pinned top-left, in a frame that grows or shrinks between
+// the two (see ::view-transition-*(dd-window) in base.css). It looks like the
+// window resizing, without scaling or squashing its content. Elsewhere, the
+// window itself is scaled from one rect to the other.
 
+interface ViewTransition { finished: Promise<void> }
+type StartViewTransition = (update: () => void) => ViewTransition;
+
+/** Runs `update` as a view transition of `win`; false if the browser can't. */
+function viewTransition(win: HTMLElement, duration: number, easing: string, update: () => void): boolean {
+  const start = (document as Document & { startViewTransition?: StartViewTransition }).startViewTransition;
+  if (typeof start !== 'function' || reducedMotion()) return false;
+  const root = document.documentElement;
+  root.style.setProperty('--dd-vt-duration', `${duration}ms`);
+  root.style.setProperty('--dd-vt-easing', easing);
+  win.style.setProperty('view-transition-name', 'dd-window');
+  const done = () => win.style.removeProperty('view-transition-name');
+  try {
+    start.call(document, update).finished.then(done, done);
+  } catch {
+    // e.g. another transition in the way: just change, no animation
+    done();
+    update();
+  }
+  return true;
+}
+
+function applyFullscreen(win: HTMLElement): void {
   win.style.position = 'fixed';
   win.style.top = '0';
   win.style.left = '0';
@@ -86,59 +108,55 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
   win.style.setProperty('--ddw-w', '100vw');
   win.style.setProperty('--ddw-h', '100vh');
   win.style.zIndex = '9999';
+}
 
-  const scaleX = fromW / fsW;
-  const scaleY = fromH / fsH;
-  const tx = (fromLeft + fromW / 2) - fsW / 2;
-  const ty = (fromTop + fromH / 2) - fsH / 2;
+function applyWindowed(win: HTMLElement, previousState: PreviousState): void {
+  win.style.position = previousState.position || 'absolute';
+  win.style.top = `${Math.round(previousState.top)}px`;
+  win.style.left = `${Math.round(previousState.left)}px`;
+  win.style.width = '';
+  win.style.height = '';
+  win.style.setProperty('--ddw-w', `${Math.round(previousState.width)}px`);
+  win.style.setProperty('--ddw-h', `${Math.round(previousState.height)}px`);
+  if (previousState.zIndex) {
+    win.style.zIndex = previousState.zIndex;
+  } else {
+    win.style.removeProperty('z-index');
+  }
+}
 
+/** The transform that puts a fullscreen window over `rect` (for the fallback). */
+function fromFullscreenTo(rect: { top: number; left: number; width: number; height: number }): string {
+  const fsW = window.innerWidth;
+  const fsH = window.innerHeight;
+  const top = rect.top - (window.scrollY || 0);
+  const left = rect.left - (window.scrollX || 0);
+  const tx = (left + rect.width / 2) - fsW / 2;
+  const ty = (top + rect.height / 2) - fsH / 2;
+  return `translate(${tx}px, ${ty}px) scale(${rect.width / fsW}, ${rect.height / fsH})`;
+}
+
+export function fullscreen(win: HTMLElement, previousState: PreviousState): void {
+  cancelRunningAnimations(win);
+  if (viewTransition(win, DURATION.fullscreen, EASE_IN_PLACE, () => applyFullscreen(win))) return;
+
+  applyFullscreen(win);
   win.animate(
-    [
-      { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
-      { transform: 'none' },
-    ],
+    [{ transform: fromFullscreenTo(previousState) }, { transform: 'none' }],
     { duration: ms(DURATION.fullscreen), easing: EASE_IN_PLACE }
   );
 }
 
 export function unfullscreen(win: HTMLElement, previousState: PreviousState): void {
   cancelRunningAnimations(win);
-  const fsW = window.innerWidth;
-  const fsH = window.innerHeight;
-  const toW = previousState.width;
-  const toH = previousState.height;
-  const toTop = previousState.top - (window.scrollY || 0);
-  const toLeft = previousState.left - (window.scrollX || 0);
+  if (viewTransition(win, DURATION.unfullscreen, EASE_SMOOTH, () => applyWindowed(win, previousState))) return;
 
-  // Animate from fullscreen → target size/position, then apply final state
-  const scaleX = toW / fsW;
-  const scaleY = toH / fsH;
-  const tx = (toLeft + toW / 2) - fsW / 2;
-  const ty = (toTop + toH / 2) - fsH / 2;
-
+  // Animate from fullscreen to the window's rect, then put it there
   const animation = win.animate(
-    [
-      { transform: 'none' },
-      { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
-    ],
+    [{ transform: 'none' }, { transform: fromFullscreenTo(previousState) }],
     { duration: ms(DURATION.unfullscreen), easing: EASE_SMOOTH, fill: 'forwards' }
   );
-
-  const applyFinal = () => {
-    win.style.position = previousState.position || 'absolute';
-    win.style.top = `${Math.round(previousState.top)}px`;
-    win.style.left = `${Math.round(previousState.left)}px`;
-    win.style.width = '';
-    win.style.height = '';
-    win.style.setProperty('--ddw-w', `${Math.round(toW)}px`);
-    win.style.setProperty('--ddw-h', `${Math.round(toH)}px`);
-    if (previousState.zIndex) {
-      win.style.zIndex = previousState.zIndex;
-    } else {
-      win.style.removeProperty('z-index');
-    }
-  };
-
+  const applyFinal = () => applyWindowed(win, previousState);
   animation.onfinish = () => { applyFinal(); win.getAnimations().forEach(a => a.cancel()); };
   animation.oncancel = applyFinal;
 }
