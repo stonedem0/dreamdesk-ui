@@ -52,9 +52,12 @@ export function BrowserWindow({
   const [showHistory, setShowHistory] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // A new url replaces whatever is typed in the address bar
+  const [shownUrl, setShownUrl] = useState(url);
+  if (url !== shownUrl) {
+    setShownUrl(url);
     setAddressValue(url);
-  }, [url]);
+  }
 
   useEffect(() => {
     if (!showHistory) return;

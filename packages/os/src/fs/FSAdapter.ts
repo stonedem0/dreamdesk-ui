@@ -15,6 +15,6 @@ export class LocalStorageAdapter implements FSAdapter {
   }
 
   async save(data: string): Promise<void> {
-    try { localStorage.setItem(this.key, data); } catch {}
+    try { localStorage.setItem(this.key, data); } catch { /* storage unavailable: not saved */ }
   }
 }

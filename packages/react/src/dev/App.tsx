@@ -480,17 +480,6 @@ function ThemeToggle() {
 
 // ── App registrar + desktop icons ─────────────────────────────────────────────
 
-function DialogDemo() {
-  const dialog = useDialog();
-  return (
-    <div style={{ position: "absolute", bottom: "48px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "0.5rem" }}>
-      <button onClick={() => dialog.alert("File saved successfully!")}>Alert</button>
-      <button onClick={async () => { const ok = await dialog.confirm("Delete this file?"); console.log("confirm:", ok); }}>Confirm</button>
-      <button onClick={async () => { const val = await dialog.prompt("Enter new name:", { defaultValue: "file.txt" }); console.log("prompt:", val); }}>Prompt</button>
-    </div>
-  );
-}
-
 const SINGLETON_WINDOW_IDS: Record<string, string> = {
   explorer: "explorer",
   browser: "browser",
@@ -539,7 +528,6 @@ function WindowShortcuts() {
 // ── VirtualFS instance (singleton for the demo) ───────────────────────────────
 
 import { VirtualFS, LocalStorageAdapter } from "@dreamdesk/os";
-import type { FSNode } from "@dreamdesk/os";
 
 const fsAdapter = new LocalStorageAdapter("dreamdesk-demo-fs");
 
@@ -610,14 +598,6 @@ function fsToListItems(fs: VirtualFS, path: string): ListViewItem[] {
   }));
 }
 
-function findTreeNode(nodes: TreeNode[], id: string): TreeNode | null {
-  for (const n of nodes) {
-    if (n.id === id) return n;
-    if (n.children) { const f = findTreeNode(n.children, id); if (f) return f; }
-  }
-  return null;
-}
-
 function getTreePath(nodes: TreeNode[], id: string, path: TreeNode[] = []): TreeNode[] | null {
   for (const n of nodes) {
     const next = [...path, n];
@@ -675,7 +655,7 @@ function ExplorerDemo() {
     if (!selectedList.length) return;
     const ok = await dialog.confirm(`Delete ${selectedList.length} item(s)?`);
     if (!ok) return;
-    selectedList.forEach(p => { try { demoFS.rm(p); } catch {} });
+    selectedList.forEach(p => { try { demoFS.rm(p); } catch { /* already gone */ } });
     setSelectedList([]);
   };
 

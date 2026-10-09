@@ -32,6 +32,9 @@ export function Taskbar({ clock = true, className, startMenu }: TaskbarProps) {
   const [displayed, setDisplayed] = useState<DisplayEntry[]>(() => wm.getWindows());
 
   useEffect(() => {
+    // Windows can register between the first render and subscribing (their
+    // effects run first), so read them again here
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDisplayed(wm.getWindows());
     return wm.subscribe(() => {
       const current = wm.getWindows();

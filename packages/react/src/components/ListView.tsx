@@ -84,7 +84,7 @@ export function ListView({
     onItemContextMenu(id, e);
   }, [selected, onSelect, onItemContextMenu]);
 
-  const SortIndicator = ({ col }: { col: SortKey }) =>
+  const sortArrow = (col: SortKey) =>
     sortKey === col ? <span className="dd-listview-sort-arrow">{sortDir === "asc" ? " ▲" : " ▼"}</span> : null;
 
   if (mode === "icons") {
@@ -114,16 +114,16 @@ export function ListView({
         <thead>
           <tr>
             <th className="dd-listview-th dd-listview-th--name" onClick={() => handleHeaderClick("name")}>
-              Name<SortIndicator col="name" />
+              Name{sortArrow("name")}
             </th>
             <th className="dd-listview-th" onClick={() => handleHeaderClick("size")}>
-              Size<SortIndicator col="size" />
+              Size{sortArrow("size")}
             </th>
             <th className="dd-listview-th" onClick={() => handleHeaderClick("type")}>
-              Type<SortIndicator col="type" />
+              Type{sortArrow("type")}
             </th>
             <th className="dd-listview-th dd-listview-th--date" onClick={() => handleHeaderClick("date")}>
-              Date Modified<SortIndicator col="date" />
+              Date Modified{sortArrow("date")}
             </th>
           </tr>
         </thead>

@@ -89,12 +89,12 @@ export function OSProvider({ fs: fsProp, apps, adapter, children }: OSProviderPr
     try {
       const raw = localStorage.getItem(PROC_KEY);
       if (raw) pm.restore(raw, p => !!apps[p.appId] && apps[p.appId].persistent !== false);
-    } catch {}
+    } catch { /* storage unavailable: start with none */ }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     return pm.subscribe(() => {
-      try { localStorage.setItem(PROC_KEY, pm.serialize(p => apps[p.appId]?.persistent !== false)); } catch {}
+      try { localStorage.setItem(PROC_KEY, pm.serialize(p => apps[p.appId]?.persistent !== false)); } catch { /* storage unavailable: not saved */ }
     });
   }, [pm, apps]);
 

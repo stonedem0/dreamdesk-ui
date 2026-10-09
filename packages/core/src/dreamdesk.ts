@@ -2,7 +2,7 @@ import { minimize, unminimize, fullscreen, unfullscreen, unsnap, close, type Pre
 import { setupDrag } from './drag';
 import { setupResize } from './resize';
 import { defaultWindowManager } from './windowManager';
-import { snapRect, type SnapZone } from './snap';
+import { snapRect } from './snap';
 import { setupProgressBar, type ProgressBarHandle } from './progressBar';
 
 // Derive the directory of this script once — plain string op, Vite won't treat it as an asset URL
@@ -45,6 +45,8 @@ interface WindowState {
 
 declare global {
   interface Window {
+    // Public: any function an app registers as an animation
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     DreamDeskAnimations?: Record<string, Function>;
     DreamDeskIcons?: Record<string, string>;
   }
@@ -58,6 +60,10 @@ class DreamDeskComponent extends HTMLElement {
   protected _initialized = false;
   protected _resizeObserver: ResizeObserver | null = null;
   private _onThemeChange: () => void;
+  /** Builds the component once its template is in place (subclasses). */
+  setup?(): void;
+  /** Updates the component after the theme changes (subclasses). */
+  themeChanged?(): void;
 
   constructor() {
     super();
@@ -75,7 +81,7 @@ class DreamDeskComponent extends HTMLElement {
     this._onThemeChange = () => {
       this._theme = document.documentElement.getAttribute('data-theme') || 'default';
       this._prefix = this._getThemePrefix(this._theme);
-      this._updateThemeStyles(() => { (this as any).themeChanged?.(); });
+      this._updateThemeStyles(() => { this.themeChanged?.(); });
     };
     document.addEventListener('dreamdesk-theme-changed', this._onThemeChange, {
       signal: this._eventController.signal,
@@ -92,7 +98,7 @@ class DreamDeskComponent extends HTMLElement {
     if (this._initialized) return;
     this._updateThemeStyles(() => {
       this._container.innerHTML = this.template();
-      (this as any).setup?.();
+      this.setup?.();
     });
     this._initialized = true;
   }
@@ -100,7 +106,7 @@ class DreamDeskComponent extends HTMLElement {
   disconnectedCallback(): void {
     if (this._eventController) { this._eventController.abort(); this._eventController = null; }
     if (this._resizeObserver) {
-      try { this._resizeObserver.disconnect(); } catch (_) {}
+      try { this._resizeObserver.disconnect(); } catch { /* already disconnected */ }
       this._resizeObserver = null;
     }
   }
