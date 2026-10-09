@@ -13,7 +13,7 @@ describe('setupProgressBar', () => {
   describe('blocky mode', () => {
     it('builds segments filling the track', () => {
       const track = makeTrack(220);
-      let value = 0;
+      const value = 0;
       const handle = setupProgressBar({
         track,
         getValue: () => value,
@@ -28,7 +28,7 @@ describe('setupProgressBar', () => {
 
     it('toggles progress-segment--active based on value', () => {
       const track = makeTrack(220);
-      let value = 50;
+      const value = 50;
       const handle = setupProgressBar({
         track,
         getValue: () => value,
@@ -44,7 +44,7 @@ describe('setupProgressBar', () => {
 
     it('update() changes active segments', () => {
       const track = makeTrack(220);
-      let value = 0;
+      const value = 0;
       const handle = setupProgressBar({
         track,
         getValue: () => value,

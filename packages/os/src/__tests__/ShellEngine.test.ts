@@ -69,7 +69,7 @@ describe("DIR", () => {
     expect(lines).toContain(" Directory of C:\\docs");
     expect(lines.some((l) => /<DIR>\s+\.$/.test(l))).toBe(true);
     expect(lines.some((l) => /<DIR>\s+Work Notes$/.test(l))).toBe(true);
-    expect(lines.some((l) => /^\d\d-\d\d-\d\d  \d\d:\d\d[ap]\s+11 readme\.txt$/.test(l))).toBe(true);
+    expect(lines.some((l) => /^\d\d-\d\d-\d\d {2}\d\d:\d\d[ap]\s+11 readme\.txt$/.test(l))).toBe(true);
     expect(fromEnd(lines, 2)).toMatch(/^\s+3 File\(s\)\s+15 bytes$/);
     expect(fromEnd(lines, 1)).toMatch(/^\s+3 Dir\(s\)$/);
   });

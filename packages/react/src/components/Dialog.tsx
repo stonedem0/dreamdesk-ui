@@ -1,5 +1,4 @@
 import {
-  useRef,
   useState,
   useEffect,
   useCallback,
@@ -59,14 +58,17 @@ export function Dialog({
 }: DialogProps) {
   const [rendered, setRendered] = useState(isOpen);
   const [closing, setClosing] = useState(false);
-  useEffect(() => {
+  // Opening or closing: adjust while rendering, rather than in an effect after
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
     if (isOpen) {
       setRendered(true);
       setClosing(false);
     } else if (rendered) {
       setClosing(true);
     }
-  }, [isOpen]);
+  }
 
   useEffect(() => {
     if (!rendered) return;
@@ -132,16 +134,19 @@ type PendingState =
   | { type: "choose"; title: string; message: string; choices: DialogChoice[]; resolve: (v: string | null) => void };
 
 export function DialogProvider({ children }: { children: ReactNode }) {
-  const [pending, setPending] = useState<PendingState | null>(null);
+  const [pending, setPendingState] = useState<PendingState | null>(null);
   const [promptValue, setPromptValue] = useState("");
-  // Keep last pending alive so content stays visible during the close animation
-  const lastPendingRef = useRef<PendingState | null>(null);
-  if (pending) lastPendingRef.current = pending;
-  const displayPending = pending ?? lastPendingRef.current;
+  // Keep the last dialog so its content stays visible during the close animation
+  const [lastPending, setLastPending] = useState<PendingState | null>(null);
+  const setPending = (next: PendingState | null) => {
+    setPendingState(next);
+    if (next) setLastPending(next);
+  };
+  const displayPending = pending ?? lastPending;
 
-  const dismiss = useCallback((value: any) => {
-    (pending?.resolve as ((v: any) => void) | undefined)?.(value);
-    setPending(null);
+  const dismiss = useCallback((value: unknown) => {
+    (pending?.resolve as ((v: unknown) => void) | undefined)?.(value);
+    setPendingState(null);
   }, [pending]);
 
   const api: DialogAPI = {

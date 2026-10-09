@@ -3,6 +3,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useId,
   type ReactNode,
   type CSSProperties,
@@ -294,11 +295,13 @@ export function Window({
       saveState({ isOpen: true, isMinimized: false });
     });
     return () => wm.unregister(windowId);
+    // Sets the window up once per id; the props it reads are its starting state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowId, title, icon, wm]);
 
   const raise = useCallback(() => {
     wm.raise(windowId);
-  }, [windowId]);
+  }, [windowId, wm]);
 
   const handleMinimize = useCallback(() => {
     const win = hostRef.current?.querySelector<HTMLElement>(".dd-win");
@@ -321,7 +324,7 @@ export function Window({
     saveState({ isMinimized: next });
   }, [isMinimized, onMinimize, windowId, wm, saveState]);
 
-  toggleRef.current = handleMinimize;
+  useLayoutEffect(() => { toggleRef.current = handleMinimize; });
 
   const handleFullscreen = useCallback(() => {
     const host = hostRef.current;
@@ -370,7 +373,7 @@ export function Window({
     });
   }, [onBeforeClose, onClose, wm, windowId, windowIdProp]);
 
-  closeRef.current = handleClose;
+  useLayoutEffect(() => { closeRef.current = handleClose; });
 
   // Dragging
   useEffect(() => {

@@ -1,7 +1,9 @@
 function $(i) {
-  var e;
+  var e, s;
   const t = ((e = i == null ? void 0 : i.getAnimations) == null ? void 0 : e.call(i)) ?? [];
-  for (const s of t) s.cancel();
+  for (const n of t)
+    (s = n.finished) == null || s.catch(() => {
+    }), n.cancel();
 }
 function zt(i) {
   $(i), i.style.transformOrigin = "50% 50%", i.animate(
@@ -114,7 +116,7 @@ function nt({ handle: i, host: t, container: e, reservedBottom: s = 0, signal: n
         q !== k && (k = q, c(q));
       }
     }));
-  }, F = (z) => {
+  }, F = () => {
     f = !1, document.removeEventListener("pointermove", A, { capture: !0 }), document.removeEventListener("pointerup", F, { capture: !0 }), u && (cancelAnimationFrame(u), u = null, E()), p && k !== "none" && p(k), c && c("none"), k = "none", m == null || m();
   }, Y = (z) => {
     if (r != null && r() || o && z.target.closest(o)) return;
