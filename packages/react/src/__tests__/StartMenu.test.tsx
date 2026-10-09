@@ -27,6 +27,11 @@ describe("StartMenu", () => {
     expect(button.firstElementChild).toBe(icon);
   });
 
+  it("sizes the icon", () => {
+    render(<StartMenu items={ITEMS} onSelect={vi.fn()} buttonIcon="/logo.png" buttonIconSize={24} />);
+    expect(screen.getByRole("button", { name: /start/i }).querySelector("img")).toHaveAttribute("width", "24");
+  });
+
   it("has no icon by default", () => {
     setup();
     expect(screen.getByRole("button", { name: /start/i }).querySelector(".dd-startmenu-btn-icon")).toBeNull();

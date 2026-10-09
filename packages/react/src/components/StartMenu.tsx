@@ -16,10 +16,12 @@ export interface StartMenuProps {
   buttonLabel?: string;
   /** An icon before the button's label, like the Windows logo on Start. */
   buttonIcon?: string;
+  /** The icon's size in px (default 16); the button is about 28px tall. */
+  buttonIconSize?: number;
   className?: string;
 }
 
-export function StartMenu({ label = "DreamDesk", items, onSelect, buttonLabel = "Start", buttonIcon, className }: StartMenuProps) {
+export function StartMenu({ label = "DreamDesk", items, onSelect, buttonLabel = "Start", buttonIcon, buttonIconSize = 16, className }: StartMenuProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -74,7 +76,7 @@ export function StartMenu({ label = "DreamDesk", items, onSelect, buttonLabel = 
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        {buttonIcon && <Icon src={buttonIcon} size={16} className="dd-startmenu-btn-icon" />}
+        {buttonIcon && <Icon src={buttonIcon} size={buttonIconSize} className="dd-startmenu-btn-icon" />}
         {buttonLabel}
       </button>
     </div>
