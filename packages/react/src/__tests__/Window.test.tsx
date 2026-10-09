@@ -235,3 +235,73 @@ describe("Window — compact desktop", () => {
     expect(getHost().querySelector(".dd-win-resize-handle")).not.toBeNull();
   });
 });
+
+describe("Window — keeps itself on screen when it grows", () => {
+  // happy-dom doesn't lay out, so sizes are faked and resizes triggered by hand
+  let resized: (() => void) | null = null;
+  beforeEach(() => {
+    vi.stubGlobal("ResizeObserver", class {
+      constructor(cb: () => void) { resized = cb; }
+      observe() {}
+      disconnect() { resized = null; }
+    });
+  });
+  afterEach(() => { vi.unstubAllGlobals(); resized = null; });
+
+  function size(el: Element, w: number, h: number) {
+    Object.defineProperty(el, "offsetWidth", { configurable: true, value: w });
+    Object.defineProperty(el, "offsetHeight", { configurable: true, value: h });
+  }
+  function place(props: Partial<React.ComponentProps<typeof Window>>, at: { left: number; top: number }) {
+    const onMove = vi.fn();
+    setup({ onMove, ...props });
+    const host = getHost();
+    const desktop = host.closest(".dd-desktop")!;
+    Object.defineProperty(desktop, "clientWidth", { configurable: true, value: 800 });
+    Object.defineProperty(desktop, "clientHeight", { configurable: true, value: 600 });
+    host.style.left = `${at.left}px`;
+    host.style.top = `${at.top}px`;
+    return { host, onMove };
+  }
+  const grow = (host: HTMLElement, w: number, h: number) => { size(host, w, h); act(() => resized?.()); };
+
+  it("moves up when it grows past the bottom, and reports where to", () => {
+    const { host, onMove } = place({}, { left: 50, top: 400 });
+    grow(host, 300, 150);
+    grow(host, 300, 350);
+    const top = parseFloat(host.style.top);
+    expect(top).toBeLessThan(400);
+    expect(top + 350).toBeLessThanOrEqual(600);
+    expect(onMove).toHaveBeenLastCalledWith(50, top);
+  });
+
+  it("moves left when it grows past the right edge", () => {
+    const { host, onMove } = place({}, { left: 600, top: 20 });
+    grow(host, 100, 100);
+    grow(host, 300, 100);
+    expect(host.style.left).toBe("500px");
+    expect(onMove).toHaveBeenLastCalledWith(500, 20);
+  });
+
+  it("goes to the top when it's taller than the desktop", () => {
+    const { host } = place({}, { left: 0, top: 100 });
+    grow(host, 100, 100);
+    grow(host, 100, 900);
+    expect(host.style.top).toBe("0px");
+  });
+
+  it("leaves it alone when it still fits", () => {
+    const fits = place({}, { left: 10, top: 10 });
+    grow(fits.host, 100, 100);
+    grow(fits.host, 200, 200);
+    expect(fits.onMove).not.toHaveBeenCalled();
+  });
+
+  it("can be turned off", () => {
+    const { host, onMove } = place({ keepOnScreen: false }, { left: 50, top: 500 });
+    grow(host, 300, 300);
+    expect(resized).toBeNull();
+    expect(host.style.top).toBe("500px");
+    expect(onMove).not.toHaveBeenCalled();
+  });
+});

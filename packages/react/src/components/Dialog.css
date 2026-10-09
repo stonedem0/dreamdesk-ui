@@ -34,12 +34,12 @@
 }
 
 .dd-dialog .dd-win {
-  animation: dd-dialog-in 0.15s cubic-bezier(0.2, 0, 0, 1);
+  animation: dd-dialog-in 0.22s cubic-bezier(0.2, 0, 0, 1);
   height: auto;
 }
 
 .dd-dialog--closing .dd-win {
-  animation: dd-dialog-out 0.25s ease forwards;
+  animation: dd-dialog-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .dd-dialog-message {
@@ -61,6 +61,12 @@
   justify-content: flex-end;
   gap: 0.4rem;
   padding: 0.5rem 0.5rem 0.6rem;
+}
+
+/* Less motion for people who ask for it (kept, not removed: closing waits for it to end) */
+@media (prefers-reduced-motion: reduce) {
+  .dd-dialog .dd-win,
+  .dd-dialog--closing .dd-win { animation-duration: 1ms; }
 }
 
 } /* @layer dreamdesk */
