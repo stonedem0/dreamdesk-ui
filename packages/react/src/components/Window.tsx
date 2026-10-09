@@ -48,6 +48,12 @@ export interface WindowProps {
   scrollContent?: boolean;
   onMove?: (x: number, y: number) => void;
   disableSnap?: boolean;
+  /**
+   * When the window grows past the desktop's bottom or right edge (a panel
+   * opening, content loading), move it back in, as Windows does, and report
+   * the new place through onMove. Default true.
+   */
+  keepOnScreen?: boolean;
   onMinimize?: (isMinimized: boolean) => void;
   onFullscreen?: (isFullscreen: boolean) => void;
   /**
@@ -152,6 +158,7 @@ export function Window({
   scrollContent,
   onMove,
   disableSnap: disableSnapProp = false,
+  keepOnScreen = true,
   onMinimize,
   onFullscreen,
   defaultFullscreen,
@@ -374,6 +381,37 @@ export function Window({
   }, [onBeforeClose, onClose, wm, windowId, windowIdProp]);
 
   useLayoutEffect(() => { closeRef.current = handleClose; });
+
+  // Growing past the desktop's edge: move back in. Only on growth, so a window
+  // dragged partly off screen stays where it was put. A window is moved as it
+  // grows, so one that opens up gradually keeps its edge pinned to the screen's.
+  const onMoveRef = useRef(onMove);
+  useLayoutEffect(() => { onMoveRef.current = onMove; });
+  useEffect(() => {
+    const host = hostRef.current;
+    const container = desktopRef?.current;
+    if (!keepOnScreen || compact || !host || !container || typeof ResizeObserver === "undefined") return;
+    let last = { w: host.offsetWidth, h: host.offsetHeight };
+    const observer = new ResizeObserver(() => {
+      const w = host.offsetWidth, h = host.offsetHeight;
+      const grew = w > last.w || h > last.h;
+      last = { w, h };
+      // Real fullscreen (fixed to the viewport) and hidden windows are left alone
+      if (!grew || host.style.position === "fixed" || host.style.display === "none") return;
+      const left = parseFloat(host.style.left), top = parseFloat(host.style.top);
+      if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+      const spaceW = container.clientWidth;
+      const spaceH = container.clientHeight - taskbarHeight;
+      const nextTop = top + h > spaceH ? Math.max(0, spaceH - h) : top;
+      const nextLeft = left + w > spaceW ? Math.max(0, spaceW - w) : left;
+      if (nextTop === top && nextLeft === left) return;
+      host.style.top = `${nextTop}px`;
+      host.style.left = `${nextLeft}px`;
+      onMoveRef.current?.(nextLeft, nextTop);
+    });
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [keepOnScreen, compact, desktopRef, taskbarHeight]);
 
   // Dragging
   useEffect(() => {
