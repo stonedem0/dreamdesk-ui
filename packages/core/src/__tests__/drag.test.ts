@@ -135,3 +135,75 @@ describe('setupDrag', () => {
     expect(host.style.left).toBe('');
   });
 });
+
+describe('setupDrag — smooth and robust', () => {
+  const frame = async () => { await new Promise((r) => setTimeout(r, 30)); };
+
+  it('moves with a transform while dragging, and writes left/top once on release', async () => {
+    const { handle, host } = makeElements();
+    host.style.left = '50px';
+    host.style.top = '50px';
+    setupDrag({ handle, host });
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100 });
+    fire(document, 'pointermove', { clientX: 150, clientY: 130 });
+    await frame();
+    expect(host.style.transform).toBe('translate(50px, 30px)');
+    expect(host.style.left).toBe('50px');
+    fire(document, 'pointerup');
+    expect(host.style.transform).toBe('');
+    expect(host.style.left).toBe('100px');
+    expect(host.style.top).toBe('80px');
+  });
+
+  it('captures the pointer, so iframes under it don\'t take the drag', () => {
+    const { handle, host } = makeElements();
+    const capture = vi.fn();
+    const release = vi.fn();
+    handle.setPointerCapture = capture;
+    handle.releasePointerCapture = release;
+    setupDrag({ handle, host });
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100, pointerId: 7 });
+    expect(capture).toHaveBeenCalledWith(7);
+    fire(document, 'pointerup', { pointerId: 7 });
+    expect(release).toHaveBeenCalledWith(7);
+  });
+
+  it('stops text being selected while dragging', () => {
+    const { handle, host } = makeElements();
+    setupDrag({ handle, host });
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100 });
+    expect(document.documentElement.style.getPropertyValue('user-select')).toBe('none');
+    fire(document, 'pointerup');
+    expect(document.documentElement.style.getPropertyValue('user-select')).toBe('');
+  });
+
+  it('ends when the pointer is cancelled, and ignores other pointers and buttons', () => {
+    const { handle, host } = makeElements();
+    const onEnd = vi.fn();
+    setupDrag({ handle, host, onEnd });
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100, button: 2 });
+    fire(document, 'pointerup');
+    expect(onEnd).not.toHaveBeenCalled();
+
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100, pointerId: 1 });
+    fire(document, 'pointerup', { pointerId: 2 });
+    expect(onEnd).not.toHaveBeenCalled();
+    fire(document, 'pointercancel', { pointerId: 1 });
+    expect(onEnd).toHaveBeenCalledOnce();
+  });
+
+  it('measures the desktop once per drag, not every frame', async () => {
+    const { handle, host } = makeElements();
+    const container = document.createElement('div');
+    const measure = vi.fn(() => ({ left: 0, top: 0, width: 800, height: 600, right: 800, bottom: 600, x: 0, y: 0, toJSON: () => {} }) as DOMRect);
+    container.getBoundingClientRect = measure;
+    setupDrag({ handle, host, container, onSnap: () => {} });
+    fire(handle, 'pointerdown', { clientX: 100, clientY: 100 });
+    for (let x = 110; x < 200; x += 10) {
+      fire(document, 'pointermove', { clientX: x, clientY: 100 });
+      await frame();
+    }
+    fire(document, 'pointerup');
+    expect(measure).toHaveBeenCalledTimes(1);
+  });
+});
