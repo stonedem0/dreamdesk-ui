@@ -76,7 +76,8 @@ function at(s, t) {
 }
 function V(s, t) {
   const e = s.animate(
-    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
+    // The mirror of open()
+    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.9)" }],
     { duration: M($.close), easing: H, fill: "forwards" }
   );
   e.onfinish = () => {
