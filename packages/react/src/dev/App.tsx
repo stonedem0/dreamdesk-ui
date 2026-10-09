@@ -365,7 +365,13 @@ function BrowserApp({ pid }: { pid: string; args: ProcessArgs }) {
   const [loading, setLoading] = useState(true);
 
   const navigate = (url: string) => {
-    const trimmed = url.startsWith("http") ? url : `https://${url}`;
+    // Web pages only: anything else (javascript:, data:) isn't loaded
+    let trimmed: string;
+    try {
+      const parsed = new URL(/^https?:\/\//i.test(url) ? url : `https://${url}`);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return;
+      trimmed = parsed.href;
+    } catch { return; }
     const next = navHistory.slice(0, historyIndex + 1);
     next.push(trimmed);
     setNavHistory(next);

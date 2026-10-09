@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master]
 
+# Read the code, nothing more
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
