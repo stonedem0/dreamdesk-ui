@@ -29,6 +29,12 @@ export interface ListViewProps {
    * menu, and e.stopPropagation() to keep a surrounding menu from opening.
    */
   onItemContextMenu?: (id: string, e: React.MouseEvent) => void;
+  /**
+   * Other headings for the details columns, e.g. { type: "Original Location" }
+   * when that column holds something else. Sorting still uses the item's
+   * size / type / date fields.
+   */
+  columnLabels?: Partial<Record<SortKey, string>>;
   className?: string;
   style?: CSSProperties;
 }
@@ -43,6 +49,8 @@ function ItemIcon({ icon, size }: { icon?: string; size: number }) {
   );
 }
 
+const DEFAULT_HEADINGS: Record<SortKey, string> = { name: "Name", size: "Size", type: "Type", date: "Date Modified" };
+
 export function ListView({
   items,
   mode = "details",
@@ -51,9 +59,11 @@ export function ListView({
   onSelect,
   onOpen,
   onItemContextMenu,
+  columnLabels,
   className,
   style,
 }: ListViewProps) {
+  const heading = (col: SortKey) => columnLabels?.[col] ?? DEFAULT_HEADINGS[col];
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
@@ -114,16 +124,16 @@ export function ListView({
         <thead>
           <tr>
             <th className="dd-listview-th dd-listview-th--name" onClick={() => handleHeaderClick("name")}>
-              Name{sortArrow("name")}
+              {heading("name")}{sortArrow("name")}
             </th>
             <th className="dd-listview-th" onClick={() => handleHeaderClick("size")}>
-              Size{sortArrow("size")}
+              {heading("size")}{sortArrow("size")}
             </th>
             <th className="dd-listview-th" onClick={() => handleHeaderClick("type")}>
-              Type{sortArrow("type")}
+              {heading("type")}{sortArrow("type")}
             </th>
             <th className="dd-listview-th dd-listview-th--date" onClick={() => handleHeaderClick("date")}>
-              Date Modified{sortArrow("date")}
+              {heading("date")}{sortArrow("date")}
             </th>
           </tr>
         </thead>
