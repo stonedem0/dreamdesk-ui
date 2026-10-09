@@ -7,6 +7,30 @@ export interface PreviousState {
   zIndex: string;
 }
 
+// ── Motion ──────────────────────────────────────────────────────────────────
+// One feel for every window animation: a gentle start and a soft landing.
+// Opening and growing take a little longer than closing and shrinking.
+
+/** Growing in: starts briskly, settles softly. */
+export const EASE_IN_PLACE = 'cubic-bezier(0.2, 0, 0, 1)';
+/** Moving or shrinking: eases in and out, never snaps at the end. */
+export const EASE_SMOOTH = 'cubic-bezier(0.4, 0, 0.2, 1)';
+
+export const DURATION = {
+  open: 260,
+  close: 240,
+  minimize: 340,
+  unminimize: 340,
+  fullscreen: 450,
+  unfullscreen: 400,
+  unsnap: 360,
+} as const;
+
+/** Near-instant for people who ask their system for less motion. */
+const reducedMotion = () =>
+  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const ms = (duration: number) => (reducedMotion() ? 1 : duration);
+
 export function cancelRunningAnimations(el: Element): void {
   const anims = el?.getAnimations?.() ?? [];
   for (const a of anims) {
@@ -22,8 +46,8 @@ export function open(win: HTMLElement): void {
   cancelRunningAnimations(win);
   win.style.transformOrigin = '50% 50%';
   win.animate(
-    [{ transform: 'scale(0.85)', opacity: '0' }, { transform: 'scale(1)', opacity: '1' }],
-    { duration: 180, easing: 'ease-out' }
+    [{ transform: 'scale(0.9)', opacity: '0' }, { transform: 'scale(1)', opacity: '1' }],
+    { duration: ms(DURATION.open), easing: EASE_IN_PLACE }
   );
 }
 
@@ -32,7 +56,7 @@ export function minimize(win: HTMLElement): void {
   win.style.transformOrigin = '50% 100%';
   win.animate(
     [{ transform: 'scale(1)' }, { transform: 'scale(0)' }],
-    { duration: 300, easing: 'ease-in', fill: 'forwards' }
+    { duration: ms(DURATION.minimize), easing: EASE_SMOOTH, fill: 'forwards' }
   );
 }
 
@@ -41,7 +65,7 @@ export function unminimize(win: HTMLElement): void {
   win.style.transformOrigin = '50% 100%';
   win.animate(
     [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
-    { duration: 300, easing: 'ease-out' }
+    { duration: ms(DURATION.unminimize), easing: EASE_IN_PLACE }
   );
 }
 
@@ -73,7 +97,7 @@ export function fullscreen(win: HTMLElement, previousState: PreviousState): void
       { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
       { transform: 'none' },
     ],
-    { duration: 500, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+    { duration: ms(DURATION.fullscreen), easing: EASE_IN_PLACE }
   );
 }
 
@@ -97,7 +121,7 @@ export function unfullscreen(win: HTMLElement, previousState: PreviousState): vo
       { transform: 'none' },
       { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
     ],
-    { duration: 300, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }
+    { duration: ms(DURATION.unfullscreen), easing: EASE_SMOOTH, fill: 'forwards' }
   );
 
   const applyFinal = () => {
@@ -131,14 +155,14 @@ export function unsnap(win: HTMLElement, fromRect: DOMRect): void {
       { transform: `translate(${tx}px, ${ty}px) scale(${scaleX}, ${scaleY})` },
       { transform: 'none' },
     ],
-    { duration: 300, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+    { duration: ms(DURATION.unsnap), easing: EASE_SMOOTH }
   );
 }
 
 export function close(win: HTMLElement, onfinish?: () => void): void {
   const anim = win.animate(
     [{ opacity: '1', transform: 'scale(1)' }, { opacity: '0', transform: 'scale(0.95)' }],
-    { duration: 300, easing: 'ease', fill: 'forwards' }
+    { duration: ms(DURATION.close), easing: EASE_SMOOTH, fill: 'forwards' }
   );
   anim.onfinish = () => {
     anim.cancel(); // clear fill effect so re-opening the window works correctly

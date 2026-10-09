@@ -64,7 +64,7 @@
 }
 
 .dd-menu-dropdown {
-  animation: dd-menu-in 0.08s ease;
+  animation: dd-menu-in 0.12s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ── Menu items ── */
@@ -116,6 +116,11 @@
   height: 1px;
   margin: 0.15rem 0;
   background: var(--dd-cm-separator, var(--color-window-border, var(--border, #ccc)));
+}
+
+/* Less motion for people who ask for it (kept, not removed: closing waits for it to end) */
+@media (prefers-reduced-motion: reduce) {
+  .dd-menu-dropdown { animation-duration: 1ms; }
 }
 
 } /* @layer dreamdesk */

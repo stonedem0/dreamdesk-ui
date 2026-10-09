@@ -23,7 +23,7 @@
 }
 
 .dd-context-menu {
-  animation: dd-cm-in 0.1s ease;
+  animation: dd-cm-in 0.14s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .dd-cm-item {
@@ -76,6 +76,11 @@
   height: 1px;
   margin: 0.15rem 0;
   background: var(--dd-cm-separator, var(--color-window-border, var(--border, #ccc)));
+}
+
+/* Less motion for people who ask for it (kept, not removed: closing waits for it to end) */
+@media (prefers-reduced-motion: reduce) {
+  .dd-context-menu { animation-duration: 1ms; }
 }
 
 } /* @layer dreamdesk */
