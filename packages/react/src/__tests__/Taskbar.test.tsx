@@ -47,6 +47,12 @@ describe("Taskbar", () => {
     expect(screen.getByText("Beta")).toBeInTheDocument();
   });
 
+  it("labels each button with its window's id, for the window to minimize into", () => {
+    const { wm } = setup();
+    act(() => { wm.register("win:1", makeEl(), "Alpha", { toggle: () => {} }); });
+    expect(screen.getByText("Alpha").closest("button")).toHaveAttribute("data-window-id", "win:1");
+  });
+
   it("calls toggle when a button is clicked", () => {
     const { wm } = setup();
     const toggle = vi.fn();

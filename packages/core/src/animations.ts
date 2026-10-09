@@ -51,22 +51,38 @@ export function open(win: HTMLElement): void {
   );
 }
 
-export function minimize(win: HTMLElement): void {
-  cancelRunningAnimations(win);
-  win.style.transformOrigin = '50% 100%';
-  win.animate(
-    [{ transform: 'scale(1)' }, { transform: 'scale(0)' }],
-    { duration: ms(DURATION.minimize), easing: EASE_SMOOTH, fill: 'forwards' }
-  );
+/** Where a window goes when minimized: its taskbar button, if it has one. */
+export type MinimizeTarget = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+
+/** The transform that lays `win` over `target`, shrunk to its size. */
+function into(win: HTMLElement, target: MinimizeTarget): string {
+  const r = win.getBoundingClientRect();
+  const tx = (target.left + target.width / 2) - (r.left + r.width / 2);
+  const ty = (target.top + target.height / 2) - (r.top + r.height / 2);
+  return `translate(${tx}px, ${ty}px) scale(${target.width / (r.width || 1)}, ${target.height / (r.height || 1)})`;
 }
 
-export function unminimize(win: HTMLElement): void {
+/**
+ * Shrinks the window away: into its taskbar button when given its rect, as
+ * Windows does, otherwise down to its bottom edge.
+ */
+export function minimize(win: HTMLElement, target?: MinimizeTarget | null): void {
   cancelRunningAnimations(win);
-  win.style.transformOrigin = '50% 100%';
-  win.animate(
-    [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
-    { duration: ms(DURATION.unminimize), easing: EASE_IN_PLACE }
-  );
+  win.style.transformOrigin = target ? '50% 50%' : '50% 100%';
+  const keyframes = target
+    ? [{ transform: 'none', opacity: 1 }, { transform: into(win, target), opacity: 0 }]
+    : [{ transform: 'scale(1)' }, { transform: 'scale(0)' }];
+  win.animate(keyframes, { duration: ms(DURATION.minimize), easing: EASE_SMOOTH, fill: 'forwards' });
+}
+
+/** Brings the window back: out of its taskbar button when given its rect. */
+export function unminimize(win: HTMLElement, target?: MinimizeTarget | null): void {
+  cancelRunningAnimations(win);
+  win.style.transformOrigin = target ? '50% 50%' : '50% 100%';
+  const keyframes = target
+    ? [{ transform: into(win, target), opacity: 0 }, { transform: 'none', opacity: 1 }]
+    : [{ transform: 'scale(0)' }, { transform: 'scale(1)' }];
+  win.animate(keyframes, { duration: ms(DURATION.unminimize), easing: EASE_IN_PLACE });
 }
 
 // ── Fullscreen ──────────────────────────────────────────────────────────────

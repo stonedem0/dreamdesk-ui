@@ -256,3 +256,39 @@ describe('fullscreen with View Transitions', () => {
     }
   });
 });
+
+describe('minimize into the taskbar button', () => {
+  const BUTTON = { left: 100, top: 560, width: 120, height: 28 };
+  function placed() {
+    const win = makeWin();
+    win.getBoundingClientRect = () => ({ left: 200, top: 100, width: 400, height: 300, right: 600, bottom: 400, x: 200, y: 100, toJSON() {} }) as DOMRect;
+    return win;
+  }
+
+  it('shrinks into the button and fades out', () => {
+    const win = placed();
+    const animate = vi.spyOn(win, 'animate');
+    minimize(win, BUTTON);
+    const [frames] = animate.mock.calls[0] as [Keyframe[]];
+    // Centre (400, 250) to the button's centre (160, 574), at its size
+    expect(frames[1]).toEqual({ transform: 'translate(-240px, 324px) scale(0.3, 0.09333333333333334)', opacity: 0 });
+    expect(win.style.transformOrigin).toBe('50% 50%');
+  });
+
+  it('grows back out of it', () => {
+    const win = placed();
+    const animate = vi.spyOn(win, 'animate');
+    unminimize(win, BUTTON);
+    const [frames] = animate.mock.calls[0] as [Keyframe[]];
+    expect(frames[0]).toMatchObject({ opacity: 0 });
+    expect(frames[1]).toEqual({ transform: 'none', opacity: 1 });
+  });
+
+  it('shrinks to its bottom edge without a button', () => {
+    const win = placed();
+    const animate = vi.spyOn(win, 'animate');
+    minimize(win, null);
+    expect((animate.mock.calls[0] as [Keyframe[]])[0][1]).toEqual({ transform: 'scale(0)' });
+    expect(win.style.transformOrigin).toBe('50% 100%');
+  });
+});
