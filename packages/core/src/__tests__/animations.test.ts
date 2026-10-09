@@ -292,3 +292,26 @@ describe('minimize into the taskbar button', () => {
     expect(win.style.transformOrigin).toBe('50% 100%');
   });
 });
+
+describe('the whole app\'s pace', () => {
+  afterEach(() => document.documentElement.style.removeProperty('--dd-motion-pace'));
+
+  it('scales every duration by --dd-motion-pace', () => {
+    const win = makeWin();
+    const animate = vi.spyOn(win, 'animate');
+    open(win);
+    document.documentElement.style.setProperty('--dd-motion-pace', '1.5');
+    open(win);
+    const [normal, slower] = animate.mock.calls.map((c) => (c[1] as KeyframeAnimationOptions).duration as number);
+    expect(slower).toBe(Math.round(normal * 1.5));
+  });
+
+  it('ignores a missing or nonsense pace', async () => {
+    const { motionPace } = await import('../animations');
+    expect(motionPace()).toBe(1);
+    document.documentElement.style.setProperty('--dd-motion-pace', 'fast');
+    expect(motionPace()).toBe(1);
+    document.documentElement.style.setProperty('--dd-motion-pace', '0');
+    expect(motionPace()).toBe(1);
+  });
+});

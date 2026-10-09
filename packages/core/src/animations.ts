@@ -16,20 +16,32 @@ export const EASE_IN_PLACE = 'cubic-bezier(0.2, 0, 0, 1)';
 /** Moving or shrinking: eases in and out, never snaps at the end. */
 export const EASE_SMOOTH = 'cubic-bezier(0.4, 0, 0.2, 1)';
 
+/** At pace 1. Minimizing travels to the taskbar, so it takes longer. */
 export const DURATION = {
   open: 260,
   close: 240,
-  minimize: 340,
-  unminimize: 340,
+  minimize: 460,
+  unminimize: 440,
   fullscreen: 450,
   unfullscreen: 400,
   unsnap: 360,
 } as const;
 
+/**
+ * The whole app's pace: every animation's duration is multiplied by
+ * `--dd-motion-pace` on the root element (1 by default; 1.3 is 30% slower,
+ * 0.8 faster). Dialogs and menus read it in CSS; apps can too.
+ */
+export function motionPace(): number {
+  if (typeof document === 'undefined') return 1;
+  const pace = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dd-motion-pace'));
+  return Number.isFinite(pace) && pace > 0 ? pace : 1;
+}
+
 /** Near-instant for people who ask their system for less motion. */
 const reducedMotion = () =>
   typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-const ms = (duration: number) => (reducedMotion() ? 1 : duration);
+const ms = (duration: number) => (reducedMotion() ? 1 : Math.round(duration * motionPace()));
 
 export function cancelRunningAnimations(el: Element): void {
   const anims = el?.getAnimations?.() ?? [];
@@ -101,7 +113,7 @@ function viewTransition(win: HTMLElement, duration: number, easing: string, upda
   const start = (document as Document & { startViewTransition?: StartViewTransition }).startViewTransition;
   if (typeof start !== 'function' || reducedMotion()) return false;
   const root = document.documentElement;
-  root.style.setProperty('--dd-vt-duration', `${duration}ms`);
+  root.style.setProperty('--dd-vt-duration', `${ms(duration)}ms`);
   root.style.setProperty('--dd-vt-easing', easing);
   win.style.setProperty('view-transition-name', 'dd-window');
   const done = () => win.style.removeProperty('view-transition-name');
