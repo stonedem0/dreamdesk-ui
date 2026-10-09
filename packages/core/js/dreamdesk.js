@@ -87,7 +87,8 @@ function ht(s, t) {
 }
 function et(s, t) {
   const e = s.animate(
-    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.95)" }],
+    // The mirror of open()
+    [{ opacity: "1", transform: "scale(1)" }, { opacity: "0", transform: "scale(0.9)" }],
     { duration: M(z.close), easing: O, fill: "forwards" }
   );
   e.onfinish = () => {
