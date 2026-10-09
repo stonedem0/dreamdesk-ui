@@ -31,9 +31,12 @@ jobs:
 
       - name: Bump version and sync packages
         id: bump
+        # The input comes in through an env var, never pasted into the script
+        env:
+          RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
         run: |
           # Bump root without committing so we can amend package files into the same commit
-          NEW_VER=$(npm version ${{ github.event.inputs.releaseType }} --no-git-tag-version)
+          NEW_VER=$(npm version "$RELEASE_TYPE" --no-git-tag-version)
           NEW_VER="${NEW_VER#v}"
 
           # Sync to individual packages
