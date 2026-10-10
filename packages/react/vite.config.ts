@@ -15,7 +15,7 @@ export default defineConfig({
     // One bundled .d.ts: the per-file output lands in dist/react/src/ (core is
     // aliased from ../core) and imports @dreamdesk/core, which isn't published,
     // so core's source is included and its types are inlined
-    dts({ include: ["src", "../core/src"], exclude: ["src/__tests__", "src/dev", "../core/src/__tests__", "../core/src/**/*.test.ts"], rollupTypes: true }),
+    dts({ include: ["src", "../core/src"], exclude: ["src/__tests__", "src/dev", "src/stories", "../core/src/__tests__", "../core/src/**/*.test.ts"], rollupTypes: true }),
   ],
   resolve: {
     alias: {

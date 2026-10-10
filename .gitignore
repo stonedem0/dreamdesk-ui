@@ -2,3 +2,4 @@ node_modules/
 dist/
 .pnpmfile.cjs
 ROADMAP.md
+packages/react/build/
