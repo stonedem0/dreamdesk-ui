@@ -1,0 +1,159 @@
+/* Inside the `dreamdesk` cascade layer, so any unlayered app CSS overrides it
+   regardless of specificity. Apps with global resets should layer them first:
+   @layer reset, dreamdesk; */
+@layer dreamdesk {
+
+/* XP Theme (working name): Windows XP's Luna, in purple, after small-talk.
+   Glossy purple title bars, pill-shaped caption buttons with a pink close,
+   lavender gel buttons, rounded window corners, Trebuchet MS. */
+
+html[data-theme="xp"] {
+  /* XP purple palette */
+  --xp-purple: #4a00f7;
+  --xp-purple-light: #782cff;
+  --xp-purple-dark: #2f00a8;
+  --xp-lavender: #e9d5ff;
+  --xp-lilac: #d8b4fe;
+  --xp-mist: #f6f1ff;
+  --xp-pink: #f72585;
+  --xp-coral: #f75858;
+
+  /* Type */
+  --font-ui: "Trebuchet MS", "Lucida Grande", Tahoma, sans-serif;
+  --font-size-base: 15px;
+
+  /* App surface */
+  --app-color: var(--xp-mist);
+  --line-color: var(--xp-purple-dark);
+  --color-background: var(--xp-mist);
+
+  /* Semantic colors */
+  --color-primary: var(--xp-purple);
+  --color-secondary: var(--xp-purple-light);
+  --color-accent: var(--xp-pink);
+  --color-tertiary: var(--xp-lilac);
+  --color-surface: #ffffff;
+  --color-text: #1b0b3a;
+  --color-text-muted: #5b4a85;
+  --color-border: var(--xp-purple-dark);
+
+  /* Interactive */
+  --color-hover: #ede4ff;
+  --color-active: var(--xp-purple);
+  --color-disabled: #d9d0ec;
+  --color-error: #ff8fab;
+  --color-success: #9be7a8;
+  --color-warning: #ffe08a;
+
+  /* Window: glossy purple title bar on a white body, rounded corners */
+  --dd-window-radius: 6px 6px 4px 4px;
+  --color-window-border: 1px solid var(--xp-purple-dark);
+  --color-window-header: var(--xp-purple);
+  --dd-header-bg: linear-gradient(to bottom,
+    #8c5cff 0%, #5a14fa 9%, var(--xp-purple) 18%, var(--xp-purple) 84%, #3b00cf 100%);
+  --dd-header-color: #ffffff;
+  --dd-header-font-weight: bold;
+  --dd-title-text-shadow: 1px 1px 0 rgba(20, 0, 70, 0.55);
+  --window-header-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --dd-header-border-bottom: 1px solid var(--xp-purple-dark);
+  --color-window-body: #ffffff;
+  --dd-body-bg: #ffffff;
+  --resize-stripe-color: var(--xp-purple-dark);
+
+  /* Inputs */
+  --color-input-background: #ffffff;
+  --color-input-border: #8b5cf6;
+  --color-input-focus: #ffffff;
+  --input-shadow: inset 1px 1px 0 rgba(74, 0, 247, 0.12);
+
+  /* Buttons: lavender gel with a glossy top half */
+  --dd-btn-radius: 5px;
+  --dd-btn-border: 1px solid #8b5cf6;
+  --color-button-primary: linear-gradient(to bottom, #fff9ff 0%, #f1e4ff 45%, var(--xp-lavender) 50%, var(--xp-lilac) 100%);
+  --color-button-ghost: linear-gradient(to bottom, #ffffff 0%, #faf7ff 45%, #f1ebff 50%, #e6dcfa 100%);
+  --button-shadow-primary: inset 0 1px 0 #ffffff, 0 1px 2px rgba(45, 13, 99, 0.18);
+  --button-shadow-ghost: inset 0 1px 0 #ffffff, 0 1px 2px rgba(45, 13, 99, 0.12);
+
+  /* Toasts */
+  --dd-toast-radius: 6px;
+  --dd-toast-bg: #ffffff;
+  --color-toast-alert: #ffe0ea;
+  --color-toast-notification: var(--xp-mist);
+  --color-toast-warning: #fff4cc;
+
+  /* Progress: XP's green blocks, in lilac */
+  --dd-pb-radius: 4px;
+  --dd-pb-bar-radius: 3px;
+  --dd-progress-enable-hue-rotate: 0;
+  --color-progress-track: #ffffff;
+  --color-progress-bar: linear-gradient(to bottom, #d9c2ff 0%, #8f5bff 45%, #6a2bff 55%, #9b6cff 100%);
+  --color-progress-segment: #7d3dff;
+  --color-progress-gradient: linear-gradient(90deg, #8f5bff 0%, var(--xp-purple) 100%);
+  --progress-track-shadow: inset 1px 1px 2px rgba(45, 13, 99, 0.25);
+  --progress-bar-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  /* Toggle */
+  --color-toggle-background: var(--xp-lavender);
+  --color-toggle-knob: #ffffff;
+  --color-toggle-active: var(--xp-purple);
+
+  /* Terminal */
+  --color-terminal-bg: #120428;
+  --color-terminal-fg: #e9d5ff;
+
+  /* Caption buttons: XP's glossy pills, purple, with a pink close */
+  --controls-gap: 3px;
+  --controls-button-w: 1.45rem;
+  --controls-button-h: 1.4rem;
+  --dd-controls-radius: 4px;
+  --dd-controls-border: 1px solid #ffffff;
+  --controls-minimize-border-right: 1px solid #ffffff;
+  --controls-close-border-left: 1px solid #ffffff;
+  --window-controls-button-shadow: inset 0 3px 5px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(20, 0, 70, 0.3);
+  --dd-controls-fg: #ffffff;
+  --color-window-control-bg: var(--xp-purple);
+  --color-window-control-minimize-bg: var(--xp-purple);
+  --color-window-control-fullscreen-bg: var(--xp-purple);
+  --color-window-control-close-bg: var(--xp-pink);
+  --color-window-control-minimize-bg-hover: var(--xp-purple-light);
+  --color-window-control-fullscreen-bg-hover: var(--xp-purple-light);
+  --color-window-control-close-bg-hover: var(--xp-coral);
+  --controls-gloss-image: linear-gradient(to bottom, #4a00f7 47%, #782cff 75%);
+  --controls-minimize-gloss: var(--controls-gloss-image);
+  --controls-fullscreen-gloss: var(--controls-gloss-image);
+  --controls-close-gloss: linear-gradient(to bottom, #c70195 0%, var(--xp-pink) 35%, var(--xp-coral) 100%);
+  --btn-minimize-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><line x1='9' y1='29' x2='27' y2='29' stroke='white' stroke-width='6'/></svg>");
+  --btn-fullscreen-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><rect x='9' y='9' width='22' height='22' fill='none' stroke='white' stroke-width='3'/><line x1='9' y1='12' x2='31' y2='12' stroke='white' stroke-width='6'/></svg>");
+  --btn-close-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M11 11 L29 29 M29 11 L11 29' stroke='white' stroke-width='5'/></svg>");
+
+  /* Depth */
+  --shadow: 0 2px 8px rgba(45, 13, 99, 0.15);
+  --window-shadow: 0 6px 24px rgba(45, 13, 99, 0.22);
+  --toast-shadow: var(--shadow);
+  --toggle-slider-shadow: inset 1px 1px 2px rgba(45, 13, 99, 0.25);
+  --toggle-knob-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(45, 13, 99, 0.3);
+
+  /* Scrollbars: purple thumb with XP's light and dark edges, grey arrows */
+  --scroll-width: 1rem;
+  --scroll-track-bg: #f1f1f1;
+  --scroll-thumb-bg: var(--xp-purple);
+  --scroll-thumb-radius: 3px;
+  --scroll-thumb-gradient-image: linear-gradient(to right, #7a45ff 0%, var(--xp-purple) 45%, #3b00cf 100%);
+  --scroll-thumb-gradient-image-hover: linear-gradient(to right, #8c5cff 0%, #5a14fa 45%, #4300e6 100%);
+  --scroll-thumb-box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 0 #2a00d7;
+  --scroll-thumb-box-shadow-hover: var(--scroll-thumb-box-shadow);
+  --scroll-thumb-light: #ffffff;
+  --scroll-thumb-dark: #2a00d7;
+  --scroll-button-bg: #cccccc;
+  --scroll-button-shadow-light: #ffffff;
+  --scroll-button-shadow-dark: #a2a2a2;
+  --scroll-arrow-color: #1c1c1c;
+  --dd-scrollable-bg: #ffffff;
+}
+
+/* A soft lilac sky behind the desktop */
+html[data-theme="xp"] body {
+  background: linear-gradient(180deg, #b9a4ff 0%, #d9ccff 55%, #efe8ff 100%) fixed;
+}
+
+} /* @layer dreamdesk */

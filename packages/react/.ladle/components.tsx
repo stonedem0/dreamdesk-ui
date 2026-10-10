@@ -5,9 +5,10 @@ import "../../core/css/base.css";
 import "../../core/css/pastelcore.css";
 import "../../core/css/dark.css";
 import "../../core/css/vista.css";
+import "../../core/css/xp.css";
 import "../src/style.css";
 
-const THEMES = ["pastelcore", "vista", "dark"] as const;
+const THEMES = ["pastelcore", "vista", "dark", "xp"] as const;
 type Theme = (typeof THEMES)[number];
 const KEY = "dreamdesk-ladle-theme";
 

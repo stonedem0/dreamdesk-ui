@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
-export type DreamDeskTheme = "pastelcore" | "dark" | "vista";
+export type DreamDeskTheme = "pastelcore" | "dark" | "vista" | "xp";
 
 interface ThemeContextValue {
   theme: DreamDeskTheme;
