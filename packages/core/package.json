@@ -9,7 +9,9 @@
     "./css/base.css": "./css/base.css",
     "./css/globals.css": "./css/globals.css",
     "./css/pastelcore.css": "./css/pastelcore.css",
-    "./css/dark.css": "./css/dark.css"
+    "./css/dark.css": "./css/dark.css",
+    "./css/vista.css": "./css/vista.css",
+    "./css/xp.css": "./css/xp.css"
   },
   "files": [
     "js/",
