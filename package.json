@@ -30,6 +30,7 @@
   "scripts": {
     "dev:core": "pnpm --filter @dreamdesk/core dev",
     "dev:react": "pnpm --filter @dreamdesk/react dev",
+    "stories": "pnpm --filter @dreamdesk/react stories",
     "build:core": "pnpm --filter @dreamdesk/core build",
     "build:react": "pnpm --filter @dreamdesk/react build",
     "build": "pnpm run build:core && pnpm run build:react",
